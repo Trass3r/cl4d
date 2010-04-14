@@ -119,7 +119,7 @@ cl_int clEnqueueReleaseGLObjects(
 
 // cl_khr_gl_sharing extension
 
-const cl_khr_gl_sharing = 1;
+version = cl_khr_gl_sharing;
 
 typedef cl_uint cl_gl_context_info;
 

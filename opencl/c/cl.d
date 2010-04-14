@@ -21,9 +21,9 @@
  * MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
  ******************************************************************************/
 
-// $Revision: 9283 $ on $Date: 2009-10-14 10:18:57 -0700 (Wed, 14 Oct 2009) $
+// $Revision: 10424 $ on $Date: 2010-02-17 14:34:49 -0800 (Wed, 17 Feb 2010) $
 
-module opencl.c.opencl;
+module opencl.c.cl;
 
 public import opencl.c.platform;
 
@@ -206,6 +206,8 @@ enum
 	CL_DEVICE_VERSION                           = 0x102F,
 	CL_DEVICE_EXTENSIONS                        = 0x1030,
 	CL_DEVICE_PLATFORM                          = 0x1031,
+	// 0x1032 reserved for CL_DEVICE_DOUBLE_FP_CONFIG
+	// 0x1033 reserved for CL_DEVICE_HALF_FP_CONFIG
 	
 	// cl_device_fp_config - bitfield
 	CL_FP_DENORM                                = (1 << 0),
@@ -237,7 +239,7 @@ enum
 	CL_CONTEXT_DEVICES                          = 0x1081,
 	CL_CONTEXT_PROPERTIES                       = 0x1082,
 
-	// cl_context_properties
+	// cl_context_info + cl_context_properties
 	CL_CONTEXT_PLATFORM                         = 0x1084,
 
 	// cl_command_queue_info
