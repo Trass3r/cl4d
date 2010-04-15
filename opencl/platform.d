@@ -3,7 +3,7 @@
  */
 module opencl.platform;
 
-public import opencl.c.opencl;
+public import opencl.c.cl;
 import opencl.device;
 import opencl.error;
 import opencl.wrapper;

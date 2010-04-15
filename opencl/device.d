@@ -3,7 +3,7 @@
  */
 module opencl.device;
 
-import opencl.c.opencl;
+import opencl.c.cl;
 import opencl.platform;
 import opencl.wrapper;
 
@@ -14,6 +14,13 @@ private:
 	CLPlatform _platform;
 
 public:
+	/// need a constructor without platform, if we need to wrap a retrieved cl_device_id
+	this(cl_device_id device)
+	{
+		super(device);
+		// TODO: retrieve platform ID via CL call and set _platform
+	}
+	
 	///
 	this(CLPlatform platform, cl_device_id device)
 	{

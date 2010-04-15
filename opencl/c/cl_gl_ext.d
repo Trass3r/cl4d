@@ -26,7 +26,7 @@
 /**
  *	cl_gl_ext.h contains vendor (non-KHR) OpenCL extensions which have OpenGL dependencies.
  */
-module opencl.c.gl_ext;
+module opencl.c.cl_gl_ext;
 
 extern(C):
 

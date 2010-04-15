@@ -3,7 +3,7 @@
  */
 module opencl.error;
 
-import opencl.c.opencl;
+import opencl.c.cl;
 
 class CLException : Exception
 {

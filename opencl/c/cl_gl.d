@@ -30,7 +30,7 @@
  */
 module opencl.c.cl_gl;
 
-//import opencl.c.platform;
+//import opencl.c.cl_platform;
 import opencl.c.cl;
 
 extern(C):

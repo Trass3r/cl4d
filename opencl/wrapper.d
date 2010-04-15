@@ -4,7 +4,7 @@
 module opencl.wrapper;
 
 import opencl.error;
-import opencl.c.opencl;
+import opencl.c.cl;
 
 // alternate Info getter functions
 private alias extern(C) cl_int function(const(void)*, const(void*), cl_uint, size_t, void*, size_t*) Func;

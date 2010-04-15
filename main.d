@@ -2,7 +2,7 @@ module main;
 
 import common;
 
-import opencl.c.opencl;
+//import opencl.c.cl;
 import opencl.context;
 import opencl.device;
 import opencl.platform;

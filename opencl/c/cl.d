@@ -25,7 +25,7 @@
 
 module opencl.c.cl;
 
-public import opencl.c.platform;
+public import opencl.c.cl_platform;
 
 extern(C):
 

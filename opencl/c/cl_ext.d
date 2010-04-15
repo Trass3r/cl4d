@@ -23,7 +23,7 @@
 
 /* $Revision: 10424 $ on $Date: 2010-02-17 14:34:49 -0800 (Wed, 17 Feb 2010) $ */
 
-module opencl.c.ext;
+module opencl.c.cl_ext;
 
 extern(C):
 

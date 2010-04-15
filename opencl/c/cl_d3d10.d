@@ -23,11 +23,11 @@
 
 // $Revision: 10911 $ on $Date: 2010-04-05 14:41:26 -0700 (Mon, 05 Apr 2010) $
 
-module opencl.c.d3d10;
+module opencl.c.cl_d3d10;
 
 //import d3d10;
 import opencl.c.cl;
-import opencl.c.platform;
+import opencl.c.cl_platform;
 
 extern(C):
 

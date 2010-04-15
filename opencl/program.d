@@ -3,7 +3,7 @@
  */
 module opencl.program;
 
-import opencl.c.opencl;
+import opencl.c.cl;
 import opencl.wrapper;
 import opencl.device;
 import opencl.context;
@@ -136,7 +136,7 @@ public:
 	{
 		cl_device_id[] ids = getArrayInfo!(cl_device_id)(CL_PROGRAM_DEVICES);
 		CLDevice[] res = new CLDevice[ids.length];
-		for(uint i=0; i<ids.length, i++)
+		for(uint i=0; i<ids.length; i++)
 			res[i] = new CLDevice(ids[i]);
 		return res;
 	}
