@@ -29,7 +29,7 @@ public import opencl.c.cl_platform;
 
 extern(C):
 
-alias const(void)*
+typedef const(void*)
 	cl_platform_id,
 	cl_device_id,
 	cl_context,
