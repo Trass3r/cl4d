@@ -1,5 +1,5 @@
 /*
-cl4d - object-oriented wrapper for the OpenCL C API v1.0 revision 48
+cl4d - object-oriented wrapper for the OpenCL C API v1.1 revision 33
 written in the D programming language
 
 Copyright (C) 2009-2010 Andreas Hollandt
