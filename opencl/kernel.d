@@ -34,6 +34,9 @@ import opencl.program;
 import opencl.wrapper;
 
 
+/// collection of several devices
+alias CLObjectCollection!(cl_kernel) CLKernels;
+
 /**
  *
  */

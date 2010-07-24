@@ -26,38 +26,49 @@ FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
-module main;
+module common;
 
-import common;
-
-//import opencl.c.cl;
-import opencl.context;
-import opencl.device;
-import opencl.kernel;
-import opencl.platform;
-
-import std.stdio;
-
-void main(istring[] args)
+package
 {
-	auto platform = CLPlatform.getPlatforms[0];
-	writefln("%s %s %s %s %s", platform.name, platform.vendor, platform.clversion, platform.profile, platform.extensions);
+// define string types for compatibility with both D1 and D2
+version (D_Version2)
+{
+	pragma(msg, "D2 detected. Taking care of constness.");
 
-	auto devices = platform.allDevices;
-	
-	foreach(device; devices)
-		writefln("%s %s %s %s %s", device.name, device.vendor, device.driverVersion, device.clVersion, device.profile, device.extensions);
-	
-	auto context = new CLContext(devices);
-	
-	auto program = context.createProgram(`
-			__kernel void sum(	__global const float* a,
-								__global const float* b,
-								__global float* c)
-			{
-				int i = get_global_id(0);
-				c[i] = a[i] + b[i];
-			} `).build("-Werror");
-	
-	auto kernel = new CLKernel(program, "sum");
+	// we need a mixin cause the code is syntactically illegal under D1
+	mixin(`
+	alias const(char) cchar; /// const char type
+	alias immutable(char) ichar; /// immutable char type
+
+	alias char[] mstring; /// mutable string type
+	alias const(char)[] cstring; /// const string type
+	alias immutable(char)[] istring; /// immutable string type
+
+	alias wchar[] mwstring;
+	alias const(wchar)[] cwstring;
+	alias immutable(wchar)[] iwstring;
+
+	alias dchar[] mdstring;
+	alias const(dchar)[] cdstring;
+	alias immutable(dchar)[] idstring;`);
+}
+else
+{
+	pragma(msg, "D1 detected. All strings are mutable.");
+
+	alias char cchar;
+	alias char ichar;
+
+	alias char[] mstring;
+	alias char[] cstring;
+	alias char[] istring;
+
+	alias wchar[] mwstring;
+	alias wchar[] cwstring;
+	alias wchar[] iwstring;
+
+	alias dchar[] mdstring;
+	alias dchar[] cdstring;
+	alias dchar[] idstring;
+}
 }

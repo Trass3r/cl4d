@@ -30,6 +30,7 @@ module opencl.wrapper;
 
 import opencl.error;
 import opencl.c.cl;
+import opencl.kernel;
 import opencl.platform;
 import opencl.device;
 
@@ -148,11 +149,13 @@ class CLObjectCollection(T)
 {
 private:
 	T[] _objects;
-	
+
 	static if(is(T == cl_platform_id))
 		alias CLPlatform Wrapper;
 	static if(is(T == cl_device_id))
 		alias CLDevice Wrapper;
+	static if(is(T == cl_kernel))
+		alias CLKernel Wrapper;
 	// TODO: rest of the types
 	
 public:

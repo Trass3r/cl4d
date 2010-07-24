@@ -28,6 +28,7 @@ DEALINGS IN THE SOFTWARE.
 */
 module opencl.program;
 
+import opencl.kernel;
 import opencl.c.cl;
 import opencl.wrapper;
 import opencl.device;
@@ -158,7 +159,7 @@ public:
 	 *	Returns:
 	 *		kernel collection
 	 */
-	CLKernels createKernels()
+	auto createKernels()
 	{
 		cl_int res;
 		cl_uint numKernels;
@@ -234,7 +235,7 @@ public:
 	 * which the program object has been created or can be a subset of devices that are specified when a progam object
 	 * is created using	clCreateProgramWithBinary
 	 */
-	CLDevices devices()
+	auto devices()
 	{
 		// TODO: maybe save the devices as a class member
 		cl_device_id[] ids = getArrayInfo!(cl_device_id)(CL_PROGRAM_DEVICES);
