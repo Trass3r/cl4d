@@ -1,5 +1,5 @@
 /**********************************************************************************
- * Copyright (c) 2008-2009 The Khronos Group Inc.
+ * Copyright (c) 2008-2010 The Khronos Group Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -21,7 +21,7 @@
  * MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
  **********************************************************************************/
 
-// $Revision: 10424 $ on $Date: 2010-02-17 14:34:49 -0800 (Wed, 17 Feb 2010) $
+// $Revision: 11708 $ on $Date: 2010-06-13 23:36:24 -0700 (Sun, 13 Jun 2010) $
 
 /**
  * cl_gl.h contains Khronos-approved (KHR) OpenCL extensions which have
@@ -33,11 +33,12 @@ module opencl.c.cl_gl;
 //import opencl.c.cl_platform;
 import opencl.c.cl;
 
-extern(C):
+extern(System):
 
 typedef cl_uint	 cl_gl_object_type;
 typedef cl_uint	 cl_gl_texture_info;
 typedef cl_uint	 cl_gl_platform_info;
+// TODO: typedef struct __GLsync *cl_GLsync;
 
 enum
 {
@@ -147,3 +148,11 @@ cl_int clGetGLContextInfoKHR(
 	void*							param_value,
 	size_t*							param_value_size_ret
 );
+
+typedef extern(System) cl_int function(
+		const(cl_context_properties)*	properties,
+		cl_gl_context_info				param_name,
+		size_t							param_value_size,
+		void*							param_value,
+		size_t*							param_value_size_ret
+	) clGetGLContextInfoKHR_fn;

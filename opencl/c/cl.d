@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008-2009 The Khronos Group Inc.
+ * Copyright (c) 2008-2010 The Khronos Group Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -21,13 +21,13 @@
  * MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
  ******************************************************************************/
 
-// $Revision: 10424 $ on $Date: 2010-02-17 14:34:49 -0800 (Wed, 17 Feb 2010) $
+// $Revision: 11708 $ on $Date: 2010-06-13 23:36:24 -0700 (Sun, 13 Jun 2010) $
 
 module opencl.c.cl;
 
 public import opencl.c.cl_platform;
 
-extern(C):
+extern(System):
 
 typedef const(void*)
 	cl_platform_id,
@@ -40,44 +40,50 @@ typedef const(void*)
 	cl_event,
 	cl_sampler;
 
-alias cl_uint			cl_bool;		// WARNING!  Unlike cl_ types in cl_platform.h, cl_bool is not guaranteed to be the same size as the bool in kernels.
-alias cl_ulong			cl_bitfield;
-alias cl_bitfield		cl_device_type;
-alias cl_uint			cl_platform_info;
-alias cl_uint			cl_device_info;
-alias cl_bitfield		cl_device_address_info;
-alias cl_bitfield		cl_device_fp_config;
-alias cl_uint			cl_device_mem_cache_type;
-alias cl_uint			cl_device_local_mem_type;
-alias cl_bitfield		cl_device_exec_capabilities;
-alias cl_bitfield		cl_command_queue_properties;
+typedef cl_uint			cl_bool;		// WARNING!  Unlike cl_ types in cl_platform.h, cl_bool is not guaranteed to be the same size as the bool in kernels.
+typedef cl_ulong			cl_bitfield;
+typedef cl_bitfield		cl_device_type;
+typedef cl_uint			cl_platform_info;
+typedef cl_uint			cl_device_info;
+typedef cl_bitfield		cl_device_fp_config;
+typedef cl_uint			cl_device_mem_cache_type;
+typedef cl_uint			cl_device_local_mem_type;
+typedef cl_bitfield		cl_device_exec_capabilities;
+typedef cl_bitfield		cl_command_queue_properties;
 
-alias cl_bitfield		cl_context_properties;
-alias cl_uint			cl_context_info;
-alias cl_uint			cl_command_queue_info;
-alias cl_uint			cl_channel_order;
-alias cl_uint			cl_channel_type;
-alias cl_bitfield		cl_mem_flags;
-alias cl_uint			cl_mem_object_type;
-alias cl_uint			cl_mem_info;
-alias cl_uint			cl_image_info;
-alias cl_uint			cl_addressing_mode;
-alias cl_uint			cl_filter_mode;
-alias cl_uint			cl_sampler_info;
-alias cl_bitfield		cl_map_flags;
-alias cl_uint			cl_program_info;
-alias cl_uint			cl_program_build_info;
-alias cl_uint			cl_build_status;
-alias cl_uint			cl_kernel_info;
-alias cl_uint			cl_kernel_work_group_info;
-alias cl_uint			cl_event_info;
-alias cl_uint			cl_command_type;
-alias cl_uint			cl_profiling_info;
+typedef cl_bitfield		cl_context_properties;
+typedef cl_uint			cl_context_info;
+typedef cl_uint			cl_command_queue_info;
+typedef cl_uint			cl_channel_order;
+typedef cl_uint			cl_channel_type;
+typedef cl_bitfield		cl_mem_flags;
+typedef cl_uint			cl_mem_object_type;
+typedef cl_uint			cl_mem_info;
+typedef cl_uint			cl_image_info;
+typedef cl_uint			cl_buffer_create_type;
+typedef cl_uint			cl_addressing_mode;
+typedef cl_uint			cl_filter_mode;
+typedef cl_uint			cl_sampler_info;
+typedef cl_bitfield		cl_map_flags;
+typedef cl_uint			cl_program_info;
+typedef cl_uint			cl_program_build_info;
+typedef cl_uint			cl_build_status;
+typedef cl_uint			cl_kernel_info;
+typedef cl_uint			cl_kernel_work_group_info;
+typedef cl_uint			cl_event_info;
+typedef cl_uint			cl_command_type;
+typedef cl_uint			cl_profiling_info;
 
 struct cl_image_format
 {
 	cl_channel_order        image_channel_order;
 	cl_channel_type         image_channel_data_type;
+}
+
+struct cl_buffer_region
+{
+	size_t                  origin;
+	size_t                  size;
 }
 
 /******************************************************************************/
@@ -98,6 +104,8 @@ enum
 	CL_IMAGE_FORMAT_NOT_SUPPORTED               = -10,
 	CL_BUILD_PROGRAM_FAILURE                    = -11,
 	CL_MAP_FAILURE                              = -12,
+	CL_MISALIGNED_SUB_BUFFER_OFFSET             = -13,
+	CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST= -14,
 
 	CL_INVALID_VALUE                            = -30,
 	CL_INVALID_DEVICE_TYPE                      = -31,
@@ -133,10 +141,13 @@ enum
 	CL_INVALID_BUFFER_SIZE                      = -61,
 	CL_INVALID_MIP_LEVEL                        = -62,
 	CL_INVALID_GLOBAL_WORK_SIZE                 = -63,
-
+}
 	// OpenCL Version
-	CL_VERSION_1_0                              = 1,
+version = CL_VERSION_1_0;
+version = CL_VERSION_1_1;
 
+enum
+{
 	// cl_bool
 	CL_FALSE                                    = 0,
 	CL_TRUE                                     = 1,
@@ -208,7 +219,17 @@ enum
 	CL_DEVICE_PLATFORM                          = 0x1031,
 	// 0x1032 reserved for CL_DEVICE_DOUBLE_FP_CONFIG
 	// 0x1033 reserved for CL_DEVICE_HALF_FP_CONFIG
-	
+	CL_DEVICE_PREFERRED_VECTOR_WIDTH_HALF       = 0x1034,
+	CL_DEVICE_HOST_UNIFIED_MEMORY               = 0x1035,
+	CL_DEVICE_NATIVE_VECTOR_WIDTH_CHAR          = 0x1036,
+	CL_DEVICE_NATIVE_VECTOR_WIDTH_SHORT         = 0x1037,
+	CL_DEVICE_NATIVE_VECTOR_WIDTH_INT           = 0x1038,
+	CL_DEVICE_NATIVE_VECTOR_WIDTH_LONG          = 0x1039,
+	CL_DEVICE_NATIVE_VECTOR_WIDTH_FLOAT         = 0x103A,
+	CL_DEVICE_NATIVE_VECTOR_WIDTH_DOUBLE        = 0x103B,
+	CL_DEVICE_NATIVE_VECTOR_WIDTH_HALF          = 0x103C,
+	CL_DEVICE_OPENCL_C_VERSION                  = 0x103D,
+
 	// cl_device_fp_config - bitfield
 	CL_FP_DENORM                                = (1 << 0),
 	CL_FP_INF_NAN                               = (1 << 1),
@@ -216,6 +237,7 @@ enum
 	CL_FP_ROUND_TO_ZERO                         = (1 << 3),
 	CL_FP_ROUND_TO_INF                          = (1 << 4),
 	CL_FP_FMA                                   = (1 << 5),
+	CL_FP_SOFT_FLOAT                            = (1 << 6),
 
 	// cl_device_mem_cache_type
 	CL_NONE                                     = 0x0,
@@ -238,7 +260,8 @@ enum
 	CL_CONTEXT_REFERENCE_COUNT                  = 0x1080,
 	CL_CONTEXT_DEVICES                          = 0x1081,
 	CL_CONTEXT_PROPERTIES                       = 0x1082,
-
+	CL_CONTEXT_NUM_DEVICES                      = 0x1083,
+	 
 	// cl_context_info + cl_context_properties
 	CL_CONTEXT_PLATFORM                         = 0x1084,
 
@@ -267,6 +290,9 @@ enum
 	CL_ARGB                                     = 0x10B7,
 	CL_INTENSITY                                = 0x10B8,
 	CL_LUMINANCE                                = 0x10B9,
+	CL_Rx                                       = 0x10BA,
+	CL_RGx                                      = 0x10BB,
+	CL_RGBx                                     = 0x10BC,
 
 	// cl_channel_type
 	CL_SNORM_INT8                               = 0x10D0,
@@ -298,6 +324,8 @@ enum
 	CL_MEM_MAP_COUNT                            = 0x1104,
 	CL_MEM_REFERENCE_COUNT                      = 0x1105,
 	CL_MEM_CONTEXT                              = 0x1106,
+	CL_MEM_ASSOCIATED_MEMOBJECT                 = 0x1107,
+	CL_MEM_OFFSET                               = 0x1108,
 
 	// cl_image_info
 	CL_IMAGE_FORMAT                             = 0x1110,
@@ -313,7 +341,8 @@ enum
 	CL_ADDRESS_CLAMP_TO_EDGE                    = 0x1131,
 	CL_ADDRESS_CLAMP                            = 0x1132,
 	CL_ADDRESS_REPEAT                           = 0x1133,
-
+	CL_ADDRESS_MIRRORED_REPEAT                  = 0x1134,
+	
 	// cl_filter_mode
 	CL_FILTER_NEAREST                           = 0x1140,
 	CL_FILTER_LINEAR                            = 0x1141,
@@ -360,12 +389,15 @@ enum
 	CL_KERNEL_WORK_GROUP_SIZE                   = 0x11B0,
 	CL_KERNEL_COMPILE_WORK_GROUP_SIZE           = 0x11B1,
 	CL_KERNEL_LOCAL_MEM_SIZE                    = 0x11B2,
+	CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE= 0x11B3,
+	CL_KERNEL_PRIVATE_MEM_SIZE                  = 0x11B4,
 
 	// cl_event_info
 	CL_EVENT_COMMAND_QUEUE                      = 0x11D0,
 	CL_EVENT_COMMAND_TYPE                       = 0x11D1,
 	CL_EVENT_REFERENCE_COUNT                    = 0x11D2,
 	CL_EVENT_COMMAND_EXECUTION_STATUS           = 0x11D3,
+	CL_EVENT_CONTEXT                            = 0x11D4,
 
 	// cl_command_type
 	CL_COMMAND_NDRANGE_KERNEL                   = 0x11F0,
@@ -385,6 +417,10 @@ enum
 	CL_COMMAND_MARKER                           = 0x11FE,
 	CL_COMMAND_ACQUIRE_GL_OBJECTS               = 0x11FF,
 	CL_COMMAND_RELEASE_GL_OBJECTS               = 0x1200,
+	CL_COMMAND_READ_BUFFER_RECT                 = 0x1201,
+	CL_COMMAND_WRITE_BUFFER_RECT                = 0x1202,
+	CL_COMMAND_COPY_BUFFER_RECT                 = 0x1203,
+	CL_COMMAND_USER                             = 0x1204,
 
 	// command execution status
 	CL_COMPLETE                                 = 0x0,
@@ -392,6 +428,9 @@ enum
 	CL_SUBMITTED                                = 0x2,
 	CL_QUEUED                                   = 0x3,
   
+	// cl_buffer_create_type
+	CL_BUFFER_CREATE_TYPE_REGION                = 0x1220,
+	
 	// cl_profiling_info
 	CL_PROFILING_COMMAND_QUEUED                 = 0x1280,
 	CL_PROFILING_COMMAND_SUBMIT                 = 0x1281,
@@ -435,11 +474,11 @@ cl_int clGetDeviceInfo(
 
 // Context APIs
 
-typedef void function(
+typedef extern(System) void function(
 	const(char)*,
 	const(void)*,
 	size_t,
-	const(void)*
+	void*
 ) cl_logging_fn;
  
 cl_context clCreateContext(
@@ -499,7 +538,17 @@ cl_int clGetCommandQueueInfo(
 	size_t *               param_value_size_ret
 );
 
-cl_int clSetCommandQueueProperty(
+/**
+ *  WARNING:
+ *     This API introduces mutable state into the OpenCL implementation. It has been REMOVED
+ *  to better facilitate thread safety.  The 1.0 API is not thread safe. It is not tested by the
+ *  OpenCL 1.1 conformance test, and consequently may not work or may not work dependably.
+ *  It is likely to be non-performant. Use of this API is not advised. Use at your own risk.
+ *
+ *  Software developers previously relying on this API are instructed to set the command queue
+ *  properties when creating the queue, instead.
+ */
+deprecated cl_int clSetCommandQueueProperty(
 	cl_command_queue               command_queue,
 	cl_command_queue_properties    properties, 
 	cl_bool                        enable,
@@ -514,6 +563,13 @@ cl_mem clCreateBuffer(
 	void *        host_ptr,
 	cl_int *      errcode_ret
 );
+
+cl_mem clCreateSubBuffer(
+	cl_mem					buffer,
+	cl_mem_flags			flags,
+	cl_buffer_create_type	buffer_create_type,
+	const(void)*			buffer_create_info,
+	cl_int*					errcode_ret);
 
 cl_mem clCreateImage2D(
 	cl_context               context,
@@ -572,6 +628,14 @@ cl_int clGetImageInfo(
 	size_t *          param_value_size_ret
 );
 
+typedef extern(System) void function(
+	cl_mem memobj,
+	void* user_data) mem_notify_fn;
+cl_int clSetMemObjectDestructorCallback(
+	cl_mem	memobj,
+	mem_notify_fn pfn_notify,
+	void*	user_data);  
+
 // Sampler APIs
 cl_sampler clCreateSampler(
 	cl_context           context,
@@ -624,16 +688,18 @@ cl_int clReleaseProgram(
 	cl_program  program
 );
 
+typedef extern(System) void function(
+	cl_program		  program,
+	void*			  user_data
+) prg_notify_fn;
+
 cl_int clBuildProgram(
-	cl_program            program,
-	cl_uint               num_devices,
-	const(cl_device_id)*  device_list,
-	const(char)*          options, 
-	void function(
-		cl_program		  program,
-		void*			  user_data
-	) pfn_notify,
-	void*                 user_data
+	cl_program				program,
+	cl_uint					num_devices,
+	const(cl_device_id)*	device_list,
+	const(char)*			options, 
+	prg_notify_fn			pfn_notify,
+	void*					user_data
 );
 
 cl_int clUnloadCompiler();
@@ -715,6 +781,10 @@ cl_int clGetEventInfo(
 	size_t*           param_value_size_ret
 );
 
+cl_event clCreateUserEvent(
+	cl_context	context,
+	cl_int*		errcode_ret);
+
 cl_int clRetainEvent(
 	cl_event  event
 );
@@ -722,6 +792,20 @@ cl_int clRetainEvent(
 cl_int clReleaseEvent(
 	cl_event  event
 );
+
+cl_int clSetUserEventStatus(
+	cl_event	event,
+	cl_int		execution_status);
+
+typedef extern(System) void function(
+	cl_event,
+	cl_int,
+	void*) evt_notify_fn;
+
+cl_int clSetEventCallback( cl_event	event,
+                    cl_int			command_exec_callback_type,
+                    evt_notify_fn	pfn_notify,
+                    void*			user_data);
 
 // Profiling APIs
 cl_int clGetEventProfilingInfo(
@@ -754,9 +838,25 @@ cl_int clEnqueueReadBuffer(
 	cl_event*            event
 );
 
+cl_int clEnqueueReadBufferRect(
+	cl_command_queue	command_queue,
+	cl_mem				buffer,
+	cl_bool				blocking_read,
+	const(size_t)*		buffer_offset,
+	const(size_t)*		host_offset, 
+	const(size_t)*		region,
+	size_t				buffer_row_pitch,
+	size_t				buffer_slice_pitch,
+	size_t				host_row_pitch,
+	size_t				host_slice_pitch,
+	void*				ptr,
+	cl_uint				num_events_in_wait_list,
+	const(cl_event)*	event_wait_list,
+	cl_event*			event);
+
 cl_int clEnqueueWriteBuffer(
-	cl_command_queue    command_queue, 
-	cl_mem              buffer, 
+	cl_command_queue	command_queue, 
+	cl_mem				buffer, 
 	cl_bool             blocking_write, 
 	size_t              offset, 
 	size_t              cb, 
@@ -765,6 +865,22 @@ cl_int clEnqueueWriteBuffer(
 	const(cl_event)*    event_wait_list, 
 	cl_event*           event
 );
+
+cl_int clEnqueueWriteBufferRect(
+	cl_command_queue	command_queue,
+	cl_mem				buffer,
+	cl_bool				blocking_read,
+	const(size_t)*		buffer_offset,
+	const(size_t)*		host_offset, 
+	const(size_t)*		region,
+	size_t				buffer_row_pitch,
+	size_t				buffer_slice_pitch,
+	size_t				host_row_pitch,
+	size_t				host_slice_pitch,
+	const(void)*		ptr,
+	cl_uint				num_events_in_wait_list,
+	const(cl_event)*	event_wait_list,
+	cl_event *			event);
 
 cl_int clEnqueueCopyBuffer(
 	cl_command_queue     command_queue, 
@@ -777,6 +893,21 @@ cl_int clEnqueueCopyBuffer(
 	const(cl_event)*     event_wait_list,
 	cl_event*            event
 );
+
+cl_int clEnqueueCopyBufferRect(
+		cl_command_queue	command_queue,
+		cl_mem				src_buffer,
+		cl_mem				dst_buffer,
+		const(size_t)*		src_origin,
+		const(size_t)*		dst_origin, 
+		const(size_t)*		region,
+		size_t				src_row_pitch,
+		size_t				src_slice_pitch,
+		size_t				dst_row_pitch,
+		size_t				dst_slice_pitch,
+		cl_uint				num_events_in_wait_list,
+		const(cl_event)*	event_wait_list,
+		cl_event*			event);
 
 cl_int clEnqueueReadImage(
 	cl_command_queue      command_queue,

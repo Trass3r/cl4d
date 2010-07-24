@@ -1,5 +1,5 @@
 /**********************************************************************************
- * Copyright (c) 2008-2009 The Khronos Group Inc.
+ * Copyright (c) 2008-2010 The Khronos Group Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -21,23 +21,35 @@
  * MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
  **********************************************************************************/
 
-/* $Revision: 10424 $ on $Date: 2010-02-17 14:34:49 -0800 (Wed, 17 Feb 2010) $ */
+/* $Revision: 11708 $ on $Date: 2010-06-13 23:36:24 -0700 (Sun, 13 Jun 2010) $ */
 
 /**
  *	cl_gl_ext.h contains vendor (non-KHR) OpenCL extensions which have OpenGL dependencies.
  */
 module opencl.c.cl_gl_ext;
 
-extern(C):
+import opencl.c.cl_gl;
 
-/*
+extern(System):
+
+/+
  * For each extension, follow this template
  * /* cl_VEN_extname extension  */
-/* #define cl_VEN_extname 1
+ * #define cl_VEN_extname 1
  * ... define new types, if any
  * ... define new tokens, if any
  * ... define new APIs, if any
  *
  *  If you need GLtypes here, mirror them with a cl_GLtype, rather than including a GL header
  *  This allows us to avoid having to decide whether to include GL headers or GLES here.
+ +/
+	
+/* 
+ *  cl_khr_gl_event  extension
+ *  See section 9.9 in the OpenCL 1.1 spec for more information
  */
+enum CL_COMMAND_GL_FENCE_SYNC_OBJECT_KHR = 0x200D;
+
+cl_event clCreateEventFromGLsyncKHR(cl_context context,
+									cl_GLsync cl_GLsync,
+									cl_int* errcode_ret);
