@@ -30,6 +30,7 @@ module opencl.kernel;
 
 import opencl.c.cl;
 import opencl.context;
+import opencl.error;
 import opencl.program;
 import opencl.wrapper;
 
@@ -47,6 +48,12 @@ private:
 	string		_kernelName;
 
 public:
+	/// 
+	this(cl_kernel kernel)
+	{
+		super(kernel);
+	}
+
 	/**
 	 *	create a kernel object
 	 *
@@ -133,6 +140,7 @@ public:
 	CLContext context()
 	{
 		assert("not implemented yet");
+		return null;
 	}
 }
 }

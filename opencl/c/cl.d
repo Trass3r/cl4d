@@ -40,39 +40,39 @@ typedef const(void*)
 	cl_event,
 	cl_sampler;
 
-typedef cl_uint			cl_bool;		// WARNING!  Unlike cl_ types in cl_platform.h, cl_bool is not guaranteed to be the same size as the bool in kernels.
-typedef cl_ulong			cl_bitfield;
-typedef cl_bitfield		cl_device_type;
-typedef cl_uint			cl_platform_info;
-typedef cl_uint			cl_device_info;
-typedef cl_bitfield		cl_device_fp_config;
-typedef cl_uint			cl_device_mem_cache_type;
-typedef cl_uint			cl_device_local_mem_type;
-typedef cl_bitfield		cl_device_exec_capabilities;
-typedef cl_bitfield		cl_command_queue_properties;
+alias cl_uint			cl_bool;		// WARNING!  Unlike cl_ types in cl_platform.h, cl_bool is not guaranteed to be the same size as the bool in kernels.
+alias cl_ulong			cl_bitfield;
+alias cl_bitfield		cl_device_type;
+alias cl_uint			cl_platform_info;
+alias cl_uint			cl_device_info;
+alias cl_bitfield		cl_device_fp_config;
+alias cl_uint			cl_device_mem_cache_type;
+alias cl_uint			cl_device_local_mem_type;
+alias cl_bitfield		cl_device_exec_capabilities;
+alias cl_bitfield		cl_command_queue_properties;
 
-typedef cl_bitfield		cl_context_properties;
-typedef cl_uint			cl_context_info;
-typedef cl_uint			cl_command_queue_info;
-typedef cl_uint			cl_channel_order;
-typedef cl_uint			cl_channel_type;
-typedef cl_bitfield		cl_mem_flags;
-typedef cl_uint			cl_mem_object_type;
-typedef cl_uint			cl_mem_info;
-typedef cl_uint			cl_image_info;
-typedef cl_uint			cl_buffer_create_type;
-typedef cl_uint			cl_addressing_mode;
-typedef cl_uint			cl_filter_mode;
-typedef cl_uint			cl_sampler_info;
-typedef cl_bitfield		cl_map_flags;
-typedef cl_uint			cl_program_info;
-typedef cl_uint			cl_program_build_info;
-typedef cl_uint			cl_build_status;
-typedef cl_uint			cl_kernel_info;
-typedef cl_uint			cl_kernel_work_group_info;
-typedef cl_uint			cl_event_info;
-typedef cl_uint			cl_command_type;
-typedef cl_uint			cl_profiling_info;
+alias cl_bitfield		cl_context_properties;
+alias cl_uint			cl_context_info;
+alias cl_uint			cl_command_queue_info;
+alias cl_uint			cl_channel_order;
+alias cl_uint			cl_channel_type;
+alias cl_bitfield		cl_mem_flags;
+alias cl_uint			cl_mem_object_type;
+alias cl_uint			cl_mem_info;
+alias cl_uint			cl_image_info;
+alias cl_uint			cl_buffer_create_type;
+alias cl_uint			cl_addressing_mode;
+alias cl_uint			cl_filter_mode;
+alias cl_uint			cl_sampler_info;
+alias cl_bitfield		cl_map_flags;
+alias cl_uint			cl_program_info;
+alias cl_uint			cl_program_build_info;
+alias cl_uint			cl_build_status;
+alias cl_uint			cl_kernel_info;
+alias cl_uint			cl_kernel_work_group_info;
+alias cl_uint			cl_event_info;
+alias cl_uint			cl_command_type;
+alias cl_uint			cl_profiling_info;
 
 struct cl_image_format
 {
