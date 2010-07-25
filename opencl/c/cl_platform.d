@@ -141,62 +141,72 @@ typedef uint	cl_GLenum;
  *          Maintaining proper alignment is the user's responsibility.
  */
 
-import std.cpuid;
+import std.conv;
 
-alias byte[2]		cl_char2;
-alias cl_char4		cl_char3;
-alias byte[4]		cl_char4;
-alias byte[8]		cl_char8;
-alias byte[16]		cl_char16;
-alias ubyte[2]		cl_uchar2;
-alias cl_uchar4		cl_uchar3;
-alias ubyte[4]		cl_uchar4;
-alias ubyte[8]		cl_uchar8;
-alias ubyte[16]		cl_uchar16;
+// generate code for the CL vector types
+// this might look crazy, but eases further changes
+// do a pragma(msg, genCLVectorTypes()); for debugging
 
-alias short[2]		cl_short2;
-alias cl_short4		cl_short3;
-alias short[4]		cl_short4;
-alias short[8]		cl_short8;
-alias short[16]		cl_short16;
-alias ushort[2]		cl_ushort2;
-alias cl_ushort4	cl_ushort3;
-alias ushort[4]		cl_ushort4;
-alias ushort[8]		cl_ushort8;
-alias ushort[16]	cl_ushort16;
+// TODO: compiler-specific vector types, e.g. __attribute__((vector_size(16))); for GDC
+private string genCLVectorTypes()
+{
+	string res;
+	foreach(type; ["cl_char", "cl_uchar", "cl_short", "cl_ushort", "cl_int", "cl_uint", "cl_long", "cl_ulong", "cl_float", "cl_double"])
+	{
+		res ~= "alias " ~ type ~ "4 " ~ type ~ "3;"; // cl_xx3 is identical in size, alignment and behavior to cl_xx4. See section 6.1.5. of the spec
+        // now add the rest of the types
+		foreach (size; [2,4,8,16])
+		{
+			res ~= `
+union ` ~ type ~ to!string(size) ~ `
+{
+	`;
+    // add aligned attribute if inside GDC
+    version(GNU) res ~= `pragma(GNU_attribute, aligned(` ~ to!string(size) ~ ` * ` ~ type ~ `.sizeof` ~ `)) `;
+	res ~= type ~ "[" ~ to!string(size) ~ `] s;
+	alias s this; // allow array access and implicit conversion to the array
+	struct { ` ~ type ~ ` x, y` ~ (size<=2 ? "" : ", z, w") ~ (size>=16 ? ", __spacer4, __spacer5, __spacer6, __spacer7, __spacer8, __spacer9, sa, sb, sc, sd, se, sf" : "") ~ `; }
+	struct { ` ~ type ~ ` s0, s1` ~ (size<=2 ? "" : ", s2, s3") ~ (size>=8 ? ", s4, s5, s6, s7" : "") ~ (size>=16 ? ", s8, s9, sA, sB, sC, sD, sE, sF" : "") ~ `; }
+	struct { ` ~ type ~ (size>2 ? to!string(size/2) : "") ~ ` lo, hi; }
+}
+`;
+		}
+    }
+	return res;
+}
 
-alias int[2]		cl_int2;
-alias cl_int4		cl_int3;
-alias int[4]		cl_int4;
-alias int[8]		cl_int8;
-alias int[16]		cl_int16;
-alias uint[2]		cl_uint2;
-alias cl_uint4		cl_uint3;
-alias uint[4]		cl_uint4;
-alias uint[8]		cl_uint8;
-alias uint[16]		cl_uint16;
+//pragma(msg, genCLVectorTypes());
+mixin(genCLVectorTypes());
+// NOTE: There are no vector types for half
 
-alias long[2]		cl_long2;
-alias cl_long4		cl_long3;
-alias long[4]		cl_long4;
-alias long[8]		cl_long8;
-alias long[16]		cl_long16;
-alias ulong[2]		cl_ulong2;
-alias cl_ulong4		cl_ulong3;
-alias ulong[4]		cl_ulong4;
-alias ulong[8]		cl_ulong8;
-alias ulong[16]		cl_ulong16;
 
-alias float[2]		cl_float2;
-alias cl_float4		cl_float3;
-alias float[4]		cl_float4;
-alias float[8]		cl_float8;
-alias float[16]		cl_float16;
+/**************************************************
+                    unittests
+ **************************************************/
+unittest
+{
+	mixin(genVectorTypeTests());
+}
 
-alias double[2]		cl_double2;
-alias cl_double		cl_double3;
-alias double[4]		cl_double4;
-alias double[8]		cl_double8;
-alias double[16]	cl_double16;
-
-/* There are no vector types for half */
+version(unittest) 
+private string genVectorTypeTests()
+{
+	string res;
+	uint vnum;
+	foreach(type; ["cl_char", "cl_uchar", "cl_short", "cl_ushort", "cl_int", "cl_uint", "cl_long", "cl_ulong", "cl_float", "cl_double"])
+	{
+		foreach (size; [2,3,4,8,16])
+		{
+			string var = "t" ~ to!string(vnum++); // generate variable name
+			res ~= type ~ to!string(size) ~ ` ` ~ var ~ ";\x0A"; // type var;
+			
+			// var[idx] = idx+1;
+			foreach (idx; 0..size)
+				res ~= var ~ `[` ~ to!string(idx) ~ `] = ` ~ to!string(idx+1) ~ ";\x0A";
+			
+			res ~= "assert(" ~ var ~ ".x == " ~ var ~ ".s0);";
+//			res ~= "assert(" ~ var ~ ".x == " ~ var ~ ".lo);";
+		}
+	}
+	return res;
+}
