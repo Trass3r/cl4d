@@ -38,7 +38,7 @@ import opencl.platform;
 
 import std.stdio;
 
-void main(istring[] args)
+void main(string[] args)
 {
 	auto platform = CLPlatform.getPlatforms[0];
 	writefln("%s %s %s %s %s", platform.name, platform.vendor, platform.clversion, platform.profile, platform.extensions);
