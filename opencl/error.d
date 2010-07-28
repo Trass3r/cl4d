@@ -100,7 +100,7 @@ package string exceptionHandling(E...)(E es)
 	res ~= `	default:
 		throw new CLUnrecognizedException(res);
 		break;
-	}`;
+}`;
 	return res;
 }
 

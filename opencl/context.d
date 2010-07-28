@@ -47,6 +47,12 @@ private:
 	CLDevices	_devices;
 
 public:
+	//! TODO: check reference counting
+	this(cl_context context)
+	{
+		super(context);
+	}
+	
 	/// creates an OpenCL context with the given devices
 	this(CLDevices devices)
 	{

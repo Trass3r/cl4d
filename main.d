@@ -28,7 +28,7 @@ DEALINGS IN THE SOFTWARE.
 */
 module main;
 
-import common;
+//import common;
 
 import opencl.context;
 import opencl.device;
@@ -40,12 +40,12 @@ import std.stdio;
 void main(string[] args)
 {
 	auto platform = CLPlatform.getPlatforms[0];
-	writefln("%s %s %s %s %s", platform.name, platform.vendor, platform.clversion, platform.profile, platform.extensions);
+	writefln("%s\n\t%s\n\t%s\n\t%s\n\t%s", platform.name, platform.vendor, platform.clversion, platform.profile, platform.extensions);
 
 	auto devices = platform.allDevices;
 	
 	foreach(device; devices)
-		writefln("%s %s %s %s %s", device.name, device.vendor, device.driverVersion, device.clVersion, device.profile, device.extensions);
+		writefln("%s\n\t%s\n\t%s\n\t%s\n\t%s", device.name, device.vendor, device.driverVersion, device.clVersion, device.profile, device.extensions);
 	
 	auto context = new CLContext(devices);
 	
