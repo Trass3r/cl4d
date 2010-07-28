@@ -1,5 +1,5 @@
 /*
-cl4d - object-oriented wrapper for the OpenCL C API v1.1 revision 33
+cl4d - object-oriented wrapper for the OpenCL C API v1.1
 written in the D programming language
 
 Copyright (C) 2009-2010 Andreas Hollandt
@@ -42,7 +42,7 @@ public:
 	/// constructor
 	this(cl_platform_id platform)
 	{
-		_object = platform;
+		super(platform);
 	}
 	
 	/// get the platform name
@@ -76,32 +76,23 @@ public:
 	}
 	
 	/// returns a list of all devices available on the platform matching deviceType
-	auto getDevices(cl_device_type deviceType)
+	package CLDevices getDevices(cl_device_type deviceType)
 	{
 		cl_uint numDevices;
 		cl_int res;
 		
 		// get number of devices
 		res = clGetDeviceIDs(_object, deviceType, 0, null, &numDevices);
-		switch(res)
-		{
-			case CL_SUCCESS:
-				break;
-			case CL_INVALID_PLATFORM:
-				throw new CLInvalidPlatformException();
-				break;
-			case CL_INVALID_DEVICE_TYPE:
-				throw new CLInvalidDeviceTypeException("There's no such device type");
-				break;
-			case CL_DEVICE_NOT_FOUND:
-				throw new CLDeviceNotFoundException("Couldn't find an OpenCL device matching the given type");
-				break;
-			default:
-				throw new CLException(res, "unexpected error while getting device count");
-		}
-			
+		
+		mixin(exceptionHandling(
+			["CL_INVALID_PLATFORM",		""],
+			["CL_INVALID_DEVICE_TYPE",	"There's no such device type"],
+			["CL_DEVICE_NOT_FOUND",		"Couldn't find an OpenCL device matching the given type"]
+		));
+		
 		// get device IDs
 		auto deviceIDs = new cl_device_id[numDevices];
+
 		res = clGetDeviceIDs(_object, deviceType, deviceIDs.length, deviceIDs.ptr, null);
 		if(res != CL_SUCCESS)
 			throw new CLException(res);
@@ -111,16 +102,16 @@ public:
 	}
 	
 	/// returns a list of all devices
-	auto allDevices()	{return getDevices(CL_DEVICE_TYPE_ALL);}
+	CLDevices allDevices()	{return getDevices(CL_DEVICE_TYPE_ALL);}
 	
 	/// returns a list of all CPU devices
-	auto cpuDevices()	{return getDevices(CL_DEVICE_TYPE_CPU);}
+	CLDevices cpuDevices()	{return getDevices(CL_DEVICE_TYPE_CPU);}
 	
 	/// returns a list of all GPU devices
-	auto gpuDevices()	{return getDevices(CL_DEVICE_TYPE_GPU);}
+	CLDevices gpuDevices()	{return getDevices(CL_DEVICE_TYPE_GPU);}
 	
 	/// returns a list of all accelerator devices
-	auto accelDevices() {return getDevices(CL_DEVICE_TYPE_ACCELERATOR);}
+	CLDevices accelDevices() {return getDevices(CL_DEVICE_TYPE_ACCELERATOR);}
 	
 	/// get an array of all available platforms
 	static CLPlatforms getPlatforms()

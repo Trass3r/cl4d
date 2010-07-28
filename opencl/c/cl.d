@@ -27,7 +27,7 @@ module opencl.c.cl;
 
 public import opencl.c.cl_platform;
 
-extern(System):
+extern(C): // TODO: change back to System
 
 typedef const(void*)
 	cl_platform_id,
@@ -142,7 +142,8 @@ enum
 	CL_INVALID_MIP_LEVEL                        = -62,
 	CL_INVALID_GLOBAL_WORK_SIZE                 = -63,
 }
-	// OpenCL Version
+
+// OpenCL Version
 version = CL_VERSION_1_0;
 version = CL_VERSION_1_1;
 

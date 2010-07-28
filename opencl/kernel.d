@@ -1,5 +1,5 @@
 /*
-cl4d - object-oriented wrapper for the OpenCL C API v1.1 revision 33
+cl4d - object-oriented wrapper for the OpenCL C API v1.1
 written in the D programming language
 
 Copyright (C) 2009-2010 Andreas Hollandt
@@ -35,7 +35,7 @@ import opencl.program;
 import opencl.wrapper;
 
 
-/// collection of several devices
+//! collection of several devices
 alias CLObjectCollection!(cl_kernel) CLKernels;
 
 /**
@@ -133,14 +133,15 @@ public:
 	CLProgram program()
 	{
 		// TODO: get info and assert
+		// getInfo!(cl_program)(CL_KERNEL_PROGRAM);
 		return _program;
 	}
 	
 	/// Return the context associated with kernel
 	CLContext context()
 	{
-		assert("not implemented yet");
-		return null;
+		assert(0, "not implemented yet");
+		return new CLContext(getInfo!(cl_context)(CL_KERNEL_CONTEXT));
 	}
 }
 }
