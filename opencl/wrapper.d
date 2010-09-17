@@ -134,7 +134,7 @@ protected:
 
 	//	static cl_int getInfo(Arg0, Arg1)(Arg0 arg0, Arg1)
 
-public:
+protected:
 	this() {}
 	this(T obj)
 	{
@@ -167,6 +167,8 @@ public:
 		for(uint i=0; i<objects.length; i++)
 		{
 			// increment the reference counter so the object won't be destroyed
+			// NOTE: nothing to do for platform and device
+			
 			static if(is(T == cl_context))
 			{
 				if (clRetainContext(objects[i]) != CL_SUCCESS)
