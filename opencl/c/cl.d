@@ -27,7 +27,7 @@ module opencl.c.cl;
 
 public import opencl.c.cl_platform;
 
-extern(C): // TODO: change back to System
+extern(System):
 
 typedef const(void*)
 	cl_platform_id,
