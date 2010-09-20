@@ -50,6 +50,15 @@ public:
 	{
 		cl_int res;
 		super(clCreateCommandQueue(context.getObject(), device.getObject(), outOfOrder ? CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE : 0 | CL_QUEUE_PROFILING_ENABLE, &res));
+		
+		mixin(exceptionHandling(
+			["CL_INVALID_CONTEXT",			"context is not a valid context"],
+			["CL_INVALID_DEVICE",			"device is not a valid device or is not associated with context"],
+			["CL_INVALID_VALUE",			"values specified in properties are not valid"],
+			["CL_INVALID_QUEUE_PROPERTIES",	"values specified in properties are valid but are not supported by the device"],
+			["CL_OUT_OF_RESOURCES",			""],
+			["CL_OUT_OF_HOST_MEMORY",		""]
+		));
 	}
 	
 	//! increments the command queue reference count
@@ -60,8 +69,8 @@ public:
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_COMMAND_QUEUE","_object is not a valid command-queue"],
-			["CL_OUT_OF_RESOURCES",		"there is a failure to allocate resources required by the OpenCL implementation on the device"],
-			["CL_OUT_OF_HOST_MEMORY",	"there is a failure to allocate resources required by the OpenCL implementation on the host"]
+			["CL_OUT_OF_RESOURCES",		""],
+			["CL_OUT_OF_HOST_MEMORY",	""]
 		));
 	}
 	
@@ -76,8 +85,8 @@ public:
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_COMMAND_QUEUE","_object is not a valid command-queue"],
-			["CL_OUT_OF_RESOURCES",		"there is a failure to allocate resources required by the OpenCL implementation on the device"],
-			["CL_OUT_OF_HOST_MEMORY",	"there is a failure to allocate resources required by the OpenCL implementation on the host"]
+			["CL_OUT_OF_RESOURCES",		""],
+			["CL_OUT_OF_HOST_MEMORY",	""]
 		));	
 	}
 	

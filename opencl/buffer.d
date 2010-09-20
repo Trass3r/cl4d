@@ -1,5 +1,5 @@
 /*
-cl4d - object-oriented wrapper for the OpenCL C API
+cl4d - object-oriented wrapper for the OpenCL C API v1.1
 written in the D programming language
 
 Copyright (C) 2009-2010 Andreas Hollandt
@@ -26,34 +26,47 @@ FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
-module main;
+module opencl.buffer;
 
-//import common;
+import opencl.c.cl;
+import opencl.context;
+import opencl.error;
+import opencl.wrapper;
 
-import opencl.all;
-
-import std.stdio;
-
-void main(string[] args)
+//! buffer class
+class CLBuffer : CLWrapper!(cl_mem, clGetMemObjectInfo)
 {
-	auto platform = CLPlatform.getPlatforms[0];
-	writefln("%s\n\t%s\n\t%s\n\t%s\n\t%s", platform.name, platform.vendor, platform.clversion, platform.profile, platform.extensions);
+private:
 
-	auto devices = platform.allDevices;
+protected:
+	//!
+	this(cl_mem buffer)
+	{
+		super(buffer);
+	}
 	
-	foreach(device; devices)
-		writefln("%s\n\t%s\n\t%s\n\t%s\n\t%s", device.name, device.vendor, device.driverVersion, device.clVersion, device.profile, device.extensions);
-	
-	auto context = new CLContext(devices);
-	
-	auto program = context.createProgram(`
-			__kernel void sum(	__global const float* a,
-								__global const float* b,
-								__global float* c)
-			{
-				int i = get_global_id(0);
-				c[i] = a[i] + b[i];
-			} `).build("-Werror");
-	
-	auto kernel = new CLKernel(program, "sum");
+public:
+	/**
+	 *	create a buffer object from hostbuf
+	 *	TODO: hide cl_mem_flags?
+	 *
+	 *	Params:
+	 *		context	=	is a valid OpenCL context used to create the buffer object
+	 *		flags	=	is a bit-field that is used to specify allocation and usage information such as the memory
+	 *					arena that should be used to allocate the buffer object and how it will be used
+	 */
+	this(CLContext context, void[] hostbuf, cl_mem_flags flags)
+	{
+		cl_int res;
+		super(clCreateBuffer(context.getObject(), flags, hostbuf.length, hostbuf.ptr, &res));
+		
+		mixin(exceptionHandling(
+			["CL_INVALID_CONTEXT",				""],
+			["CL_INVALID_BUFFER_SIZE",			"hostbuf is empty"],
+			["CL_INVALID_HOST_PTR",				"hostbuf is null and CL_MEM_USE_HOST_PTR or CL_MEM_COPY_HOST_PTR are set in flags or hostbuf !is null but CL_MEM_COPY_HOST_PTR or CL_MEM_USE_HOST_PTR are not set in flags"],
+			["CL_MEM_OBJECT_ALLOCATION_FAILURE",""],
+			["CL_OUT_OF_RESOURCES",				""],
+			["CL_OUT_OF_HOST_MEMORY",			""]
+		));
+	}
 }

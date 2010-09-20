@@ -71,6 +71,9 @@ class CLDeviceException : CLException {this(cl_int errcode, string msg = "") {su
 /// context exceptions base class
 class CLContextException : CLException {this(cl_int errcode, string msg = "") {super(errcode, msg);}}
 
+/// event exceptions base class
+class CLEventException : CLException {this(cl_int errcode, string msg = "") {super(errcode, msg);}}
+
 /// program exceptions base class
 class CLProgramException : CLException {this(cl_int errcode, string msg = "") {super(errcode, msg);}}
 
@@ -163,13 +166,13 @@ class ` ~ processErrName(e.name.dup) ~ `Exception : ` ~ e.baseclass ~ ` {this(st
 // change 'mixin(' to 'pragma(msg,' to see the content
 mixin(mixinExceptionClasses(
 		ECD("CL_INVALID_VALUE"),
-		ECD("CL_OUT_OF_HOST_MEMORY",		"there is a failure to allocate resources required by the OpenCL implementation on the host"),
+		ECD("CL_OUT_OF_HOST_MEMORY",		"allocating resources required by the OpenCL implementation on the host has failed"),
 		ECD("CL_INVALID_PLATFORM",			"", "CLPlatformException"),
 		ECD("CL_INVALID_DEVICE",			"", "CLDeviceException"),
 		ECD("CL_INVALID_DEVICE_TYPE",		"", "CLDeviceException"),
 		ECD("CL_DEVICE_NOT_FOUND",			"", "CLDeviceException"),
 		ECD("CL_DEVICE_NOT_AVAILABLE",		"", "CLDeviceException"),
-		ECD("CL_INVALID_CONTEXT",			"", "CLContextException"),
+		ECD("CL_INVALID_CONTEXT",			"context is not a valid Context", "CLContextException"),
 		ECD("CL_INVALID_PROGRAM",			"", "CLProgramException"),
 		ECD("CL_INVALID_BINARY",			"", "CLProgramException"),
 		ECD("CL_INVALID_BUILD_OPTIONS",		"", "CLProgramException"),
@@ -180,6 +183,11 @@ mixin(mixinExceptionClasses(
 		ECD("CL_INVALID_PROGRAM_EXECUTABLE","", "CLProgramException"), // TODO: derive from CLKernelException since it occurs in clCreateKernel?
 		ECD("CL_INVALID_KERNEL_NAME",		"", "CLKernelException"),
 		ECD("CL_INVALID_KERNEL_DEFINITION",	"", "CLKernelException"),
+		ECD("CL_INVALID_EVENT",				"",	"CLEventException"),
 		ECD("CL_INVALID_COMMAND_QUEUE",		"",	"CLCommandQueueException"),
-		ECD("CL_OUT_OF_RESOURCES",			"", "CLCommandQueueException"),
+		ECD("CL_OUT_OF_RESOURCES",			"allocating resources required by the OpenCL implementation on the device has failed", "CLCommandQueueException"),
+		ECD("CL_MEM_OBJECT_ALLOCATION_FAILURE", "allocating memory for buffer object has failed", "CLBufferException"),
+		ECD("CL_INVALID_QUEUE_PROPERTIES",	"",	"CLCommandQueueException"),
+		ECD("CL_INVALID_BUFFER_SIZE",		"",	"CLBufferException"),
+		ECD("CL_INVALID_HOST_PTR",			"",	"CLBufferException"),
 ));

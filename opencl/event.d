@@ -29,11 +29,13 @@ DEALINGS IN THE SOFTWARE.
 module opencl.event;
 
 import opencl.c.cl;
-import opencl.wrapper;
 import opencl.error;
+import opencl.program;
+import opencl.wrapper;
 
 //! collection of several devices
-alias CLObjectCollection!(cl_event) CLEvents;
+// TODO
+//alias CLObjectCollection!(cl_event) CLEvents;
 
 /**
  *
@@ -59,8 +61,8 @@ public:
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_EVENT",		"is not a valid event object"],
-			["CL_OUT_OF_RESOURCES",		"allocating resources required by the OpenCL implementation on the device has failed"],
-			["CL_OUT_OF_HOST_MEMORY",	"allocating resources required by the OpenCL implementation on the host has failed"]
+			["CL_OUT_OF_RESOURCES",		""],
+			["CL_OUT_OF_HOST_MEMORY",	""]
 		));
 	}
 	
@@ -72,8 +74,8 @@ public:
 		
 		mixin(exceptionHandling(
 				["CL_INVALID_EVENT",		"is not a valid event object"],
-				["CL_OUT_OF_RESOURCES",		"allocating resources required by the OpenCL implementation on the device has failed"],
-				["CL_OUT_OF_HOST_MEMORY",	"allocating resources required by the OpenCL implementation on the host has failed"]
+				["CL_OUT_OF_RESOURCES",		""],
+				["CL_OUT_OF_HOST_MEMORY",	""]
 			));
 	}
 	/**
@@ -95,8 +97,8 @@ public:
 			["CL_INVALID_EVENT",		"this is not a valid user event object"],
 			["CL_INVALID_VALUE",		"executionStatus is not CL_COMPLETE or a negative integer value"],
 			["CL_INVALID_OPERATION",	"executionStatus for event has already been changed by a previous call to clSetUserEventStatus"],
-			["CL_OUT_OF_RESOURCES",		"allocating resources required by the OpenCL implementation on the device has failed"],
-			["CL_OUT_OF_HOST_MEMORY",	"allocating resources required by the OpenCL implementation on the host has failed"]
+			["CL_OUT_OF_RESOURCES",		""],
+			["CL_OUT_OF_HOST_MEMORY",	""]
 		));
 	}
 }
