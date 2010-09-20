@@ -80,6 +80,8 @@ class CLBufferException : CLException {this(cl_int errcode, string msg = "") {su
 /// kernel exceptions base class
 class CLKernelException : CLException {this(cl_int errcode, string msg = "") {super(errcode, msg);}}
 
+/// command queue exceptions base class
+class CLCommandQueueException : CLException {this(cl_int errcode, string msg = "") {super(errcode, msg);}}
 
 package string exceptionHandling(E...)(E es)
 {
@@ -177,5 +179,7 @@ mixin(mixinExceptionClasses(
 		ECD("CL_INVALID_KERNEL",			"", "CLKernelException"),
 		ECD("CL_INVALID_PROGRAM_EXECUTABLE","", "CLProgramException"), // TODO: derive from CLKernelException since it occurs in clCreateKernel?
 		ECD("CL_INVALID_KERNEL_NAME",		"", "CLKernelException"),
-		ECD("CL_INVALID_KERNEL_DEFINITION",	"", "CLKernelException")
+		ECD("CL_INVALID_KERNEL_DEFINITION",	"", "CLKernelException"),
+		ECD("CL_INVALID_COMMAND_QUEUE",		"",	"CLCommandQueueException"),
+		ECD("CL_OUT_OF_RESOURCES",			"", "CLCommandQueueException"),
 ));

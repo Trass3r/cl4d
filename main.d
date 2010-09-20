@@ -34,6 +34,7 @@ import opencl.context;
 import opencl.device;
 import opencl.kernel;
 import opencl.platform;
+import opencl.commandqueue;
 
 import std.stdio;
 
