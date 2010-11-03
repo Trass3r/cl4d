@@ -31,10 +31,11 @@ module opencl.buffer;
 import opencl.c.cl;
 import opencl.context;
 import opencl.error;
+import opencl.memory;
 import opencl.wrapper;
 
 //! buffer class
-class CLBuffer : CLWrapper!(cl_mem, clGetMemObjectInfo)
+class CLBuffer : CLMemory
 {
 private:
 
@@ -86,15 +87,10 @@ public:
 	 */
 	CLBuffer createRegionSubBuffer(cl_mem_flags flags, size_t origin, size_t size)
 	{
-		struct cl_buffer_region
-		{
-			size_t origin;
-			size_t size;
-		}
 		cl_buffer_region reg = {origin, size};
 
 		cl_int res;
-		return new CLBuffer(clCreateSubBuffer(this.getObject(), flags, CL_BUFFER_CREATE_TYPE_REGION, &reg, &res));
+		auto ret = new CLBuffer(clCreateSubBuffer(this.getObject(), flags, CL_BUFFER_CREATE_TYPE_REGION, &reg, &res));
 
 		// TODO: handle flags separately? see CL_INVALID_VALUE message
 		mixin(exceptionHandling(
@@ -107,5 +103,6 @@ public:
 			["CL_OUT_OF_HOST_MEMORY",			""],
 		));
 		
+		return ret;
 	}
 }

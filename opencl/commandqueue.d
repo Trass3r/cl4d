@@ -90,6 +90,46 @@ public:
 		));	
 	}
 	
+	/**
+	 *	issues all previously queued OpenCL commands to the device associated with command_queue.
+	 *	flush only guarantees that all queued commands get issued to the appropriate device.
+	 *	There is no guarantee that they will be complete after flush returns.
+	 *
+	 *	Any blocking commands queued in a command-queue and clReleaseCommandQueue perform
+	 *	an implicit flush of the command-queue.
+	 *
+	 *	To use event objects that refer to commands enqueued in a command-queue as event objects to
+	 *	wait on by commands enqueued in a different command-queue, the application must call a
+	 *	flush or any blocking commands that perform an implicit flush of the command-queue where
+	 *	the commands that refer to these event objects are enqueued.
+	 */
+	void flush()
+	{
+		cl_int res = clFlush(getObject());
+		
+		mixin(exceptionHandling(
+			["CL_INVALID_COMMAND_QUEUE",	""],
+			["CL_OUT_OF_RESOURCES",			""],
+			["CL_OUT_OF_HOST_MEMORY",		""]
+		));
+	}
+	
+	/**
+	 *	blocks until all previously queued OpenCL commands in command_queue are issued to the
+	 *	associated device and have completed. clFinish does not return until all queued commands in
+	 *	command_queue have been processed and completed. clFinish is also a synchronization point.
+	 */
+	void finish()
+	{
+		cl_int res = clFinish(getObject());
+		
+		mixin(exceptionHandling(
+			["CL_INVALID_COMMAND_QUEUE",	""],
+			["CL_OUT_OF_RESOURCES",			""],
+			["CL_OUT_OF_HOST_MEMORY",		""]
+		));
+	}
+	
 	//! are the commands queued in the command queue executed out-of-order
 	@property bool outOfOrder()
 	{

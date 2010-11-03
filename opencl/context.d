@@ -64,28 +64,13 @@ public:
 		// TODO: user notification function
 		_object = clCreateContext(null, deviceIDs.length, deviceIDs.ptr, null, null, &res);
 		if(!_object)
-			switch(res)
-			{
-				case CL_INVALID_PLATFORM:
-					throw new CLInvalidPlatformException("no valid platform could be selected for context creation");
-					break;
-				case CL_INVALID_VALUE:
-					throw new CLInvalidValueException("devices array has length 0 or a null pointer");
-					break;
-				case CL_INVALID_DEVICE:
-					throw new CLInvalidDeviceException("devices contains an invalid device or are not associated with the specified platform");
-					break;
-				case CL_DEVICE_NOT_AVAILABLE:
-					throw new CLDeviceNotAvailableException("a device is currently not available even though the device was returned by getDevices");
-					break;
-				case CL_OUT_OF_HOST_MEMORY:
-					throw new CLOutOfHostMemoryException("couldn't allocate resources required by the OpenCL implementation on the host");
-					break;
-				default:
-					throw new CLUnrecognizedException(res);
-			}
-		
-		
+			mixin(exceptionHandling(
+				["CL_INVALID_PLATFORM",		"no valid platform could be selected for context creation"],
+				["CL_INVALID_VALUE",		"devices array has length 0 or a null pointer"],
+				["CL_INVALID_DEVICE",		"devices contains an invalid device or are not associated with the specified platfor"],
+				["CL_DEVICE_NOT_AVAILABLE",	"a device is currently not available even though the device was returned by getDevices"],
+				["CL_OUT_OF_HOST_MEMORY",	""]
+			));
 	}
 	
 	/// create a context from all available devices
@@ -94,28 +79,13 @@ public:
 		cl_int res;
 		_object = clCreateContextFromType(null, CL_DEVICE_TYPE_ALL, null, null, &res);
 		
-		switch(res)
-		{
-			case CL_SUCCESS:
-				break;
-			case CL_INVALID_PLATFORM:
-				throw new CLInvalidPlatformException("no platform could be selected");
-				break;
-			case CL_INVALID_VALUE:
-				throw new CLInvalidValueException("internal invalid value error");
-				break;
-			case CL_DEVICE_NOT_AVAILABLE:
-				throw new CLDeviceNotAvailableException("no devices currently available");
-				break;
-			case CL_DEVICE_NOT_FOUND:
-				throw new CLDeviceNotFoundException("no devices were found");
-				break;
-			case CL_OUT_OF_HOST_MEMORY:
-				throw new CLOutOfHostMemoryException();
-				break;
-			default:
-				throw new CLUnrecognizedException(res);
-		}
+		mixin(exceptionHandling(
+			["CL_INVALID_PLATFORM",		"no platform could be selected"],
+			["CL_INVALID_VALUE",		"internal invalid value error"],
+			["CL_DEVICE_NOT_AVAILABLE",	"no devices currently available"],
+			["CL_DEVICE_NOT_FOUND",		"no devices were found"],
+			["CL_OUT_OF_HOST_MEMORY",	""]
+		));
 	}
 	
 	~this()
