@@ -74,12 +74,14 @@ alias cl_uint			cl_event_info;
 alias cl_uint			cl_command_type;
 alias cl_uint			cl_profiling_info;
 
+//!
 struct cl_image_format
 {
 	cl_channel_order	image_channel_order;
 	cl_channel_type		image_channel_data_type;
 }
 
+//! used in createSubBuffer
 struct cl_buffer_region
 {
 	size_t				origin;
@@ -473,12 +475,14 @@ enum : cl_profiling_info
 /********************************************************************************************************/
 
 // Platform API
+//!
 cl_int clGetPlatformIDs(
 	cl_uint          num_entries,
 	cl_platform_id*  platforms,
 	cl_uint*         num_platforms
 );
 
+//!
 cl_int clGetPlatformInfo(
 	cl_platform_id    platform,
 	cl_platform_info  param_name,
@@ -488,6 +492,7 @@ cl_int clGetPlatformInfo(
 );
 
 // Device APIs
+//!
 cl_int clGetDeviceIDs(
 	cl_platform_id    platform,
 	cl_device_type    device_type, 
@@ -496,6 +501,7 @@ cl_int clGetDeviceIDs(
 	cl_uint*          num_devices
 );
 
+//!
 cl_int clGetDeviceInfo(
 	cl_device_id     device,
 	cl_device_info   param_name, 
@@ -506,13 +512,19 @@ cl_int clGetDeviceInfo(
 
 // Context APIs
 
+/**
+ *	errinfo is a pointer to an error string
+ *	private_info and cb represent a pointer to binary data that is returned by the OpenCL
+	implementation that can be used to log additional information helpful in debugging the error
+ */
 typedef extern(System) void function(
-	const(char)*,
-	const(void)*,
-	size_t,
-	void*
+	const(char)*	errinfo,
+	const(void)*	private_info,
+	size_t			cb,
+	void*			user_data
 ) cl_logging_fn;
  
+//!
 cl_context clCreateContext(
 	const(cl_context_properties)*    properties,
 	cl_uint                          num_devices,
@@ -522,6 +534,7 @@ cl_context clCreateContext(
 	cl_int*                          errcode_ret
 );
 
+//!
 cl_context clCreateContextFromType(
 	const(cl_context_properties)*    properties,
 	cl_device_type                   device_type,
@@ -530,14 +543,17 @@ cl_context clCreateContextFromType(
 	cl_int*                          errcode_ret
 );
 
+//!
 cl_int clRetainContext(
 	cl_context  context
 );
 
+//!
 cl_int clReleaseContext(
 	cl_context  context
 );
 
+//!
 cl_int clGetContextInfo(
 	cl_context          context, 
 	cl_context_info     param_name, 
@@ -547,6 +563,7 @@ cl_int clGetContextInfo(
 );
 
 // Command Queue APIs
+//!
 cl_command_queue clCreateCommandQueue(
 	cl_context                      context, 
 	cl_device_id                    device, 
@@ -554,14 +571,17 @@ cl_command_queue clCreateCommandQueue(
 	cl_int*                         errcode_ret
 );
 
+//!
 cl_int clRetainCommandQueue(
 	cl_command_queue  command_queue
 );
 
+//!
 cl_int clReleaseCommandQueue(
 	cl_command_queue  command_queue
 );
 
+//!
 cl_int clGetCommandQueueInfo(
 	cl_command_queue       command_queue,
 	cl_command_queue_info  param_name,
@@ -588,6 +608,7 @@ deprecated cl_int clSetCommandQueueProperty(
 );
 
 // Memory Object APIs
+//!
 cl_mem clCreateBuffer(
 	cl_context    context,
 	cl_mem_flags  flags,
@@ -596,6 +617,7 @@ cl_mem clCreateBuffer(
 	cl_int *      errcode_ret
 );
 
+//!
 cl_mem clCreateSubBuffer(
 	cl_mem					buffer,
 	cl_mem_flags			flags,
@@ -603,6 +625,7 @@ cl_mem clCreateSubBuffer(
 	const(void)*			buffer_create_info,
 	cl_int*					errcode_ret);
 
+//!
 cl_mem clCreateImage2D(
 	cl_context               context,
 	cl_mem_flags             flags,
@@ -614,6 +637,7 @@ cl_mem clCreateImage2D(
 	cl_int*                  errcode_ret
 );
 
+//!
 cl_mem clCreateImage3D(
 	cl_context               context,
 	cl_mem_flags             flags,
@@ -627,14 +651,17 @@ cl_mem clCreateImage3D(
 	cl_int*                  errcode_ret
 );
 
+//!
 cl_int clRetainMemObject(
 	cl_mem  memobj
 );
 
+//!
 cl_int clReleaseMemObject(
 	cl_mem  memobj
 );
 
+//!
 cl_int clGetSupportedImageFormats(
 	cl_context            context,
 	cl_mem_flags          flags,
@@ -644,6 +671,7 @@ cl_int clGetSupportedImageFormats(
 	cl_uint*              num_image_formats
 );
 
+//!
 cl_int clGetMemObjectInfo(
 	cl_mem            memobj,
 	cl_mem_info       param_name, 
@@ -652,6 +680,7 @@ cl_int clGetMemObjectInfo(
 	size_t*           param_value_size_ret
 );
 
+//!
 cl_int clGetImageInfo(
 	cl_mem            image,
 	cl_image_info     param_name, 
@@ -660,15 +689,18 @@ cl_int clGetImageInfo(
 	size_t *          param_value_size_ret
 );
 
+//!
 alias extern(System) void function(
 	cl_mem memobj,
 	void* user_data) mem_notify_fn;
+//!
 cl_int clSetMemObjectDestructorCallback(
 	cl_mem	memobj,
 	mem_notify_fn pfn_notify,
 	void*	user_data);  
 
 // Sampler APIs
+//!
 cl_sampler clCreateSampler(
 	cl_context           context,
 	cl_bool              normalized_coords, 
@@ -677,14 +709,17 @@ cl_sampler clCreateSampler(
 	cl_int*              errcode_ret
 );
 
+//!
 cl_int clRetainSampler(
 	cl_sampler  sampler
 );
 
+//!
 cl_int clReleaseSampler(
 	cl_sampler  sampler
 );
 
+//!
 cl_int clGetSamplerInfo(
 	cl_sampler          sampler,
 	cl_sampler_info     param_name,
@@ -694,6 +729,7 @@ cl_int clGetSamplerInfo(
 );
 
 // Program Object APIs
+//!
 cl_program clCreateProgramWithSource(
 	cl_context         context,
 	cl_uint            count,
@@ -702,6 +738,7 @@ cl_program clCreateProgramWithSource(
 	cl_int*            errcode_ret
 );
 
+//!
 cl_program clCreateProgramWithBinary(
 	cl_context             context,
 	cl_uint                num_devices,
@@ -712,19 +749,23 @@ cl_program clCreateProgramWithBinary(
 	cl_int*                errcode_ret
 );
 
+//!
 cl_int clRetainProgram(
 	cl_program  program
 );
 
+//!
 cl_int clReleaseProgram(
 	cl_program  program
 );
 
+//!
 typedef extern(System) void function(
 	cl_program		  program,
 	void*			  user_data
 ) prg_notify_fn;
 
+//!
 cl_int clBuildProgram(
 	cl_program				program,
 	cl_uint					num_devices,
@@ -734,8 +775,10 @@ cl_int clBuildProgram(
 	void*					user_data
 );
 
+//!
 cl_int clUnloadCompiler();
 
+//!
 cl_int clGetProgramInfo(
 	cl_program          program,
 	cl_program_info     param_name,
@@ -744,6 +787,7 @@ cl_int clGetProgramInfo(
 	size_t*             param_value_size_ret
 );
 
+//!
 cl_int clGetProgramBuildInfo(
 	cl_program             program,
 	cl_device_id           device,
@@ -754,12 +798,14 @@ cl_int clGetProgramBuildInfo(
 );
 
 // Kernel Object APIs
+//!
 cl_kernel clCreateKernel(
 	cl_program       program,
 	const(char)*     kernel_name,
 	cl_int*          errcode_ret
 );
 
+//!
 cl_int clCreateKernelsInProgram(
 	cl_program      program,
 	cl_uint         num_kernels,
@@ -767,14 +813,17 @@ cl_int clCreateKernelsInProgram(
 	cl_uint*        num_kernels_ret
 );
 
+//!
 cl_int clRetainKernel(
 	cl_kernel     kernel
 );
 
+//!
 cl_int clReleaseKernel(
 	cl_kernel    kernel
 );
 
+//!
 cl_int clSetKernelArg(
 	cl_kernel     kernel,
 	cl_uint       arg_indx,
@@ -782,6 +831,7 @@ cl_int clSetKernelArg(
 	const(void)*  arg_value
 );
 
+//!
 cl_int clGetKernelInfo(
 	cl_kernel        kernel,
 	cl_kernel_info   param_name,
@@ -790,6 +840,7 @@ cl_int clGetKernelInfo(
 	size_t*          param_value_size_ret
 );
 
+//!
 cl_int clGetKernelWorkGroupInfo(
 	cl_kernel                   kernel,
 	cl_device_id                device,
@@ -800,11 +851,13 @@ cl_int clGetKernelWorkGroupInfo(
 );
 
 // Event Object APIs
+//!
 cl_int clWaitForEvents(
 	cl_uint              num_events,
 	const(cl_event)*     event_list
 );
 
+//!
 cl_int clGetEventInfo(
 	cl_event          event,
 	cl_event_info     param_name,
@@ -813,33 +866,40 @@ cl_int clGetEventInfo(
 	size_t*           param_value_size_ret
 );
 
+//!
 cl_event clCreateUserEvent(
 	cl_context	context,
 	cl_int*		errcode_ret);
 
+//!
 cl_int clRetainEvent(
 	cl_event  event
 );
 
+//!
 cl_int clReleaseEvent(
 	cl_event  event
 );
 
+//!
 cl_int clSetUserEventStatus(
 	cl_event	event,
 	cl_int		execution_status);
 
+//!
 typedef extern(System) void function(
 	cl_event,
 	cl_int,
 	void*) evt_notify_fn;
 
+//!
 cl_int clSetEventCallback( cl_event	event,
                     cl_int			command_exec_callback_type,
                     evt_notify_fn	pfn_notify,
                     void*			user_data);
 
 // Profiling APIs
+//!
 cl_int clGetEventProfilingInfo(
 	cl_event             event,
 	cl_profiling_info    param_name,
@@ -849,15 +909,18 @@ cl_int clGetEventProfilingInfo(
 );
 
 // Flush and Finish APIs
+//!
 cl_int clFlush(
 	cl_command_queue  command_queue
 );
 
+//!
 cl_int clFinish(
 	cl_command_queue  command_queue
 );
 
 // Enqueued Commands APIs
+//!
 cl_int clEnqueueReadBuffer(
 	cl_command_queue     command_queue,
 	cl_mem               buffer,
@@ -870,6 +933,7 @@ cl_int clEnqueueReadBuffer(
 	cl_event*            event
 );
 
+//!
 cl_int clEnqueueReadBufferRect(
 	cl_command_queue	command_queue,
 	cl_mem				buffer,
@@ -886,6 +950,7 @@ cl_int clEnqueueReadBufferRect(
 	const(cl_event)*	event_wait_list,
 	cl_event*			event);
 
+//!
 cl_int clEnqueueWriteBuffer(
 	cl_command_queue	command_queue, 
 	cl_mem				buffer, 
@@ -898,6 +963,7 @@ cl_int clEnqueueWriteBuffer(
 	cl_event*           event
 );
 
+//!
 cl_int clEnqueueWriteBufferRect(
 	cl_command_queue	command_queue,
 	cl_mem				buffer,
@@ -914,6 +980,7 @@ cl_int clEnqueueWriteBufferRect(
 	const(cl_event)*	event_wait_list,
 	cl_event *			event);
 
+//!
 cl_int clEnqueueCopyBuffer(
 	cl_command_queue     command_queue, 
 	cl_mem               src_buffer,
@@ -926,6 +993,7 @@ cl_int clEnqueueCopyBuffer(
 	cl_event*            event
 );
 
+//!
 cl_int clEnqueueCopyBufferRect(
 		cl_command_queue	command_queue,
 		cl_mem				src_buffer,
@@ -941,6 +1009,7 @@ cl_int clEnqueueCopyBufferRect(
 		const(cl_event)*	event_wait_list,
 		cl_event*			event);
 
+//!
 cl_int clEnqueueReadImage(
 	cl_command_queue      command_queue,
 	cl_mem                image,
@@ -955,6 +1024,7 @@ cl_int clEnqueueReadImage(
 	cl_event*             event
 );
 
+//!
 cl_int clEnqueueWriteImage(
 	cl_command_queue     command_queue,
 	cl_mem               image,
@@ -969,6 +1039,7 @@ cl_int clEnqueueWriteImage(
 	cl_event*            event
 );
 
+//!
 cl_int clEnqueueCopyImage(
 	cl_command_queue      command_queue,
 	cl_mem                src_image,
@@ -981,6 +1052,7 @@ cl_int clEnqueueCopyImage(
 	cl_event*             event
 );
 
+//!
 cl_int clEnqueueCopyImageToBuffer(
 	cl_command_queue  command_queue,
 	cl_mem            src_image,
@@ -993,6 +1065,7 @@ cl_int clEnqueueCopyImageToBuffer(
 	cl_event*         event
 );
 
+//!
 cl_int clEnqueueCopyBufferToImage(
 	cl_command_queue  command_queue,
 	cl_mem            src_buffer,
@@ -1005,6 +1078,7 @@ cl_int clEnqueueCopyBufferToImage(
 	cl_event*         event
 );
 
+//!
 void* clEnqueueMapBuffer(
 	cl_command_queue  command_queue,
 	cl_mem            buffer,
@@ -1018,6 +1092,7 @@ void* clEnqueueMapBuffer(
 	cl_int*           errcode_ret
 );
 
+//!
 void* clEnqueueMapImage(
 	cl_command_queue   command_queue,
 	cl_mem             image, 
@@ -1033,6 +1108,7 @@ void* clEnqueueMapImage(
 	cl_int*            errcode_ret
 );
 
+//!
 cl_int clEnqueueUnmapMemObject(
 	cl_command_queue  command_queue,
 	cl_mem            memobj,
@@ -1042,6 +1118,7 @@ cl_int clEnqueueUnmapMemObject(
 	cl_event*         event
 );
 
+//!
 cl_int clEnqueueNDRangeKernel(
 	cl_command_queue  command_queue,
 	cl_kernel         kernel,
@@ -1054,6 +1131,7 @@ cl_int clEnqueueNDRangeKernel(
 	cl_event*         event
 );
 
+//!
 cl_int clEnqueueTask(
 	cl_command_queue   command_queue,
 	cl_kernel          kernel,
@@ -1062,6 +1140,7 @@ cl_int clEnqueueTask(
 	cl_event*          event
 );
 
+//!
 cl_int clEnqueueNativeKernel(
 	cl_command_queue   command_queue,
 	void function(
@@ -1077,26 +1156,30 @@ cl_int clEnqueueNativeKernel(
 	cl_event*          event
 );
 
+//!
 cl_int clEnqueueMarker(
 	cl_command_queue     command_queue,
 	cl_event*            event
 );
 
+//!
 cl_int clEnqueueWaitForEvents(
 	cl_command_queue  command_queue,
 	cl_uint           num_events,
 	const(cl_event)*  event_list
 );
 
+//!
 cl_int clEnqueueBarrier(
 	cl_command_queue  command_queue
 );
 
-//Extension function access
-//
-// Returns the extension function address for the given function name,
-// or NULL if a valid function can not be found.  The client must
-// check to make sure the address is not NULL, before using or 
-// calling the returned function address.
-//
+/**
+ *	Extension function access
+ *
+ *	Returns the extension function address for the given function name,
+ *	or null if a valid function can not be found. The client must
+ *	check to make sure the address is not null, before using or 
+ *	calling the returned function address.
+ */
 void* clGetExtensionFunctionAddress(const(char)* func_name);

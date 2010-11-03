@@ -86,6 +86,10 @@ class CLKernelException : CLException {this(cl_int errcode, string msg = "") {su
 /// command queue exceptions base class
 class CLCommandQueueException : CLException {this(cl_int errcode, string msg = "") {super(errcode, msg);}}
 
+/**
+ *	this function generates exception handling code that is used all over the place when calling OpenCL functions
+ *	thus it is easy to change global behaviour, e.g. removing exception handling completely in release mode
+ */
 package string exceptionHandling(E...)(E es)
 {
 	string res = `switch(res)
