@@ -1,5 +1,5 @@
 /*
-cl4d - object-oriented wrapper for the OpenCL C API v1.1 revision 33
+cl4d - object-oriented wrapper for the OpenCL C API v1.1
 written in the D programming language
 
 Copyright (C) 2009-2010 Andreas Hollandt
@@ -54,6 +54,13 @@ abstract class CLWrapper(T, alias infoFunction)
 protected:
 	T _object = null;
 
+package:
+	this() {}
+	this(T obj)
+	{
+		_object = obj;
+	}
+
 	// should only be used inside here
 	package T getObject()
 	{
@@ -61,7 +68,7 @@ protected:
 	}
 	
 	// used for all non-array types
-	T getInfo(T)(cl_uint infoname, Func altFunction = null, cl_device_id device = null)
+	U getInfo(U)(cl_uint infoname, Func altFunction = null, cl_device_id device = null)
 	{
 		assert(_object !is null);
 		size_t needed;
@@ -77,15 +84,15 @@ protected:
 		if (res != CL_SUCCESS)
 			throw new CLException(res);
 		
-		assert(needed == T.sizeof); // TODO:
+		assert(needed == U.sizeof); // TODO:
 		
-		T info;
+		U info;
 
 		// get actual data
 		if (altFunction != null && device != null)
-			res = altFunction(_object, device, infoname, T.sizeof, &info, null);
+			res = altFunction(_object, device, infoname, U.sizeof, &info, null);
 		else
-			res = infoFunction(_object, infoname, T.sizeof, &info, null);
+			res = infoFunction(_object, infoname, U.sizeof, &info, null);
 		
 		// error checking
 		if (res != CL_SUCCESS)
@@ -96,7 +103,7 @@ protected:
 	
 	// helper function for all OpenCL Get*Info functions
 	// used for all array return types
-	T[] getArrayInfo(T)(cl_uint infoname, Func altFunction = null, cl_device_id device = null)
+	U[] getArrayInfo(U)(cl_uint infoname, Func altFunction = null, cl_device_id device = null)
 	{
 		assert(_object !is null);
 		size_t needed;
@@ -112,7 +119,7 @@ protected:
 		if (res != CL_SUCCESS)
 			throw new CLException(res);
 		
-		auto buffer = new T[needed];
+		auto buffer = new U[needed];
 
 		// get actual data
 		if (altFunction != null && device != null)
@@ -134,12 +141,6 @@ protected:
 
 	//	static cl_int getInfo(Arg0, Arg1)(Arg0 arg0, Arg1)
 
-protected:
-	this() {}
-	this(T obj)
-	{
-		_object = obj;
-	}
 }
 
 /**
