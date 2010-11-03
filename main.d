@@ -56,4 +56,6 @@ void main(string[] args)
 			} `).build("-Werror");
 	
 	auto kernel = new CLKernel(program, "sum");
+	
+	auto buffer = new CLBuffer(context, CL_MEM_COPY_HOST_PTR);
 }

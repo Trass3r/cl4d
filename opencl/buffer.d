@@ -54,9 +54,13 @@ public:
 	 *		context	=	is a valid OpenCL context used to create the buffer object
 	 *		flags	=	is a bit-field that is used to specify allocation and usage information such as the memory
 	 *					arena that should be used to allocate the buffer object and how it will be used
+	 *		hostbuf	=	is a pointer to the buffer data that may already be allocated by the application
 	 */
-	this(CLContext context, void[] hostbuf, cl_mem_flags flags)
+	this(CLContext context, cl_mem_flags flags, void[] hostbuf = null)
 	{
+		// TODO: debug to see what happens if hostbuf is really null and check against
+		// perform argument checks? is it necessary or just leave it to OpenCL?
+
 		cl_int res;
 		super(clCreateBuffer(context.getObject(), flags, hostbuf.length, hostbuf.ptr, &res));
 		
@@ -68,5 +72,40 @@ public:
 			["CL_OUT_OF_RESOURCES",				""],
 			["CL_OUT_OF_HOST_MEMORY",			""]
 		));
+	}
+
+	/**
+	 *	create a new buffer object representing a specific region in this buffer
+	 *
+	 *	Params:
+	 *		flags	= a bit-field that is used to specify allocation and usage information about the image
+	 *				  memory object being created and is described in table 5.3
+	 *		origin	= defines the region's offset in this buffer
+	 *		size	= defines the size in bytes
+	 *	Returns:
+	 */
+	CLBuffer createRegionSubBuffer(cl_mem_flags flags, size_t origin, size_t size)
+	{
+		struct cl_buffer_region
+		{
+			size_t origin;
+			size_t size;
+		}
+		cl_buffer_region reg = {origin, size};
+
+		cl_int res;
+		return new CLBuffer(clCreateSubBuffer(this.getObject(), flags, CL_BUFFER_CREATE_TYPE_REGION, &reg, &res));
+
+		// TODO: handle flags separately? see CL_INVALID_VALUE message
+		mixin(exceptionHandling(
+			["CL_INVALID_VALUE",				"the region specified by (origin, size) is out of bounds in buffer OR buffer was created with CL_MEM_WRITE_ONLY and flags specifies CL_MEM_READ_WRITE or CL_MEM_READ_ONLY, OR if buffer was created with CL_MEM_READ_ONLY and flags specifies CL_MEM_READ_WRITE or CL_MEM_WRITE_ONLY, OR if flags specifies CL_MEM_USE_HOST_PTR or CL_MEM_ALLOC_HOST_PTR or CL_MEM_COPY_HOST_PTR"],
+			["CL_INVALID_BUFFER_SIZE",			"size is 0"],
+			["CL_INVALID_MEM_OBJECT",			"buffer is not a valid buffer object or is a sub-buffer object"],
+			["CL_MISALIGNED_SUB_BUFFER_OFFSET",	"there are no devices in context associated with buffer for which the origin value is aligned to the CL_DEVICE_MEM_BASE_ADDR_ALIGN value"],
+			["CL_MEM_OBJECT_ALLOCATION_FAILURE",""],
+			["CL_OUT_OF_RESOURCES",				""],
+			["CL_OUT_OF_HOST_MEMORY",			""],
+		));
+		
 	}
 }

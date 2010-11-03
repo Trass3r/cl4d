@@ -190,4 +190,8 @@ mixin(mixinExceptionClasses(
 		ECD("CL_INVALID_QUEUE_PROPERTIES",	"",	"CLCommandQueueException"),
 		ECD("CL_INVALID_BUFFER_SIZE",		"",	"CLBufferException"),
 		ECD("CL_INVALID_HOST_PTR",			"",	"CLBufferException"),
+		
+		// memory object errors
+		ECD("CL_INVALID_MEM_OBJECT",		"memobj is not a valid memory object", "CLBufferException"),
+		ECD("CL_MISALIGNED_SUB_BUFFER_OFFSET","", "CLBufferException"),
 ));

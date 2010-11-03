@@ -660,7 +660,7 @@ cl_int clGetImageInfo(
 	size_t *          param_value_size_ret
 );
 
-typedef extern(System) void function(
+alias extern(System) void function(
 	cl_mem memobj,
 	void* user_data) mem_notify_fn;
 cl_int clSetMemObjectDestructorCallback(
