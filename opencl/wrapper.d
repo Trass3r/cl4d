@@ -48,7 +48,10 @@ package
 // alternate Info getter functions
 private alias extern(C) cl_int function(const(void)*, const(void*), cl_uint, size_t, void*, size_t*) Func;
 
-/// abstract base class 
+/**
+ *	This is the base class of all CLObjects
+ *	provides getInfo, retain and release functions
+ */ 
 abstract class CLWrapper(T, alias infoFunction)
 {
 protected:
@@ -73,6 +76,33 @@ package:
 		assert(_object !is null);
 	}
 +/
+public:
+	static if (T.stringof[$-3..$] != "_id") // cl_platform_id and cl_device_id don't have reference counting
+	{
+		//! increments the object reference count
+		void retain()
+		{
+			mixin("cl_int res = clRetain" ~ toCamelCase(T.stringof[2..$].dup) ~ (T.stringof == "cl_mem" ? "Object" : "") ~ "(_object);");
+			mixin(exceptionHandling(
+				["CL_OUT_OF_RESOURCES",		""],
+				["CL_OUT_OF_HOST_MEMORY",	""]
+			));
+		}
+		
+		/**
+		 *	decrements the context reference count
+		 *	The object is deleted once the number of instances that are retained to it become zero
+		 */
+		void release()
+		{
+			mixin("cl_int res = clRelease" ~ toCamelCase(T.stringof[2..$].dup) ~ (T.stringof == "cl_mem" ? "Object" : "") ~ "(_object);");
+			mixin(exceptionHandling(
+				["CL_OUT_OF_RESOURCES",		""],
+				["CL_OUT_OF_HOST_MEMORY",	""]
+			));
+		}
+	}
+
 protected:
 	// used for all non-array types
 	U getInfo(U)(cl_uint infoname)

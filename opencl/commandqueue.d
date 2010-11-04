@@ -29,6 +29,7 @@ DEALINGS IN THE SOFTWARE.
 module opencl.commandqueue;
 
 import opencl.c.cl;
+import opencl.buffer;
 import opencl.context;
 import opencl.device;
 import opencl.wrapper;
@@ -59,35 +60,6 @@ public:
 			["CL_OUT_OF_RESOURCES",			""],
 			["CL_OUT_OF_HOST_MEMORY",		""]
 		));
-	}
-	
-	//! increments the command queue reference count
-	void retain()
-	{
-		cl_int res;
-		res = clRetainCommandQueue(_object);
-		
-		mixin(exceptionHandling(
-			["CL_INVALID_COMMAND_QUEUE","_object is not a valid command-queue"],
-			["CL_OUT_OF_RESOURCES",		""],
-			["CL_OUT_OF_HOST_MEMORY",	""]
-		));
-	}
-	
-	/**
-	 *	decrements the command queue reference count
-	 *	performs an implicit flush to issue any previously queued OpenCL commands in the command queue
-	 */
-	void release()
-	{
-		cl_int res;
-		res = clReleaseCommandQueue(_object);
-		
-		mixin(exceptionHandling(
-			["CL_INVALID_COMMAND_QUEUE","_object is not a valid command-queue"],
-			["CL_OUT_OF_RESOURCES",		""],
-			["CL_OUT_OF_HOST_MEMORY",	""]
-		));	
 	}
 	
 	/**

@@ -84,24 +84,6 @@ public:
 			));
 	}
 	
-	/// increments the kernel reference count
-	void retain()
-	{
-		if(clRetainKernel(_object) != CL_SUCCESS)
-			throw new CLInvalidKernelException();
-	}
-	
-	/**
-	 *	decrements the kernel reference count
-	 *	The kernel object is deleted once the number of instances that are retained to kernel become zero
-	 *	and the kernel object is no longer needed by any enqueued commands that use kernel
-	 */
-	void release()
-	{
-		if (clReleaseKernel(_object) != CL_SUCCESS)
-			throw new CLInvalidKernelException();
-	}
-	
 	@property
 	{
 		/// Return the kernel function name

@@ -101,7 +101,7 @@ package string exceptionHandling(E...)(E es)
 	foreach(e; es)
 	{
 		res ~= `	case ` ~ e[0] ~ `:
-		throw new ` ~ processErrName(e[0].dup) ~ `Exception("` ~ e[1] ~ `");
+		throw new CL` ~ toCamelCase(e[0][2..$].dup) ~ `Exception("` ~ e[1] ~ `");
 		break;
 `;
 	}
@@ -127,11 +127,10 @@ private struct ECD
 private import std.string;
 
 // converts an OpenCL error identifier (e.g. "CL_INVALID_VALUE") into a camelcase name for the corresponding exception class
-private string processErrName(char[] s)
+package string toCamelCase(char[] s)
 {
 	tolowerInPlace(s);
-	int i=2, j=2;
-	s[0..2] = "CL";
+	int i=0, j=0;
 	while(i < s.length - 1)
 	{
 		if(s[i] == '_')
@@ -160,7 +159,7 @@ private string mixinExceptionClasses(E...)(E es)
 		
 		
 		res ~= `/// 
-class ` ~ processErrName(e.name.dup) ~ `Exception : ` ~ e.baseclass ~ ` {this(string msg = "") {super(` ~ e.name ~ `, ` ~ ((e.msg != "") ? `"` ~ e.msg ~ `" ~ ` : "") ~ `msg);}}
+class CL` ~ toCamelCase(e.name[2..$].dup) ~ `Exception : ` ~ e.baseclass ~ ` {this(string msg = "") {super(` ~ e.name ~ `, ` ~ ((e.msg != "") ? `"` ~ e.msg ~ `" ~ ` : "") ~ `msg);}}
 `;
 
 	}

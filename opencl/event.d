@@ -53,31 +53,6 @@ public:
 		super(event);
 	}
 
-	//! 
-	void retain()
-	{
-		cl_int res;
-		res = clRetainEvent(_object);
-		
-		mixin(exceptionHandling(
-			["CL_INVALID_EVENT",		"is not a valid event object"],
-			["CL_OUT_OF_RESOURCES",		""],
-			["CL_OUT_OF_HOST_MEMORY",	""]
-		));
-	}
-	
-	//! 
-	void release()
-	{
-		cl_int res;
-		res = clReleaseEvent(_object);
-		
-		mixin(exceptionHandling(
-				["CL_INVALID_EVENT",		"is not a valid event object"],
-				["CL_OUT_OF_RESOURCES",		""],
-				["CL_OUT_OF_HOST_MEMORY",	""]
-			));
-	}
 	/**
 	 *	sets the execution status of a user event object
 	 *

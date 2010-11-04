@@ -93,26 +93,6 @@ public:
 		release();
 	}
 	
-	/// increments the context reference count
-	CLContext retain()
-	{
-		cl_int res;
-		res = clRetainContext(_object);
-		if(res != CL_SUCCESS)
-			throw new CLInvalidContextException("internal context object is not a valid OpenCL context");
-		
-		return this;
-	}
-	
-	/// decrements the context reference count
-	void release()
-	{
-		cl_int res;
-		res = clReleaseContext(_object);
-		if(res != CL_SUCCESS)
-			throw new CLInvalidContextException("internal context object is not a valid OpenCL context");
-	}
-	
 	CLProgram createProgram(string sourceCode)
 	{
 		return new CLProgram(this, sourceCode);

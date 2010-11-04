@@ -183,24 +183,6 @@ public:
 		return new CLKernels(kernels);
 	}
 	
-	/// increments the context reference count
-	void retain()
-	{
-		cl_int res;
-		res = clRetainProgram(_object);
-		if(res != CL_SUCCESS)
-			throw new CLInvalidProgramException("internal program object is not a valid OpenCL context");
-	}
-	
-	/// decrements the context reference count
-	void release()
-	{
-		cl_int res;
-		res = clReleaseProgram(_object);
-		if(res != CL_SUCCESS)
-			throw new CLInvalidProgramException("internal program object is not a valid OpenCL context");
-	}
-
 	/**
 	 * allows the implementation to release the resources allocated by the OpenCL compiler.  This is a
 	 * hint from the application and does not guarantee that the compiler will not be used in the future
