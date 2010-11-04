@@ -57,7 +57,7 @@ public:
 	 *					arena that should be used to allocate the buffer object and how it will be used
 	 *		hostbuf	=	is a pointer to the buffer data that may already be allocated by the application
 	 */
-	this(CLContext context, cl_mem_flags flags, void[] hostbuf = null)
+	this(CLContext context, cl_mem_flags flags = CL_MEM_READ_ONLY, void[] hostbuf = null)
 	{
 		// TODO: debug to see what happens if hostbuf is really null and check against
 		// perform argument checks? is it necessary or just leave it to OpenCL?

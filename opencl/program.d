@@ -106,8 +106,11 @@ public:
 	 */
 	CLProgram build(string options = "", CLDevices devices = null)
 	{
+		// TODO: handle this whole (if devices is null) crap better
 		cl_int res;
-		cl_device_id[] cldevices = devices.getObjArray();
+		cl_device_id[] cldevices;
+		if (devices !is null)
+			cldevices = devices.getObjArray();
 		
 		// If pfn_notify isn't NULL, clBuildProgram does not need to wait for the build to complete and can return immediately
 		// If pfn_notify is NULL, clBuildProgram does not return until the build has completed

@@ -28,7 +28,7 @@ module opencl.c.cl_platform;
 // calling conventions are extern(System) now
 // TODO: on MacOSX API calls are __attribute__((weak_import))
 
-// scalar types
+// scalar types, leave as aliases for template instantiation
 alias byte		cl_char;
 alias ubyte		cl_uchar;
 alias short		cl_short;

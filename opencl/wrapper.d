@@ -134,6 +134,7 @@ public:
 
 protected:
 	// used for all non-array types
+	// TODO: make infoname type-safe, not cl_uint (can vary for certain _object, see cl_mem)
 	U getInfo(U)(cl_uint infoname)
 	{
 		assert(_object !is null);
