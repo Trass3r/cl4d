@@ -30,6 +30,7 @@ module opencl.kernel;
 
 import opencl.c.cl;
 import opencl.context;
+import opencl.device;
 import opencl.error;
 import opencl.program;
 import opencl.wrapper;
@@ -101,47 +102,102 @@ public:
 			throw new CLInvalidKernelException();
 	}
 	
-@property
-{
-	/// Return the kernel function name
-	string kernelName()
+	@property
 	{
-		assert(getStringInfo(CL_KERNEL_FUNCTION_NAME) == _kernelName);
-		return _kernelName;
-	}
-	
-	/// Return the number of arguments to kernel
-	cl_uint numArgs()
-	{
-		return getInfo!(cl_uint)(CL_KERNEL_NUM_ARGS);
-	}
-	
-	/**
-	 *	Return the kernel reference count
-	 *
-	 *	The reference count returned should be considered immediately stale. It is unsuitable for general use in 
-	 *	applications. This feature is provided for identifying memory leaks
-	 *
-	 *	TODO: make it protected?, make use of it!
-	 */
-	cl_uint referenceCount()
-	{
-		return getInfo!(cl_uint)(CL_KERNEL_REFERENCE_COUNT);
-	}
-	
-	/// Return the program object associated with kernel
-	CLProgram program()
-	{
-		// TODO: get info and assert
-		// getInfo!(cl_program)(CL_KERNEL_PROGRAM);
-		return _program;
-	}
-	
-	/// Return the context associated with kernel
-	CLContext context()
-	{
-		assert(0, "not implemented yet");
-		return new CLContext(getInfo!(cl_context)(CL_KERNEL_CONTEXT));
-	}
-}
+		/// Return the kernel function name
+		string kernelName()
+		{
+			assert(getStringInfo(CL_KERNEL_FUNCTION_NAME) == _kernelName);
+			return _kernelName;
+		}
+		
+		/// Return the number of arguments to kernel
+		cl_uint numArgs()
+		{
+			return getInfo!(cl_uint)(CL_KERNEL_NUM_ARGS);
+		}
+		
+		/**
+		 *	Return the kernel reference count
+		 *
+		 *	The reference count returned should be considered immediately stale. It is unsuitable for general use in 
+		 *	applications. This feature is provided for identifying memory leaks
+		 *
+		 *	TODO: make it protected?, make use of it!
+		 */
+		cl_uint referenceCount()
+		{
+			return getInfo!(cl_uint)(CL_KERNEL_REFERENCE_COUNT);
+		}
+		
+		/// Return the program object associated with kernel
+		CLProgram program()
+		{
+			// TODO: get info and assert
+			// getInfo!(cl_program)(CL_KERNEL_PROGRAM);
+			return _program;
+		}
+		
+		/// Return the context associated with kernel
+		CLContext context()
+		{
+			assert(0, "not implemented yet");
+			return new CLContext(getInfo!(cl_context)(CL_KERNEL_CONTEXT));
+		}
+		
+		/**
+		 *	This provides a mechanism for the application to query the maximum
+		 *	work-group size that can be used to execute a kernel on a specific device
+		 *	given by device. The OpenCL implementation uses the resource requirements of the kernel (register
+		 *	usage etc.) to determine what this workgroup size should be.
+		 */
+		size_t workGroupSize(CLDevice device)
+		{
+			return getInfo2!(size_t, clGetKernelWorkGroupInfo)(device.getObject(), CL_KERNEL_WORK_GROUP_SIZE);
+		}
+		
+		/**
+		 *	Returns the work-group size specified by the __attribute__((reqd_work_group_size(X, Y, Z))) qualifier.
+		 *	Refer to section 6.8.2.
+		 *	If the work-group size is not specified using the above attribute qualifier (0, 0, 0) is returned
+		 */
+		size_t[3] compileWorkGroupSize(CLDevice device)
+		{
+			// TODO: check if this works
+			return getInfo2!(size_t[3], clGetKernelWorkGroupInfo)(device.getObject(), CL_KERNEL_COMPILE_WORK_GROUP_SIZE);
+		}
+		
+		/**
+		 *	Returns the amount of local memory in bytes being used by a kernel. This includes local memory that may be
+		 *	needed by an implementation to execute the kernel, variables declared inside the kernel with the __local address
+		 *	qualifier and local memory to be allocated for arguments to the kernel declared as pointers with the __local
+		 *	address qualifier and whose size is specified with clSetKernelArg. If the local memory size, for any pointer
+		 *	argument to the kernel declared with the __local address qualifier, is not specified, its size is assumed to be 0.
+		 */
+		cl_ulong localMemSize(CLDevice device)
+		{
+			return getInfo2!(cl_ulong, clGetKernelWorkGroupInfo)(device.getObject(), CL_KERNEL_LOCAL_MEM_SIZE);
+		}
+		
+		/**
+		 *	Returns the preferred multiple of workgroup size for launch. This is a performance hint. Specifying a workgroup
+		 *	size that is not a multiple of the value returned by this query as the value of the local work size argument to
+		 *	clEnqueueNDRangeKernel will not fail to enqueue the kernel for execution unless the work-group size specified is
+		 *	larger than the device maximum.
+		 */
+		size_t preferredWorkGroupSizeMultiple(CLDevice device)
+		{
+			return getInfo2!(size_t, clGetKernelWorkGroupInfo)(device.getObject(), CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE);
+		}
+		
+		/**
+		 *	Returns the minimum amount of private memory, in bytes, used by each workitem in the kernel. This value may
+		 *	include any private memory needed by an implementation to execute the kernel, including that used by the language
+		 *	built-ins and variable declared inside the kernel with the __private qualifier.
+		 */
+		cl_ulong privateMemSize(CLDevice device)
+		{
+			return getInfo2!(cl_ulong, clGetKernelWorkGroupInfo)(device.getObject(), CL_KERNEL_PRIVATE_MEM_SIZE);
+		}
+	} // of @property
 }

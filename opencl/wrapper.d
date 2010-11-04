@@ -66,33 +66,70 @@ package:
 	{
 		return _object;
 	}
-	
-	// used for all non-array types
-	U getInfo(U)(cl_uint infoname, Func altFunction = null, cl_device_id device = null)
+/+
+	//! ensure that _object isn't null
+	invariant()
 	{
 		assert(_object !is null);
-		size_t needed;
+	}
++/
+protected:
+	// used for all non-array types
+	U getInfo(U)(cl_uint infoname)
+	{
+		assert(_object !is null);
 		cl_int res;
 		
-		// get amount of memory necessary
-		if (altFunction != null && device != null)
-			res = altFunction(_object, device, infoname, 0, null, &needed);
-		else
-			res = infoFunction(_object, infoname, 0, null, &needed);
+		debug
+		{
+			size_t needed;
 
-		// error checking
-		if (res != CL_SUCCESS)
-			throw new CLException(res);
-		
-		assert(needed == U.sizeof); // TODO:
+			// get amount of memory necessary
+			res = infoFunction(_object, infoname, 0, null, &needed);
+	
+			// error checking
+			if (res != CL_SUCCESS)
+				throw new CLException(res);
+			
+			assert(needed == U.sizeof);
+		}
 		
 		U info;
 
 		// get actual data
-		if (altFunction != null && device != null)
-			res = altFunction(_object, device, infoname, U.sizeof, &info, null);
-		else
-			res = infoFunction(_object, infoname, U.sizeof, &info, null);
+		res = infoFunction(_object, infoname, U.sizeof, &info, null);
+		
+		// error checking
+		if (res != CL_SUCCESS)
+			throw new CLException(res);
+		
+		return info;
+	}
+	
+	// this special version is only used for clGetProgramBuildInfo and clGetKernelWorkgroupInfo
+	U getInfo2(U, alias altFunction)( cl_device_id device, cl_uint infoname)
+	{
+		assert(_object !is null);
+		cl_int res;
+		
+		debug
+		{
+			size_t needed;
+
+			// get amount of memory necessary
+			res = altFunction(_object, device, infoname, 0, null, &needed);
+	
+			// error checking
+			if (res != CL_SUCCESS)
+				throw new CLException(res);
+			
+			assert(needed == U.sizeof);
+		}
+		
+		U info;
+
+		// get actual data
+		res = altFunction(_object, device, infoname, U.sizeof, &info, null);
 		
 		// error checking
 		if (res != CL_SUCCESS)
@@ -103,29 +140,23 @@ package:
 	
 	// helper function for all OpenCL Get*Info functions
 	// used for all array return types
-	U[] getArrayInfo(U)(cl_uint infoname, Func altFunction = null, cl_device_id device = null)
+	U[] getArrayInfo(U)(cl_uint infoname)
 	{
 		assert(_object !is null);
 		size_t needed;
 		cl_int res;
 
 		// get number of needed memory
-		if (altFunction != null && device != null)
-			res = altFunction(_object, device, infoname, 0, null, &needed);
-		else
-			res = infoFunction(_object, infoname, 0, null, &needed);
+		res = infoFunction(_object, infoname, 0, null, &needed);
 
 		// error checking
 		if (res != CL_SUCCESS)
 			throw new CLException(res);
 		
-		auto buffer = new U[needed];
+		auto buffer = new U[needed/U.sizeof];
 
 		// get actual data
-		if (altFunction != null && device != null)
-			res = altFunction(_object, device, infoname, buffer.length, cast(void*)buffer.ptr, null);
-		else
-			res = infoFunction(_object, infoname, buffer.length, cast(void*)buffer.ptr, null);
+		res = infoFunction(_object, infoname, buffer.length, cast(void*)buffer.ptr, null);
 		
 		// error checking
 		if (res != CL_SUCCESS)
@@ -134,9 +165,36 @@ package:
 		return buffer;
 	}
 	
-	string getStringInfo(cl_uint infoname, Func altFunction = null, cl_device_id device = null)
+	// this special version is only used for clGetProgramBuildInfo and clGetKernelWorkgroupInfo
+	// used for all array return types
+	U[] getArrayInfo2(U, alias altFunction)(cl_device_id device, cl_uint infoname)
 	{
-		return cast(string) getArrayInfo!(char)(infoname, altFunction, device);
+		assert(_object !is null);
+		size_t needed;
+		cl_int res;
+
+		// get number of needed memory
+		res = altFunction(_object, device, infoname, 0, null, &needed);
+
+		// error checking
+		if (res != CL_SUCCESS)
+			throw new CLException(res);
+		
+		auto buffer = new U[needed/U.sizeof];
+
+		// get actual data
+		res = altFunction(_object, device, infoname, buffer.length, cast(void*)buffer.ptr, null);
+		
+		// error checking
+		if (res != CL_SUCCESS)
+			throw new CLException(res);
+		
+		return buffer;
+	}
+	
+	string getStringInfo(cl_uint infoname)
+	{
+		return cast(string) getArrayInfo!(ichar)(infoname);
 	}
 
 	//	static cl_int getInfo(Arg0, Arg1)(Arg0 arg0, Arg1)
@@ -175,6 +233,7 @@ public:
 				if (clRetainContext(objects[i]) != CL_SUCCESS)
 					throw new CLInvalidContextException();
 			}
+			
 			
 			// TODO: other objects
 		}

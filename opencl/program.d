@@ -96,7 +96,7 @@ public:
 	{
 		release();
 	}
-
+	
 	/**
 	 * builds (compiles & links) a program executable from the program source or binary for all the
 	 * devices or a specific device(s) in the OpenCL context associated with program. OpenCL allows
@@ -217,54 +217,93 @@ public:
 			throw new CLException(res, "failed unloading compiler, this shouldn't happen in OpenCL 1.0");
 	}
 	
-	/// returns the program reference count
-	// TODO: make it package?
-	cl_uint referenceCount()
+	@property
 	{
-		return getInfo!(cl_uint)(CL_PROGRAM_REFERENCE_COUNT);
-	}
-	
-	/// TODO: check those stuff for consistency with getInfo results
-	CLContext context()
-	{
-		return _context;
-	}
-	
-	/**
-	 * Return the list of devices associated with the program object. This can be the devices associated with context on
-	 * which the program object has been created or can be a subset of devices that are specified when a progam object
-	 * is created using	clCreateProgramWithBinary
-	 */
-	auto devices()
-	{
-		// TODO: maybe save the devices as a class member
-		cl_device_id[] ids = getArrayInfo!(cl_device_id)(CL_PROGRAM_DEVICES);
-		return new CLDevices(ids);
-	}
-	
-	///
-	string sourceCode()
-	{
-		return _sourceCode;
-	}
-	
-	/**
-	 * Return the program binaries for all devices associated with the program.
-	 * Returns:
-	 */
-	ubyte[][] binaries()
-	{
-		// TODO: make sure binaries are available?
-		size_t[] sizes = getArrayInfo!(size_t)(CL_PROGRAM_BINARY_SIZES);
-		
-		ubyte*[] ptrs = getArrayInfo!(ubyte*)(CL_PROGRAM_BINARIES);
-		
-		ubyte[][] res = new ubyte[][ptrs.length];
-		for (uint i=0; i<ptrs.length; i++)
+		/**
+		 *	Returns the build status of program for the specific device.
+		 *
+		 *	This can be one of the following:
+		 *		CL_BUILD_NONE. The build status returned if no build has been performed
+		 *						on the specified program object for device.
+		 *		CL_BUILD_ERROR. The build status returned if the last call to clBuildProgram on the specified
+		 *						program object for device generated an error
+		 *		CL_BUILD_SUCCESS. The build status retrned if the last call to clBuildProgram on the specified
+		 *						program object for device was successful.
+		 *		CL_BUILD_IN_PROGRESS. The build status returned if the last call to clBuildProgram on the specified
+		 *						program object for device has not finished.
+		 */
+		auto buildStatus(CLDevice device)
 		{
-			res[i] = ptrs[i][0 .. sizes[i]];
+			return getInfo2!(cl_build_status, clGetProgramBuildInfo)(device.getObject(), CL_PROGRAM_BUILD_STATUS);
 		}
 		
-		return res;
-	}
+		/**
+		 *	Return the build options specified by the options argument in build() for device.
+		 *	If build status of program for device is CL_BUILD_NONE, an empty string is returned.
+		 */
+		string buildOptions(CLDevice device)
+		{
+			return getArrayInfo2!(ichar, clGetProgramBuildInfo)(device.getObject(), CL_PROGRAM_BUILD_OPTIONS);
+		}
+		
+		/**
+		 *	Return the build log when clBuildProgram was called for device.
+		 *	If build status of program for device is CL_BUILD_NONE, an empty string is returned.
+		 */
+		string buildLog(CLDevice device)
+		{
+			return getArrayInfo2!(ichar, clGetProgramBuildInfo)(device.getObject(), CL_PROGRAM_BUILD_LOG);
+		}
+		
+		/// returns the program reference count
+		// TODO: make it package?
+		cl_uint referenceCount()
+		{
+			return getInfo!(cl_uint)(CL_PROGRAM_REFERENCE_COUNT);
+		}
+		
+		/// TODO: check those stuff for consistency with getInfo results
+		CLContext context()
+		{
+			return _context;
+		}
+		
+		/**
+		 * Return the list of devices associated with the program object. This can be the devices associated with context on
+		 * which the program object has been created or can be a subset of devices that are specified when a progam object
+		 * is created using	clCreateProgramWithBinary
+		 */
+		auto devices()
+		{
+			// TODO: maybe save the devices as a class member
+			cl_device_id[] ids = getArrayInfo!(cl_device_id)(CL_PROGRAM_DEVICES);
+			return new CLDevices(ids);
+		}
+		
+		///
+		string sourceCode()
+		{
+			return _sourceCode;
+		}
+		
+		/**
+		 * Return the program binaries for all devices associated with the program.
+		 * Returns:
+		 */
+		ubyte[][] binaries()
+		{
+			// TODO: make sure binaries are available?
+			size_t[] sizes = getArrayInfo!(size_t)(CL_PROGRAM_BINARY_SIZES);
+			
+			ubyte*[] ptrs = getArrayInfo!(ubyte*)(CL_PROGRAM_BINARIES);
+			
+			ubyte[][] res = new ubyte[][ptrs.length];
+			for (uint i=0; i<ptrs.length; i++)
+			{
+				res[i] = ptrs[i][0 .. sizes[i]];
+			}
+			
+			return res;
+		}
+	} // of @property
 }
