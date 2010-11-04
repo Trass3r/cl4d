@@ -62,9 +62,18 @@ package:
 	this(T obj)
 	{
 		_object = obj;
+		debug writefln("new reference to %s object created. Reference count before was: %d", typeid(typeof(this)), referenceCount);
+		// increment reference count
+		retain();
 	}
 
-	// should only be used inside here
+	~this()
+	{
+		debug writefln("%s object destroyed. Reference count before was: %d", typeid(typeof(this)), referenceCount);
+		release();
+	}
+
+	// should only be used inside here so reference counting works
 	package T getObject()
 	{
 		return _object;
@@ -77,10 +86,13 @@ package:
 	}
 +/
 public:
-	static if (T.stringof[$-3..$] != "_id") // cl_platform_id and cl_device_id don't have reference counting
+	//! increments the object reference count
+	void retain()
 	{
-		//! increments the object reference count
-		void retain()
+		// NOTE: cl_platform_id and cl_device_id don't have reference counting
+		// T.stringof is compared instead of T itself so it also works with T being an alias
+		// platform and device will have an empty retain() so it can be safely used in this()
+		static if (T.stringof[$-3..$] != "_id")
 		{
 			mixin("cl_int res = clRetain" ~ toCamelCase(T.stringof[2..$].dup) ~ (T.stringof == "cl_mem" ? "Object" : "") ~ "(_object);");
 			mixin(exceptionHandling(
@@ -88,12 +100,15 @@ public:
 				["CL_OUT_OF_HOST_MEMORY",	""]
 			));
 		}
-		
-		/**
-		 *	decrements the context reference count
-		 *	The object is deleted once the number of instances that are retained to it become zero
-		 */
-		void release()
+	}
+	
+	/**
+	 *	decrements the context reference count
+	 *	The object is deleted once the number of instances that are retained to it become zero
+	 */
+	void release()
+	{
+		static if (T.stringof[$-3..$] != "_id")
 		{
 			mixin("cl_int res = clRelease" ~ toCamelCase(T.stringof[2..$].dup) ~ (T.stringof == "cl_mem" ? "Object" : "") ~ "(_object);");
 			mixin(exceptionHandling(
@@ -101,6 +116,20 @@ public:
 				["CL_OUT_OF_HOST_MEMORY",	""]
 			));
 		}
+	}
+	private import std.string;
+	/**
+	 *	Return the reference count
+	 *
+	 *	The reference count returned should be considered immediately stale. It is unsuitable for general use in 
+	 *	applications. This feature is provided for identifying memory leaks
+	 */
+	@property cl_uint referenceCount()
+	{
+		static if (T.stringof[$-3..$] != "_id")
+			mixin("return getInfo!cl_uint(CL_" ~ (T.stringof == "cl_command_queue" ? "QUEUE" : toupper(T.stringof[3..$])) ~ "_REFERENCE_COUNT);");
+		else
+			return 0;
 	}
 
 protected:

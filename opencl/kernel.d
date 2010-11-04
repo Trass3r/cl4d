@@ -99,19 +99,6 @@ public:
 			return getInfo!(cl_uint)(CL_KERNEL_NUM_ARGS);
 		}
 		
-		/**
-		 *	Return the kernel reference count
-		 *
-		 *	The reference count returned should be considered immediately stale. It is unsuitable for general use in 
-		 *	applications. This feature is provided for identifying memory leaks
-		 *
-		 *	TODO: make it protected?, make use of it!
-		 */
-		cl_uint referenceCount()
-		{
-			return getInfo!(cl_uint)(CL_KERNEL_REFERENCE_COUNT);
-		}
-		
 		/// Return the program object associated with kernel
 		CLProgram program()
 		{

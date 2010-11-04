@@ -237,13 +237,6 @@ public:
 			return getArrayInfo2!(ichar, clGetProgramBuildInfo)(device.getObject(), CL_PROGRAM_BUILD_LOG);
 		}
 		
-		/// returns the program reference count
-		// TODO: make it package?
-		cl_uint referenceCount()
-		{
-			return getInfo!(cl_uint)(CL_PROGRAM_REFERENCE_COUNT);
-		}
-		
 		/// TODO: check those stuff for consistency with getInfo results
 		CLContext context()
 		{
