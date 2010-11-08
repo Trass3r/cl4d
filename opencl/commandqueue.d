@@ -136,7 +136,7 @@ public:
 			["CL_INVALID_COMMAND_QUEUE",						""],
 			["CL_INVALID_CONTEXT",								"context associated with command queue and buffer or waitlist is not the same"],
 			["CL_INVALID_MEM_OBJECT",							"buffer is invalid"],
-			["CL_INVALID_VALUE",								"region being read specified by (offset, size) is out of bounds"],
+			["CL_INVALID_VALUE",								"region being read/written specified by (offset, size) is out of bounds"],
 			["CL_INVALID_EVENT_WAIT_LIST",						"event objects in waitlist are not valid events"],
 			["CL_MISALIGNED_SUB_BUFFER_OFFSET",					"buffer is a sub-buffer object and offset specified when the sub-buffer object is created is not aligned to CL_DEVICE_MEM_BASE_ADDR_ALIGN value for device associated with queue"],
 			["CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST",	"the read operations are blocking and the execution status of any of the events in waitlist is a negative integer value"],
@@ -149,6 +149,57 @@ public:
 	}
 	alias enqueueReadWriteBuffer!(clEnqueueReadBuffer, void*) enqueueReadBuffer; //! ditto
 	alias enqueueReadWriteBuffer!(clEnqueueWriteBuffer, const void*) enqueueWriteBuffer; //! ditto
+	
+	/**
+	 *	enqueue commands to read a 2D or 3D rectangular region from a buffer object to host memory or write a 2D or 3D rectangular region to a buffer object from host memory
+	 *
+	 *	Also see enqueueReadWriteBuffer and OpenCL specs NOTE
+	 *
+	 *	Params:
+	 *	    bufferOrigin	=	defines the (x, y, z) offset in the memory region associated with buffer. For a 2D rectangle region, the z value given by buffer_origin[2] should be 0. The offset in bytes is
+	 *							computed as buffer_origin[2] * buffer_slice_pitch + buffer_origin[1] * buffer_row_pitch + buffer_origin[0]
+	 *	    hostOrigin		=	the (x, y, z) offset in the memory region pointed to by ptr. For a 2D rectangle region, the z value given by host_origin[2] should be 0. The offset in bytes is computed as
+	 *							host_origin[2] * host_slice_pitch + host_origin[1] * host_row_pitch + host_origin[0].
+	 *	    region			=	the (width, height, depth) in bytes of the 2D or 3D rectangle being read or written. For a 2D rectangle copy, the depth value given by region[2] should be 1
+	 *	    bufferRowPitch	=	the length of each row in bytes to be used for the memory region associated with buffer. If buffer_row_pitch is 0, buffer_row_pitch is computed as region[0]
+	 *	    bufferSlicePitch=	the length of each 2D slice in bytes to be used for the memory region associated with buffer. If buffer_slice_pitch is 0, buffer_slice_pitch is computed as region[1] * buffer_row_pitch
+	 *	    hostRowPitch	=	the length of each row in bytes to be used for the memory region pointed to by ptr. If host_row_pitch is 0, host_row_pitch is computed as region[0]
+	 *	    hostSlicePitch	=	the length of each 2D slice in bytes to be used for the memory region pointed to by ptr. If host_slice_pitch is 0, host_slice_pitch is computed as region[1] * host_row_pitch
+	 *	    ptr				=	pointer to buffer in host memory where data is to be read into or to be written from
+	 *
+	 *	TODO: add assertions that buffer origin etc. is correct in respect to CLBuffer isImage2D etc. see above notes
+	 */
+	private void enqueueReadWriteBufferRect(alias func, PtrType)(CLBuffer buffer, cl_bool blocking, const size_t[3] bufferOrigin, const size_t[3] hostOrigin, const size_t[3] region,
+	                                                             PtrType ptr, CLEvents waitlist = null, size_t bufferRowPitch = 0, size_t bufferSlicePitch = 0, size_t hostRowPitch = 0, size_t hostSlicePitch = 0)
+	in
+	{
+		assert(ptr !is null);
+		assert(region[] != 0);
+	}
+	body
+	{
+		// TODO: leave the default pitch values as 0 and let OpenCL compute or set default values as region[0], etc. see method documentation
+		cl_event event;
+		cl_int res = func(_object, buf.getObject(), blocking, bufferOrigin, hostOrigin, region, bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch, ptr, waitlist.length, waitlist.ptr, &event);
+		
+		mixin(exceptionHandling(
+			["CL_INVALID_COMMAND_QUEUE",						""],
+			["CL_INVALID_CONTEXT",								"context associated with command queue and buffer or waitlist is not the same"],
+			["CL_INVALID_MEM_OBJECT",							"buffer is invalid"],
+			["CL_INVALID_VALUE",								"region being read/written specified by (bufferOrigin, region) is out of bounds or pitch values are invalid"],
+			["CL_INVALID_EVENT_WAIT_LIST",						"event objects in waitlist are not valid events"],
+			["CL_MISALIGNED_SUB_BUFFER_OFFSET",					"buffer is a sub-buffer object and offset specified when the sub-buffer object is created is not aligned to CL_DEVICE_MEM_BASE_ADDR_ALIGN value for device associated with queue"],
+			["CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST",	"the read operations are blocking and the execution status of any of the events in waitlist is a negative integer value"],
+			["CL_MEM_OBJECT_ALLOCATION_FAILURE",				"couldn't allocate memory for data store associated with buffer"],
+			["CL_OUT_OF_RESOURCES",								""],
+			["CL_OUT_OF_HOST_MEMORY",							""]
+		));
+
+			return CLEvent(event);
+
+	}
+	alias enqueueReadWriteBufferRect!(clEnqueueReadBufferRect, void*) enqueueReadBufferRect; //! ditto
+	alias enqueueReadWriteBufferRect!(clEnqueueWriteBufferRect, const void*) enqueueWriteBufferRect; //! ditto
 	
 	//! are the commands queued in the command queue executed out-of-order
 	@property bool outOfOrder()

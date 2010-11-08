@@ -927,7 +927,7 @@ cl_int clEnqueueReadBuffer(
 	cl_bool              blocking_read,
 	size_t               offset,
 	size_t               cb, 
-	void *               ptr,
+	void*                ptr,
 	cl_uint              num_events_in_wait_list,
 	const(cl_event)*     event_wait_list,
 	cl_event*            event
@@ -938,9 +938,9 @@ cl_int clEnqueueReadBufferRect(
 	cl_command_queue	command_queue,
 	cl_mem				buffer,
 	cl_bool				blocking_read,
-	const(size_t)*		buffer_offset,
-	const(size_t)*		host_offset, 
-	const(size_t)*		region,
+	const(size_t)*		buffer_offset,	// size_t[3]
+	const(size_t)*		host_offset,	// size_t[3]
+	const(size_t)*		region,			// size_t[3]
 	size_t				buffer_row_pitch,
 	size_t				buffer_slice_pitch,
 	size_t				host_row_pitch,
@@ -968,9 +968,9 @@ cl_int clEnqueueWriteBufferRect(
 	cl_command_queue	command_queue,
 	cl_mem				buffer,
 	cl_bool				blocking_read,
-	const(size_t)*		buffer_offset,
-	const(size_t)*		host_offset, 
-	const(size_t)*		region,
+	const(size_t)*		buffer_offset,	// size_t[3]
+	const(size_t)*		host_offset,	// size_t[3]
+	const(size_t)*		region,			// size_t[3]
 	size_t				buffer_row_pitch,
 	size_t				buffer_slice_pitch,
 	size_t				host_row_pitch,
