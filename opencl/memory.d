@@ -34,7 +34,7 @@ import opencl.error;
 import opencl.wrapper;
 
 //! buffer class
-class CLMemory : CLWrapper!(cl_mem, clGetMemObjectInfo)
+abstract class CLMemory : CLWrapper!(cl_mem, clGetMemObjectInfo)
 {
 private:
 
@@ -71,6 +71,12 @@ public:
 	@property void destructorCallback(mem_notify_fn fpNotify)
 	{
 		setDestructorCallback(fpNotify);
+	}
+	
+	@property CLContext context()
+	{
+		return null;
+		// TODO
 	}
 	/+
 	@property

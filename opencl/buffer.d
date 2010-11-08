@@ -63,7 +63,7 @@ public:
 		// perform argument checks? is it necessary or just leave it to OpenCL?
 
 		cl_int res;
-		super(clCreateBuffer(context.getObject(), flags, hostbuf.length, hostbuf.ptr, &res));
+		_object = clCreateBuffer(context.getObject(), flags, hostbuf.length, hostbuf.ptr, &res);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",				""],

@@ -26,54 +26,23 @@ FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
-module opencl.event;
+module opencl.image;
 
 import opencl.c.cl;
+import opencl.context;
 import opencl.error;
-import opencl.program;
+import opencl.memory;
 import opencl.wrapper;
 
-//! collection of several devices
-// TODO
-alias CLObjectCollection!(cl_event) CLEvents;
-
-/**
- *
- */
-class CLEvent : CLWrapper!(cl_event, clGetEventInfo)
+//!
+class CLImage : CLMemory
 {
-private:
-	CLProgram	_program;
-	string		_eventName;
+	
+}
 
+
+class CLImage2D : CLImage
+{
 public:
-	//! 
-	this(cl_event event)
-	{
-		super(event);
-	}
-
-	/**
-	 *	sets the execution status of a user event object
-	 *
-	 *	Params:
-	 *		executionStatus = specifies the new execution status to be set and can be CL_COMPLETE or a
-	 *		negative integer value to indicate an error.  A negative integer value causes all enqueued
-	 *		commands that wait on this user event to be terminated.
-	 *
-	 *	clSetUserEventStatus can only be called once to change the execution status of event
-	 */
-	@property void status(cl_int executionStatus)
-	{
-		cl_int res;
-		res = clSetUserEventStatus(_object, executionStatus);
-		
-		mixin(exceptionHandling(
-			["CL_INVALID_EVENT",		"this is not a valid user event object"],
-			["CL_INVALID_VALUE",		"executionStatus is not CL_COMPLETE or a negative integer value"],
-			["CL_INVALID_OPERATION",	"executionStatus for event has already been changed by a previous call to clSetUserEventStatus"],
-			["CL_OUT_OF_RESOURCES",		""],
-			["CL_OUT_OF_HOST_MEMORY",	""]
-		));
-	}
+	this(CLContext context, cl_mem_flags flags, ImageFormat format, )
 }

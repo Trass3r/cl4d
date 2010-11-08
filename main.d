@@ -53,9 +53,10 @@ void main(string[] args)
 			{
 				int i = get_global_id(0);
 				c[i] = a[i] + b[i];
-			} `).build("-Werror");
+			} `);
+	program.build("-Werror");
 	
 	auto kernel = new CLKernel(program, "sum");
 	
-	auto buffer = new CLBuffer(context, CL_MEM_COPY_HOST_PTR);
+	auto buffer = new CLBuffer(context);
 }

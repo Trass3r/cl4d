@@ -71,7 +71,6 @@ public:
 		_program = program;
 		_kernelName = kernelName;
 		
-		// TODO: call super constructor
 		_object = clCreateKernel(program.getObject(), kernelName.ptr, &res);
 		
 		mixin(exceptionHandling(

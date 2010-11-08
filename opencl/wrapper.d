@@ -33,6 +33,7 @@ import opencl.c.cl;
 import opencl.kernel;
 import opencl.platform;
 import opencl.device;
+import opencl.event;
 
 package
 {
@@ -275,6 +276,8 @@ private:
 		alias CLDevice Wrapper;
 	static if(is(T == cl_kernel))
 		alias CLKernel Wrapper;
+	static if(is(T == cl_event))
+		alias CLEvent Wrapper;
 	// TODO: rest of the types
 	
 public:
@@ -320,9 +323,22 @@ public:
 		return _objects;
 	}
 	
+	//!
+	package @property T* ptr()
+	{
+		return _objects.ptr;
+	}
+
+	//! get number of Objects
+	@property size_t length()
+	{
+		return _objects.length;
+	}
+
 	/// returns a new instance wrapping object i
 	Wrapper opIndex(size_t i)
 	{
+		// increment reference count
 		return new Wrapper(_objects[i]);
 	}
 	

@@ -32,8 +32,9 @@ import opencl.c.cl;
 import opencl.buffer;
 import opencl.context;
 import opencl.device;
-import opencl.wrapper;
 import opencl.error;
+import opencl.event;
+import opencl.wrapper;
 
 class CLCommandQueue : CLWrapper!(cl_command_queue, clGetCommandQueueInfo)
 {
@@ -50,7 +51,7 @@ public:
 	this(CLContext context, CLDevice device, bool outOfOrder, bool profiling)
 	{
 		cl_int res;
-		super(clCreateCommandQueue(context.getObject(), device.getObject(), outOfOrder ? CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE : 0 | CL_QUEUE_PROFILING_ENABLE, &res));
+		_object = clCreateCommandQueue(context.getObject(), device.getObject(), outOfOrder ? CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE : 0 | CL_QUEUE_PROFILING_ENABLE, &res);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",			"context is not a valid context"],
@@ -101,6 +102,53 @@ public:
 			["CL_OUT_OF_HOST_MEMORY",		""]
 		));
 	}
+	
+	/**
+	 *	enqueue commands to read from a buffer object to host memory or write to a buffer object from host memory
+	 *
+	 *	the command queue and the buffer must be created with the same OpenCL context
+	 *
+	 *	Params:
+	 *		blocking	=	if false, queues a non-blocking read/write command and returns. The contents of the buffer that ptr points to
+	 *								cannot be used until the command has completed. The function returns an event
+	 *								object which can be used to query the execution status of the read command. When the read
+	 *								command has completed, the contents of the buffer that ptr points to can be used by the application
+	 *		offset		=	is the offset in bytes in the buffer object to read from or write to
+	 *		size		=	is the size in bytes of data being read or written
+	 *		ptr			=	is the pointer to buffer in host memory where data is to be read into or to be written from
+	 *		waitlist	=	specifies events that need to complete before this particular command can be executed
+	 *						they act as synchronization points. The context associated with events in waitlist and the queue must be the same
+	 *
+	 *	Returns:
+	 *		an event object that identifies this particular read / write command and can be used to query or queue a wait for this particular command to complete
+	 */
+	private CLEvent enqueueReadWriteBuffer(alias func, PtrType)(CLBuffer buffer, cl_bool blocking, size_t offset, size_t size, PtrType ptr, CLEvents waitlist)
+	in
+	{
+		assert(ptr !is null);
+	}
+	body
+	{
+		cl_event event;
+		cl_int res = func (_object, buffer.getObject(), blocking, offset, size, ptr, waitlist.length, waitlist.ptr, &event);
+		
+		mixin(exceptionHandling(
+			["CL_INVALID_COMMAND_QUEUE",						""],
+			["CL_INVALID_CONTEXT",								"context associated with command queue and buffer or waitlist is not the same"],
+			["CL_INVALID_MEM_OBJECT",							"buffer is invalid"],
+			["CL_INVALID_VALUE",								"region being read specified by (offset, size) is out of bounds"],
+			["CL_INVALID_EVENT_WAIT_LIST",						"event objects in waitlist are not valid events"],
+			["CL_MISALIGNED_SUB_BUFFER_OFFSET",					"buffer is a sub-buffer object and offset specified when the sub-buffer object is created is not aligned to CL_DEVICE_MEM_BASE_ADDR_ALIGN value for device associated with queue"],
+			["CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST",	"the read operations are blocking and the execution status of any of the events in waitlist is a negative integer value"],
+			["CL_MEM_OBJECT_ALLOCATION_FAILURE",				"couldn't allocate memory for data store associated with buffer"],
+			["CL_OUT_OF_RESOURCES",								""],
+			["CL_OUT_OF_HOST_MEMORY",							""]
+		));
+
+		return CLEvent(event);
+	}
+	alias enqueueReadWriteBuffer!(clEnqueueReadBuffer, void*) enqueueReadBuffer; //! ditto
+	alias enqueueReadWriteBuffer!(clEnqueueWriteBuffer, const void*) enqueueWriteBuffer; //! ditto
 	
 	//! are the commands queued in the command queue executed out-of-order
 	@property bool outOfOrder()

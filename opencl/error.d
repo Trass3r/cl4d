@@ -187,14 +187,18 @@ mixin(mixinExceptionClasses(
 		ECD("CL_INVALID_KERNEL_NAME",		"", "CLKernelException"),
 		ECD("CL_INVALID_KERNEL_DEFINITION",	"", "CLKernelException"),
 		ECD("CL_INVALID_EVENT",				"",	"CLEventException"),
-		ECD("CL_INVALID_COMMAND_QUEUE",		"",	"CLCommandQueueException"),
-		ECD("CL_OUT_OF_RESOURCES",			"allocating resources required by the OpenCL implementation on the device has failed", "CLCommandQueueException"),
+		
+		// command queue exceptions
+		ECD("CL_INVALID_COMMAND_QUEUE",			"",	"CLCommandQueueException"),
+		ECD("CL_OUT_OF_RESOURCES",				"allocating resources required by the OpenCL implementation on the device has failed", "CLCommandQueueException"),
 		ECD("CL_MEM_OBJECT_ALLOCATION_FAILURE", "allocating memory for buffer object has failed", "CLBufferException"),
-		ECD("CL_INVALID_QUEUE_PROPERTIES",	"",	"CLCommandQueueException"),
-		ECD("CL_INVALID_BUFFER_SIZE",		"",	"CLBufferException"),
-		ECD("CL_INVALID_HOST_PTR",			"",	"CLBufferException"),
+		ECD("CL_INVALID_QUEUE_PROPERTIES",		"",	"CLCommandQueueException"),
+		ECD("CL_INVALID_EVENT_WAIT_LIST",		"",	"CLCommandQueueException"),
+		ECD("CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST",	"",	"CLCommandQueueException"),
 		
 		// memory object errors
 		ECD("CL_INVALID_MEM_OBJECT",		"memobj is not a valid memory object", "CLBufferException"),
+		ECD("CL_INVALID_BUFFER_SIZE",		"",	"CLBufferException"),
+		ECD("CL_INVALID_HOST_PTR",			"",	"CLBufferException"),
 		ECD("CL_MISALIGNED_SUB_BUFFER_OFFSET","", "CLBufferException"),
 ));

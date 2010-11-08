@@ -58,7 +58,7 @@ public:
 		cl_int res;
 		size_t* lengths = cast(size_t*) [sourceCode.length];
 		char** ptrs = cast(char**) [sourceCode.ptr];
-		super(clCreateProgramWithSource(context.getObject(), 1, ptrs, lengths, &res));
+		_object = clCreateProgramWithSource(context.getObject(), 1, ptrs, lengths, &res);
 		
 		switch (res)
 		{
@@ -91,11 +91,6 @@ public:
 		
 	}
 */
-
-	~this()
-	{
-		release();
-	}
 	
 	/**
 	 * builds (compiles & links) a program executable from the program source or binary for all the
