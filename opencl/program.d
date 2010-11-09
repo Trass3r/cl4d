@@ -166,16 +166,16 @@ public:
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_PROGRAM",				"program is not a valid program object"],
-			["CL_INVALID_PROGRAM_EXECUTABLE",	"there is no successfully built executable for any device in program"],
-			["CL_OUT_OF_HOST_MEMORY",			""]
+			["CL_INVALID_PROGRAM_EXECUTABLE",	"there is no successfully built executable for any device in program"]
 		));
 		
 		auto kernels = new cl_kernel[numKernels];
 		res = clCreateKernelsInProgram(getObject(), kernels.length, kernels.ptr, null);
 
 		mixin(exceptionHandling(
-			["CL_INVALID_VALUE",				"kernels is not NULL and num_kernels is less than the number of kernels in program"]
-//			["CL_OUT_OF_HOST_MEMORY",			""] // TODO: need this?
+			["CL_INVALID_VALUE",				"kernels is not NULL and num_kernels is less than the number of kernels in program"],
+			["CL_OUT_OF_HOST_MEMORY",			""],
+			["CL_OUT_OF_RESOURCES",				""]
 		));
 
 		return new CLKernels(kernels);

@@ -89,6 +89,8 @@ class CLCommandQueueException : CLException {this(cl_int errcode, string msg = "
 /**
  *	this function generates exception handling code that is used all over the place when calling OpenCL functions
  *	thus it is easy to change global behaviour, e.g. removing exception handling completely in release mode
+ *
+ *	NOTE that this function expects the return value of the preceding OpenCL function call to be in cl_int res;
  */
 package string exceptionHandling(E...)(E es)
 {
@@ -195,10 +197,11 @@ mixin(mixinExceptionClasses(
 		ECD("CL_INVALID_QUEUE_PROPERTIES",		"",	"CLCommandQueueException"),
 		ECD("CL_INVALID_EVENT_WAIT_LIST",		"",	"CLCommandQueueException"),
 		ECD("CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST",	"",	"CLCommandQueueException"),
+		ECD("CL_MEM_COPY_OVERLAP",				"", "CLCommandQueueException"),
 		
 		// memory object errors
 		ECD("CL_INVALID_MEM_OBJECT",		"memobj is not a valid memory object", "CLBufferException"),
 		ECD("CL_INVALID_BUFFER_SIZE",		"",	"CLBufferException"),
 		ECD("CL_INVALID_HOST_PTR",			"",	"CLBufferException"),
-		ECD("CL_MISALIGNED_SUB_BUFFER_OFFSET","", "CLBufferException"),
+		ECD("CL_MISALIGNED_SUB_BUFFER_OFFSET","", "CLBufferException")
 ));

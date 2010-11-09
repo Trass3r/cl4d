@@ -36,6 +36,7 @@ import opencl.error;
 import opencl.event;
 import opencl.wrapper;
 
+//!
 class CLCommandQueue : CLWrapper!(cl_command_queue, clGetCommandQueueInfo)
 {
 protected:
@@ -145,7 +146,7 @@ public:
 			["CL_OUT_OF_HOST_MEMORY",							""]
 		));
 
-		return CLEvent(event);
+		return new CLEvent(event);
 	}
 	alias enqueueReadWriteBuffer!(clEnqueueReadBuffer, void*) enqueueReadBuffer; //! ditto
 	alias enqueueReadWriteBuffer!(clEnqueueWriteBuffer, const void*) enqueueWriteBuffer; //! ditto
@@ -174,13 +175,21 @@ public:
 	in
 	{
 		assert(ptr !is null);
-		assert(region[] != 0);
+		assert(region[0] != 0u && region[1] != 0u && region[2] != 0u);
+		if (bufferRowPitch > 0)
+			assert(bufferRowPitch >= region[0]);
+		if (hostRowPitch > 0)
+			assert(hostRowPitch >= region[0]);
+		if (bufferSlicePitch > 0)
+			assert(bufferSlicePitch >= region[1] * bufferRowPitch);
+		if (hostSlicePitch > 0)
+			assert(hostSlicePitch >= region[1] * hostRowPitch);
 	}
 	body
 	{
-		// TODO: leave the default pitch values as 0 and let OpenCL compute or set default values as region[0], etc. see method documentation
+		// TODO: leave the default pitch values as 0 and let OpenCL compute or set default values as region[0]? etc. see method documentation
 		cl_event event;
-		cl_int res = func(_object, buf.getObject(), blocking, bufferOrigin, hostOrigin, region, bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch, ptr, waitlist.length, waitlist.ptr, &event);
+		cl_int res = func(_object, buffer.getObject(), blocking, bufferOrigin.ptr, hostOrigin.ptr, region.ptr, bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch, ptr, waitlist.length, waitlist.ptr, &event);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_COMMAND_QUEUE",						""],
@@ -195,11 +204,103 @@ public:
 			["CL_OUT_OF_HOST_MEMORY",							""]
 		));
 
-			return CLEvent(event);
+		return new CLEvent(event);
 
 	}
 	alias enqueueReadWriteBufferRect!(clEnqueueReadBufferRect, void*) enqueueReadBufferRect; //! ditto
 	alias enqueueReadWriteBufferRect!(clEnqueueWriteBufferRect, const void*) enqueueWriteBufferRect; //! ditto
+	
+	/**
+	 *	enqueues a command to copy a buffer object identified by srcBuffer to another buffer object identified by dstBuffer
+	 *
+	 *	Params:
+	 *	    srcOffset	= the offset where to begin copying data from srcBuffer
+	 *	    dstOffset	= the offset where to begin copying data into dstBuffer
+	 *	    size		= size in bytes to copy
+	 *
+	 *	Returns:
+	 *		an event object that identifies this particular copy command and can be used to
+	 *		query or queue a wait for this particular command to complete
+	 *		The event can be ignored in which case it will not be possible for the application to query the status of this command or queue a
+	 *		wait for this command to complete.  clEnqueueBarrier can be used instead
+	 */
+	CLEvent enqueueCopyBuffer(CLBuffer srcBuffer, CLBuffer dstBuffer, size_t srcOffset, size_t dstOffset, size_t size, CLEvents waitlist = null)
+	{
+		cl_event event;
+		cl_int res = clEnqueueCopyBuffer(_object, srcBuffer.getObject(), dstBuffer.getObject(), srcOffset, dstOffset, size, waitlist.length, waitlist.ptr, &event);
+		
+		mixin(exceptionHandling(
+			["CL_INVALID_COMMAND_QUEUE",		""],
+			["CL_INVALID_CONTEXT",				"context associated with command queue, srcBuffer and dstBuffer are not the same or if the context associated with command queue and events in waitlist are not the same"],
+			["CL_INVALID_MEM_OBJECT",			""],
+			["CL_INVALID_VALUE",				"srcOffset, dstOffset, size, srcOffset + size or dstOffset + size require accessing elements outside the srcBuffer and dstBuffer buffer objects respectively"],
+			["CL_INVALID_EVENT_WAIT_LIST",		"event objects in waitlist are not valid events"],
+			["CL_MISALIGNED_SUB_BUFFER_OFFSET",	"srcBuffer or dstBuffer is a sub-buffer object and offset specified when the sub-buffer object is created is not aligned to CL_DEVICE_MEM_BASE_ADDR_ALIGN value for device associated with queue"],
+			["CL_MEM_COPY_OVERLAP",				"srcBuffer and dstBuffer are the same buffer object and the source and destination regions overlap"],
+			["CL_MEM_OBJECT_ALLOCATION_FAILURE","there is a failure to allocate memory for data store associated with srcBuffer or dstBuffer"],
+			["CL_OUT_OF_RESOURCES",				""],
+			["CL_OUT_OF_HOST_MEMORY",			""]
+		));
+		
+		return new CLEvent(event);
+	}
+	
+	/**
+	 *	enqueues a command to copy a 2D or 3D rectangular region from the buffer object identified by
+	 *	srcBuffer to a 2D or 3D region in the buffer object identified by dstBuffer
+	 *
+	 *	Params:
+	 *	    srcOrigin	=	(x, y, z) offset in the memory region associated with srcBuffer.
+	 *						For a 2D rectangle region, the z value given by src_origin[2] should be 0.
+	 *						The offset in bytes is computed as src_origin[2] * srcSlicePitch + src_origin[1] * srcRowPitch + src_origin[0]
+	 *		dstOrigin	=	analogous to above
+	 *		region		=	(width, height, depth) in bytes of the 2D or 3D rectangle being copied.
+	 *						For a 2D rectangle, the depth value given by region[2] should be 1
+	 *		srcRowPitch	=	length of each row in bytes to be used for the memory region associated with srcBuffer.
+	 *						If srcRowPitch is 0, srcRowPitch is computed as region[0]
+	 *		srcSlicePitch=	length of each 2D slice in bytes to be used for the memory region associated with srcBuffer.
+	 *						If srcSlicePitch is 0, srcSlicePitch is computed as region[1] * srcRowPitch
+	 *
+	 *	Returns:
+	 *		an event object that identifies this particular copy command and can be used to
+	 *		query or queue a wait for this particular command to complete
+	 *		The event can be ignored in which case it will not be possible for the application to query the status of this command or queue a
+	 *		wait for this command to complete.  clEnqueueBarrier can be used instead
+	 */
+	CLEvent enqueueCopyBufferRect(CLBuffer srcBuffer, CLBuffer dstBuffer, const size_t[3] srcOrigin, const size_t[3] dstOrigin, const size_t[3] region,
+            CLEvents waitlist = null, size_t srcRowPitch = 0, size_t srcSlicePitch = 0, size_t dstRowPitch = 0, size_t dstSlicePitch = 0)
+	in
+	{
+		assert(region[0] != 0u && region[1] != 0u && region[2] != 0u);
+		if (srcRowPitch > 0)
+			assert(srcRowPitch >= region[0]);
+		if (dstRowPitch > 0)
+			assert(dstRowPitch >= region[0]);
+		if (srcSlicePitch > 0)
+			assert(srcSlicePitch >= region[1] * srcRowPitch);
+		if (dstSlicePitch > 0)
+			assert(dstSlicePitch >= region[1] * dstRowPitch);
+	}
+	body
+	{
+		cl_event event;
+		cl_int res = clEnqueueCopyBufferRect(_object, srcBuffer.getObject(), dstBuffer.getObject(), srcOrigin.ptr, dstOrigin.ptr, region.ptr, srcRowPitch, srcSlicePitch, dstRowPitch, dstSlicePitch, waitlist.length, waitlist.ptr, &event);
+		
+		mixin(exceptionHandling(
+			["CL_INVALID_COMMAND_QUEUE",		""],
+			["CL_INVALID_CONTEXT",				"context associated with command queue, srcBuffer and dstBuffer are not the same or if the context associated with command queue and events in waitlist are not the same"],
+			["CL_INVALID_MEM_OBJECT",			""],
+			["CL_INVALID_VALUE",				"(src_origin, region) or (dstOrigin, region) require accessing elements outside the srcBuffer and dstBuffer buffer objects respectively"],
+			["CL_INVALID_EVENT_WAIT_LIST",		"event objects in waitlist are not valid events"],
+			["CL_MISALIGNED_SUB_BUFFER_OFFSET",	"srcBuffer or dstBuffer is a sub-buffer object and offset specified when the sub-buffer object is created is not aligned to CL_DEVICE_MEM_BASE_ADDR_ALIGN value for device associated with queue"],
+			["CL_MEM_COPY_OVERLAP",				"srcBuffer and dstBuffer are the same buffer object and the source and destination regions overlap"],
+			["CL_MEM_OBJECT_ALLOCATION_FAILURE","there is a failure to allocate memory for data store associated with srcBuffer or dstBuffer"],
+			["CL_OUT_OF_RESOURCES",				""],
+			["CL_OUT_OF_HOST_MEMORY",			""]
+		));
+		
+		return new CLEvent(event); // TODO: what happens if the return value is ignored in terms of release(event)?
+	}
 	
 	//! are the commands queued in the command queue executed out-of-order
 	@property bool outOfOrder()

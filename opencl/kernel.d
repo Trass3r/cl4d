@@ -35,12 +35,17 @@ import opencl.error;
 import opencl.program;
 import opencl.wrapper;
 
+import std.string : toStringz;
 
 //! collection of several devices
 alias CLObjectCollection!(cl_kernel) CLKernels;
 
 /**
  *
+ *	Kernel objects can only be created once you have a program object with a valid program source
+ *	or binary loaded into the program object and the program executable has been successfully built
+ *	for one or more devices associated with program.  No changes to the program executable are
+ *	allowed while there are kernel objects associated with a program object.
  */
 class CLKernel : CLWrapper!(cl_kernel, clGetKernelInfo)
 {
@@ -65,13 +70,11 @@ public:
 	this(CLProgram program, string kernelName)
 	{
 		cl_int res;
-	
-		// TODO: check kernel name to be zero-terminated
 
 		_program = program;
 		_kernelName = kernelName;
 		
-		_object = clCreateKernel(program.getObject(), kernelName.ptr, &res);
+		_object = clCreateKernel(program.getObject(), toStringz(kernelName), &res);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_PROGRAM",				"program is not a valid program object"],
@@ -79,6 +82,7 @@ public:
 			["CL_INVALID_KERNEL_NAME",			"kernelName is not found in program"],
 			["CL_INVALID_KERNEL_DEFINITION",	"the function definition for __kernel function given by kernelName such as the number of arguments, the argument types are not the same for all devices for which the program executable has been built"],
 			["CL_INVALID_VALUE",				"kernelName is NULL"],
+			["CL_OUT_OF_RESOURCES",				""],
 			["CL_OUT_OF_HOST_MEMORY",			""]
 			));
 	}
@@ -113,6 +117,12 @@ public:
 			return new CLContext(getInfo!(cl_context)(CL_KERNEL_CONTEXT));
 		}
 		
+		CLProgram program()
+		{
+			// TODO: return new CLProgram(getInfo!(cl_program)(CL_KERNEL_PROGRAM));
+			return _program;
+		}
+
 		/**
 		 *	This provides a mechanism for the application to query the maximum
 		 *	work-group size that can be used to execute a kernel on a specific device

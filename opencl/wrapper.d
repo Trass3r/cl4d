@@ -264,6 +264,8 @@ protected:
 
 /**
  *	a collection of OpenCL objects returned by some methods
+ *	Params:
+ *		T = an OpenCL C object like cl_kernel
  */
 class CLObjectCollection(T)
 {
