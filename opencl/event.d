@@ -54,6 +54,25 @@ public:
 	}
 
 	/**
+	 *	waits on the host thread for commands identified by event to complete.
+	 *
+	 *	A command is considered complete if its execution status is CL_COMPLETE or a negative value.
+	 *	This way the event acts as a synchronization point.
+	 */
+	void wait() const
+	{
+		cl_int res = clWaitForEvents(1, &_object);
+		
+		mixin(exceptionHandling(
+			["CL_INVALID_VALUE",		""],
+			["CL_INVALID_EVENT",		""],
+			["CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST",	"execution status of the event is a negative integer value"],
+			["CL_OUT_OF_RESOURCES",		""],
+			["CL_OUT_OF_HOST_MEMORY",	""]
+		));
+	}
+	
+	/**
 	 *	sets the execution status of a user event object
 	 *
 	 *	Params:
