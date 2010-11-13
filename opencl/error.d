@@ -188,6 +188,8 @@ mixin(mixinExceptionClasses(
 		ECD("CL_INVALID_PROGRAM_EXECUTABLE","", "CLProgramException"), // TODO: derive from CLKernelException since it occurs in clCreateKernel?
 		ECD("CL_INVALID_KERNEL_NAME",		"", "CLKernelException"),
 		ECD("CL_INVALID_KERNEL_DEFINITION",	"", "CLKernelException"),
+		ECD("CL_INVALID_KERNEL_ARGS",		"",	"CLKernelException"),
+		ECD("CL_INVALID_WORK_DIMENSION",	"",	"CLKernelException"),
 		ECD("CL_INVALID_EVENT",				"",	"CLEventException"),
 		
 		// command queue exceptions

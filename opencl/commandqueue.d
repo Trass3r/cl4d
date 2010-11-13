@@ -34,6 +34,7 @@ import opencl.context;
 import opencl.device;
 import opencl.error;
 import opencl.event;
+import opencl.kernel;
 import opencl.wrapper;
 
 //!
@@ -102,6 +103,24 @@ public:
 			["CL_OUT_OF_RESOURCES",			""],
 			["CL_OUT_OF_HOST_MEMORY",		""]
 		));
+	}
+	
+	CLEvent enqueueNDRangeKernel(CLKernel kernel, ref NDRange offset, ref NDRange global, ref NDRange local,
+							CLEvents events = null) const
+	{
+		cl_event event;
+		cl_int res = clEnqueueNDRangeKernel(_object, kernel.getObject(), global.dimensions, offset.ptr, global.ptr, local.ptr, events.length, events.ptr, &event);
+		
+		mixin(exceptionHandling(
+			["CL_INVALID_COMMAND_QUEUE",	""],
+			["CL_INVALID_PROGRAM_EXECUTABLE","there is no successfully built program executable available for device associated with the queue"],
+			["CL_INVALID_KERNEL",			""],
+			["CL_INVALID_CONTEXT",			""],
+			["CL_INVALID_KERNEL_ARGS",		"the kernel argument values have not been specified"],
+			["CL_INVALID_WORK_DIMENSION",	""]
+		));
+		
+		return new CLEvent(event);
 	}
 	
 	/**

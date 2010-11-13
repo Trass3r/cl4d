@@ -37,6 +37,35 @@ import opencl.wrapper;
 
 import std.string : toStringz;
 
+//! NDRange struct
+struct NDRange
+{
+	size_t[3] sizes;
+
+	//!
+	this(size_t x, size_t y = 0, size_t z = 0)
+	{
+		sizes[0] = x;
+		sizes[1] = y;
+		sizes[2] = z;
+	}
+
+	//! returns a pointer to the sizes array
+	@property const ptr()
+	{
+		return &sizes[0];
+	}
+	
+	//! returns number of work dimensions
+	@property cl_uint dimensions() const
+	{
+		return sizes[2] != 0 ? 3 : (sizes[1] != 0 ? 2 : 1);
+	}
+}
+
+//! null for NDRange
+__gshared immutable NullRange = NDRange();
+
 //! collection of several devices
 alias CLObjectCollection!(cl_kernel) CLKernels;
 
@@ -102,14 +131,6 @@ public:
 			return getInfo!(cl_uint)(CL_KERNEL_NUM_ARGS);
 		}
 		
-		/// Return the program object associated with kernel
-		CLProgram program()
-		{
-			// TODO: get info and assert
-			// getInfo!(cl_program)(CL_KERNEL_PROGRAM);
-			return _program;
-		}
-		
 		/// Return the context associated with kernel
 		CLContext context()
 		{
@@ -117,6 +138,7 @@ public:
 			return new CLContext(getInfo!(cl_context)(CL_KERNEL_CONTEXT));
 		}
 		
+		//! Return the program object associated with kernel
 		CLProgram program()
 		{
 			// TODO: return new CLProgram(getInfo!(cl_program)(CL_KERNEL_PROGRAM));

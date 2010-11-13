@@ -39,6 +39,8 @@ abstract class CLMemory : CLWrapper!(cl_mem, clGetMemObjectInfo)
 private:
 
 protected:
+	this(){}
+
 	//!
 	this(cl_mem buffer)
 	{
