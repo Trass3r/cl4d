@@ -16,7 +16,9 @@ import opencl.error;
 import opencl.memory;
 import opencl.wrapper;
 
-//! buffer class
+/**
+ *	buffer objects are generic memory objects for containing any type of data
+ */
 class CLBuffer : CLMemory
 {
 private:
@@ -31,21 +33,20 @@ protected:
 public:
 	/**
 	 *	create a buffer object from hostbuf
-	 *	TODO: hide cl_mem_flags?
 	 *
 	 *	Params:
 	 *		context	=	is a valid OpenCL context used to create the buffer object
 	 *		flags	=	is a bit-field that is used to specify allocation and usage information such as the memory
 	 *					arena that should be used to allocate the buffer object and how it will be used
-	 *		hostbuf	=	is a pointer to the buffer data that may already be allocated by the application
+	 *		datasize=	size in bytes of the buffer object to be allocated
+	 *		hostptr	=	is a pointer to the buffer data that may already be allocated by the application
 	 */
-	this(CLContext context, cl_mem_flags flags = CL_MEM_READ_ONLY, void[] hostbuf = null)
+	this(CLContext context, cl_mem_flags flags, size_t datasize, void* hostptr = null)
 	{
-		// TODO: debug to see what happens if hostbuf is really null and check against
-		// perform argument checks? is it necessary or just leave it to OpenCL?
+		// TODO: perform argument checks? is it necessary or just leave it to OpenCL?
 
 		cl_int res;
-		_object = clCreateBuffer(context.getObject(), flags, hostbuf.length, hostbuf.ptr, &res);
+		_object = clCreateBuffer(context.getObject(), flags, datasize, hostptr, &res);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",				""],
@@ -56,7 +57,7 @@ public:
 			["CL_OUT_OF_HOST_MEMORY",			""]
 		));
 	}
-
+	
 	/**
 	 *	create a new buffer object representing a specific region in this buffer
 	 *

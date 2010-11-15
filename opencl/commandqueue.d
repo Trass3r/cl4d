@@ -30,12 +30,19 @@ protected:
 	}
 
 public:
-	//! creates a command-queue on a specific device
-	// TODO: only pass a CLDevice?
-	this(CLContext context, CLDevice device, bool outOfOrder, bool profiling)
+	/**
+	 *	creates a command-queue on a specific device
+	 *
+	 *	Params:
+	 *		context		=	must be a valid context
+	 *		device		=	must be a device associated with context
+	 *		outOfOrder	=	Determines whether the commands queued in the command-queue are executed in-order or out-oforder
+	 *		profiling	=	Enable or disable profiling of commands in the command-queue
+	 */
+	this(CLContext context, CLDevice device, bool outOfOrder = false, bool profiling = false)
 	{
 		cl_int res;
-		_object = clCreateCommandQueue(context.getObject(), device.getObject(), outOfOrder ? CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE : 0 | CL_QUEUE_PROFILING_ENABLE, &res);
+		_object = clCreateCommandQueue(context.getObject(), device.getObject(), (outOfOrder ? CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE : 0) | (profiling ? CL_QUEUE_PROFILING_ENABLE : 0), &res);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",			"context is not a valid context"],
@@ -88,10 +95,10 @@ public:
 	}
 	
 	CLEvent enqueueNDRangeKernel(CLKernel kernel, ref NDRange offset, ref NDRange global, ref NDRange local,
-							CLEvents events = null) const
+							CLEvents waitlist = null) const
 	{
 		cl_event event;
-		cl_int res = clEnqueueNDRangeKernel(_object, kernel.getObject(), global.dimensions, offset.ptr, global.ptr, local.ptr, events.length, events.ptr, &event);
+		cl_int res = clEnqueueNDRangeKernel(_object, kernel.getObject(), global.dimensions, offset.ptr, global.ptr, local.ptr, waitlist.length, waitlist.ptr, &event);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_COMMAND_QUEUE",	""],
@@ -124,7 +131,7 @@ public:
 	 *	Returns:
 	 *		an event object that identifies this particular read / write command and can be used to query or queue a wait for this particular command to complete
 	 */
-	private CLEvent enqueueReadWriteBuffer(alias func, PtrType)(CLBuffer buffer, cl_bool blocking, size_t offset, size_t size, PtrType ptr, CLEvents waitlist)
+	private CLEvent enqueueReadWriteBuffer(alias func, PtrType)(CLBuffer buffer, cl_bool blocking, size_t offset, size_t size, PtrType ptr, CLEvents waitlist = null)
 	in
 	{
 		assert(ptr !is null);

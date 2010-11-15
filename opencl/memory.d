@@ -15,7 +15,9 @@ import opencl.context;
 import opencl.error;
 import opencl.wrapper;
 
-//! buffer class
+/**
+ *	Memory objects are reserved regions of global device memory that can serve as containers for your data
+ */
 abstract class CLMemory : CLWrapper!(cl_mem, clGetMemObjectInfo)
 {
 private:
