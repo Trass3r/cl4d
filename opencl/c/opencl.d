@@ -1,5 +1,5 @@
 /**
- *	
+ *	just publically imports all the other modules
  */
 module opencl.c.opencl;
 
