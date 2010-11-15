@@ -17,6 +17,8 @@
  */
 module opencl.c.cl_ext;
 
+import opencl.c.cl;
+
 extern(System):
 
 enum

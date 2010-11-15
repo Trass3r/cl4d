@@ -17,6 +17,7 @@
  */
 module opencl.c.cl_gl_ext;
 
+import opencl.c.cl;
 import opencl.c.cl_gl;
 
 extern(System):

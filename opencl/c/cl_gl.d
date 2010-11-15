@@ -27,7 +27,7 @@ extern(System):
 typedef cl_uint	 cl_gl_object_type;
 typedef cl_uint	 cl_gl_texture_info;
 typedef cl_uint	 cl_gl_platform_info;
-// TODO: typedef struct __GLsync *cl_GLsync;
+typedef void* cl_GLsync; // typedef struct __GLsync *cl_GLsync;
 
 enum
 {

@@ -11,6 +11,7 @@
 module opencl.all;
 
 public import
+	opencl.c.opencl,
 	opencl.buffer,
 	opencl.commandqueue,
 	opencl.context,
