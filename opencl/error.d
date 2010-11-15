@@ -172,6 +172,10 @@ mixin(mixinExceptionClasses(
 		ECD("CL_INVALID_KERNEL_DEFINITION",	"", "CLKernelException"),
 		ECD("CL_INVALID_KERNEL_ARGS",		"",	"CLKernelException"),
 		ECD("CL_INVALID_WORK_DIMENSION",	"",	"CLKernelException"),
+		ECD("CL_INVALID_ARG_INDEX",			"",	"CLKernelException"),
+		ECD("CL_INVALID_ARG_VALUE",			"",	"CLKernelException"),
+		ECD("CL_INVALID_SAMPLER",			"",	"CLKernelException"),
+		ECD("CL_INVALID_ARG_SIZE",			"",	"CLKernelException"),
 		ECD("CL_INVALID_EVENT",				"",	"CLEventException"),
 		
 		// command queue exceptions

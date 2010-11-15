@@ -98,6 +98,43 @@ public:
 			));
 	}
 	
+	/**
+	 *	A shorthand function for setting all the arguments for a kernel
+	 */
+	void setArgs(ArgTypes...)(ArgTypes args)
+	in
+	{
+		assert(args.length == numArgs);
+	}
+	body
+	{
+		foreach(idx, arg; args)
+			setArg(idx, arg.sizeof, &arg);
+	}
+	
+	/**
+	 *	set the argument value for a specific argument of a kernel
+	 *
+	 *	Params:
+	 *		idx	=	indices go from 0 for the leftmost argument to n - 1
+	 *		value=	TODO: go through specs pp. 127f
+	 */
+	void setArg(cl_uint idx, size_t size, const void* value)
+	{
+		cl_int res = clSetKernelArg(_object, idx, size, value);
+		
+		mixin(exceptionHandling(
+			["CL_INVALID_KERNEL",		""],
+			["CL_INVALID_ARG_INDEX",	""],
+			["CL_INVALID_ARG_VALUE",	""],
+			["CL_INVALID_MEM_OBJECT",	"argument declared to be a memory object when the specified value is not a valid memory object"],
+			["CL_INVALID_SAMPLER",		"argument declared to be of type sampler_t when the specified arg_value is not a valid sampler object"],
+			["CL_INVALID_ARG_SIZE",		"arg_size does not match the size of the data type for an argument that is not a memory object or if the argument is a memory object and arg_size != cl_mem.sizeof or if arg_size is zero and the argument is declared with the __local qualifier or if the argument is a sampler and arg_size != cl_sampler.sizeof"],
+			["CL_OUT_OF_RESOURCES",		""],
+			["CL_OUT_OF_HOST_MEMORY",	""]
+		));
+	}
+	
 	@property
 	{
 		/// Return the kernel function name
