@@ -77,7 +77,7 @@ struct cl_buffer_region
 	size_t				size;
 }
 
-/******************************************************************************/
+/* ************************************************************************** */
 
 enum
 {
@@ -580,8 +580,8 @@ cl_int clGetCommandQueueInfo(
 );
 
 /**
- *  WARNING:
- *     This API introduces mutable state into the OpenCL implementation. It has been REMOVED
+ *  Deprecated:
+ *  This API introduces mutable state into the OpenCL implementation. It has been REMOVED
  *  to better facilitate thread safety.  The 1.0 API is not thread safe. It is not tested by the
  *  OpenCL 1.1 conformance test, and consequently may not work or may not work dependably.
  *  It is likely to be non-performant. Use of this API is not advised. Use at your own risk.

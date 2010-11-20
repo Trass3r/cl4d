@@ -328,12 +328,15 @@ public:
 	
 	/**
 	 *	Describes the execution capabilities of the device.
-	 *	This is a bit-field that describes one or more of the following values:
 	 *
-	 *	CL_EXEC_KERNEL – The OpenCL device can execute OpenCL kernels.
-	 *	CL_EXEC_NATIVE_KERNEL – The OpenCL device can execute native kernels.
+	 *	Returns:
+	 *		a bit-field that describes one or more of the following values:
 	 *
-	 *	The mandated minimum capability is: CL_EXEC_KERNEL.
+	 *		$(UL
+	 *		$(LI CL_EXEC_KERNEL – The OpenCL device can execute OpenCL kernels.)
+	 *		$(LI CL_EXEC_NATIVE_KERNEL – The OpenCL device can execute native kernels.))
+	 *
+	 *		The mandated minimum capability is: CL_EXEC_KERNEL.
 	 */
 	auto deviceExecCapabilities()
 	{
@@ -342,10 +345,13 @@ public:
 	
 	/**
 	 *	Describes the command-queue properties supported by the device.
-	 *	This is a bit-field that describes one or more of the following values:
 	 *
-	 * 	CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE
-	 *	CL_QUEUE_PROFILING_ENABLE
+	 *	Returns:
+	 *		a bit-field that describes one or more of the following values:
+	 *
+	 *	$(UL
+	 * 	$(LI CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE)
+	 *	$(LI CL_QUEUE_PROFILING_ENABLE))
 	 *
 	 *	TODO: make own functions for outOfOrder and profiling?
 	 */
@@ -367,15 +373,17 @@ public:
 	string driverVersion() {return getStringInfo(CL_DRIVER_VERSION);}
 	
 	/**
-	 * get OpenCL profile string
+	 *	get OpenCL profile string
 	 * 
-	 * Returns the profile name supported by the device. 
-	 * The profile name returned can be one of the following strings:
-	 *		FULL_PROFILE - if the device supports the OpenCL specification
+	 *	Returns:
+	 *		the profile name supported by the device. 
+	 *		The profile name returned can be one of the following strings:
+	 * 		$(UL
+	 *		$(LI FULL_PROFILE - if the device supports the OpenCL specification
 	 *		(functionality defined as part of the core specification and does not require 
-	 *		any extensions to be supported). 
+	 *		any extensions to be supported).)
 	 * 
-	 *		EMBEDDED_PROFILE - if the device supports the OpenCL embedded profile.
+	 *		$(LI EMBEDDED_PROFILE - if the device supports the OpenCL embedded profile.))
 	 */
 	string profile() {return getStringInfo(CL_DEVICE_PROFILE);}
 	

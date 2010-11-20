@@ -63,7 +63,7 @@ public:
 		}
 	}
 	
-	/**
+	/*
 	 * creates a program object for a context, and loads the binary bits specified by binary into the program object
 	 *
 	this(CLContext context, ubyte[][] binaries, CLDevice[] devices = null)
@@ -71,8 +71,7 @@ public:
 		cl_int res, binary_status;
 		super(clCreateProgramWithBinary(context.getObject(), 0, devices, binaries.length, ));
 		
-	}
-*/
+	}//*/
 	
 	/**
 	 * builds (compiles & links) a program executable from the program source or binary for all the
