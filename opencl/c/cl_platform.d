@@ -136,7 +136,7 @@ import std.conv;
 // this might look crazy, but eases further changes
 // do a pragma(msg, genCLVectorTypes()); for debugging
 
-// TODO: compiler-specific vector types, e.g. __attribute__((vector_size(16))); for GDC
+// TODO: finish compiler-specific vector types, e.g. __attribute__((vector_size(16))); for GDC
 private string genCLVectorTypes()
 {
 	string res;
@@ -151,12 +151,15 @@ union ` ~ type ~ to!string(size) ~ `
 {
 	`;
     // add aligned attribute if inside GDC
-    version(GNU) res ~= `pragma(GNU_attribute, aligned(` ~ to!string(size) ~ ` * ` ~ type ~ `.sizeof` ~ `)) `;
+    version(GNU) res ~= `pragma(GNU_attribute, aligned(` ~ to!string(size) ~ ` * ` ~ type ~ `.sizeof)) `;
 	res ~= type ~ "[" ~ to!string(size) ~ `] s;
 	alias s this; // allow array access and implicit conversion to the array
 	struct { ` ~ type ~ ` x, y` ~ (size<=2 ? "" : ", z, w") ~ (size>=16 ? ", __spacer4, __spacer5, __spacer6, __spacer7, __spacer8, __spacer9, sa, sb, sc, sd, se, sf" : "") ~ `; }
 	struct { ` ~ type ~ ` s0, s1` ~ (size<=2 ? "" : ", s2, s3") ~ (size>=8 ? ", s4, s5, s6, s7" : "") ~ (size>=16 ? ", s8, s9, sA, sB, sC, sD, sE, sF" : "") ~ `; }
-	struct { ` ~ type ~ (size>2 ? to!string(size/2) : "") ~ ` lo, hi; }
+	struct { ` ~ type ~ (size>2 ? to!string(size/2) : "") ~ ` lo, hi; }`;
+	version(GNU) res ~= `
+	pragma(GNU_attribute, vector_size(` ~ to!string(size) ~ ` * ` ~ type ~ `.sizeof)) ` ~ type ~ " v" ~ to!string(size) ~ `;`;
+	res ~= `
 }
 `;
 		}

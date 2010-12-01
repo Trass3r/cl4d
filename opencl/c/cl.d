@@ -16,6 +16,17 @@ module opencl.c.cl;
 
 public import opencl.c.cl_platform;
 
+//! a helper function to make elements of enums accessable without EnumType. prefix
+string bringToCurrentScope(alias EnumType)()
+{
+	string res = "";
+	foreach (e; __traits(allMembers, EnumType))
+	{
+		res ~= "alias " ~ EnumType.stringof ~ "." ~ e ~ " " ~ e ~ ";\n";
+	}
+    return res;
+}
+
 extern(System):
 
 typedef const(void*)
