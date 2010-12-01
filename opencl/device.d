@@ -349,9 +349,9 @@ public:
 	 *	Returns:
 	 *		a bit-field that describes one or more of the following values:
 	 *
-	 *	$(UL
-	 * 	$(LI CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE)
-	 *	$(LI CL_QUEUE_PROFILING_ENABLE))
+	 *		$(UL
+	 * 		$(LI CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE)
+	 *		$(LI CL_QUEUE_PROFILING_ENABLE))
 	 *
 	 *	TODO: make own functions for outOfOrder and profiling?
 	 */

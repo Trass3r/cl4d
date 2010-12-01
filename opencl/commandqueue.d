@@ -95,10 +95,10 @@ public:
 	}
 	
 	CLEvent enqueueNDRangeKernel(CLKernel kernel, ref NDRange offset, ref NDRange global, ref NDRange local,
-							CLEvents waitlist = null) const
+							CLEvents waitlist = null)
 	{
 		cl_event event;
-		cl_int res = clEnqueueNDRangeKernel(_object, kernel.getObject(), global.dimensions, offset.ptr, global.ptr, local.ptr, waitlist.length, waitlist.ptr, &event);
+		cl_int res = clEnqueueNDRangeKernel(_object, kernel.getObject(), global.dimensions, offset.ptr, global.ptr, local.ptr, waitlist is null ? 0 : waitlist.length, waitlist is null ? null : waitlist.ptr, &event);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_COMMAND_QUEUE",	""],
@@ -139,7 +139,7 @@ public:
 	body
 	{
 		cl_event event;
-		cl_int res = func (_object, buffer.getObject(), blocking, offset, size, ptr, waitlist.length, waitlist.ptr, &event);
+		cl_int res = func (_object, buffer.getObject(), blocking, offset, size, ptr,  waitlist is null ? 0 : waitlist.length,  waitlist is null ? null : waitlist.ptr, &event);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_COMMAND_QUEUE",						""],
@@ -197,7 +197,7 @@ public:
 	{
 		// TODO: leave the default pitch values as 0 and let OpenCL compute or set default values as region[0]? etc. see method documentation
 		cl_event event;
-		cl_int res = func(_object, buffer.getObject(), blocking, bufferOrigin.ptr, hostOrigin.ptr, region.ptr, bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch, ptr, waitlist.length, waitlist.ptr, &event);
+		cl_int res = func(_object, buffer.getObject(), blocking, bufferOrigin.ptr, hostOrigin.ptr, region.ptr, bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch, ptr,  waitlist is null ? 0 : waitlist.length,  waitlist is null ? null : waitlist.ptr, &event);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_COMMAND_QUEUE",						""],
@@ -235,7 +235,7 @@ public:
 	CLEvent enqueueCopyBuffer(CLBuffer srcBuffer, CLBuffer dstBuffer, size_t srcOffset, size_t dstOffset, size_t size, CLEvents waitlist = null)
 	{
 		cl_event event;
-		cl_int res = clEnqueueCopyBuffer(_object, srcBuffer.getObject(), dstBuffer.getObject(), srcOffset, dstOffset, size, waitlist.length, waitlist.ptr, &event);
+		cl_int res = clEnqueueCopyBuffer(_object, srcBuffer.getObject(), dstBuffer.getObject(), srcOffset, dstOffset, size,  waitlist is null ? 0 : waitlist.length,  waitlist is null ? null : waitlist.ptr, &event);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_COMMAND_QUEUE",		""],
@@ -292,7 +292,7 @@ public:
 	body
 	{
 		cl_event event;
-		cl_int res = clEnqueueCopyBufferRect(_object, srcBuffer.getObject(), dstBuffer.getObject(), srcOrigin.ptr, dstOrigin.ptr, region.ptr, srcRowPitch, srcSlicePitch, dstRowPitch, dstSlicePitch, waitlist.length, waitlist.ptr, &event);
+		cl_int res = clEnqueueCopyBufferRect(_object, srcBuffer.getObject(), dstBuffer.getObject(), srcOrigin.ptr, dstOrigin.ptr, region.ptr, srcRowPitch, srcSlicePitch, dstRowPitch, dstSlicePitch,  waitlist is null ? 0 : waitlist.length,  waitlist is null ? null : waitlist.ptr, &event);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_COMMAND_QUEUE",		""],

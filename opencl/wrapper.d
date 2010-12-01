@@ -268,21 +268,20 @@ public:
 	/// takes a list of OpenCL objects returned by some OpenCL functions like GetPlatformIDs
 	this(T[] objects)
 	{
-		_objects = objects;
+		_objects = objects.dup;
 		
 		for(uint i=0; i<objects.length; i++)
 		{
-			// increment the reference counter so the object won't be destroyed
-			// NOTE: nothing to do for platform and device
-			
-			static if(is(T == cl_context))
+			// increment the reference counter so the objects won't be destroyed
+			// TODO: is there a better way than replicating the retain/release code from above?
+			static if (T.stringof[$-3..$] != "_id")
 			{
-				if (clRetainContext(objects[i]) != CL_SUCCESS)
-					throw new CLInvalidContextException();
+				mixin("cl_int res = clRetain" ~ toCamelCase(T.stringof[2..$].dup) ~ (T.stringof == "cl_mem" ? "Object" : "") ~ "(_objects[i]);");
+				mixin(exceptionHandling(
+					["CL_OUT_OF_RESOURCES",		""],
+					["CL_OUT_OF_HOST_MEMORY",	""]
+				));
 			}
-			
-			
-			// TODO: other objects
 		}
 	}
 	
@@ -290,14 +289,15 @@ public:
 	{
 		for(uint i=0; i<_objects.length; i++)
 		{
-			// increment the reference counter so the object won't be destroyed
-			static if(is(T == cl_context))
+			// release all held objects
+			static if (T.stringof[$-3..$] != "_id")
 			{
-				if (clReleaseContext(_objects[i]) != CL_SUCCESS)
-					throw new CLInvalidContextException();
+				mixin("cl_int res = clRelease" ~ toCamelCase(T.stringof[2..$].dup) ~ (T.stringof == "cl_mem" ? "Object" : "") ~ "(_objects[i]);");
+				mixin(exceptionHandling(
+					["CL_OUT_OF_RESOURCES",		""],
+					["CL_OUT_OF_HOST_MEMORY",	""]
+				));
 			}
-			
-			// TODO: other objects
 		}
 	}
 	

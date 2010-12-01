@@ -83,7 +83,7 @@ public:
 			["CL_MISALIGNED_SUB_BUFFER_OFFSET",	"there are no devices in context associated with buffer for which the origin value is aligned to the CL_DEVICE_MEM_BASE_ADDR_ALIGN value"],
 			["CL_MEM_OBJECT_ALLOCATION_FAILURE",""],
 			["CL_OUT_OF_RESOURCES",				""],
-			["CL_OUT_OF_HOST_MEMORY",			""],
+			["CL_OUT_OF_HOST_MEMORY",			""]
 		));
 		
 		return ret;
