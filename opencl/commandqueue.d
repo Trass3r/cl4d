@@ -140,7 +140,17 @@ public:
 			["CL_INVALID_KERNEL",			""],
 			["CL_INVALID_CONTEXT",			""],
 			["CL_INVALID_KERNEL_ARGS",		"the kernel argument values have not been specified"],
-			["CL_INVALID_WORK_DIMENSION",	"global.dimensions is not valid (i.e. between 1 and 3)"]
+			["CL_INVALID_WORK_DIMENSION",	"global.dimensions is not valid (i.e. between 1 and 3)"],
+			["CL_INVALID_GLOBAL_WORK_SIZE",	"global is a NullRange or any of the values specified in global[0], ... global[dims – 1] are 0 or exceed the range given by the sizeof(size_t) for the device on which the kernel execution will be enqueued"],
+			["CL_INVALID_GLOBAL_OFFSET",	"the value specified in global + the corresponding values in offset for any dimensions is greater than the sizeof(size t) for the device on which the kernel execution will be enqueued"],
+			["CL_INVALID_WORK_GROUP_SIZE",	"(local is specified AND (number of workitems specified by global is not evenly divisible by size of work-group given by local or does not match the work-group size specified for kernel using the __attribute__((reqd_work_group_size(X, Y, Z))) qualifier in program source OR the total number of work-items in the work-group computed as local[0] * ... * local[dims – 1] is greater than the value specified by CL_DEVICE_MAX_WORK_GROUP_SIZE)) OR local is a NullRange and the __attribute__((reqd_work_group_size(X, Y, Z))) qualifier is used to declare the work-group size for kernel in the program source."],
+			["CL_INVALID_WORK_ITEM_SIZE",	"the number of work-items specified in any of local[0], ... local[dims – 1] is greater than the corresponding values specified by CL_DEVICE_MAX_WORK_ITEM_SIZES[0], ..., CL_DEVICE_MAX_WORK_ITEM_SIZES[dims – 1]."],
+			["CL_MISALIGNED_SUB_BUFFER_OFFSET","a sub-buffer object is specified as the value for an argument that is a buffer object and the offset specified when the sub-buffer object is created is not aligned to CL_DEVICE_MEM_BASE_ADDR_ALIGN value for device associated with queue."],
+			["CL_INVALID_IMAGE_SIZE",		"an image object is specified as an argument value and the image dimensions (image width, height, specified or compute row and/or slice pitch) are not supported by device associated with queue"],
+			["CL_MEM_OBJECT_ALLOCATION_FAILURE", "could not allocate memory for data store associated with image or buffer objects specified as arguments to kernel"],
+			["CL_INVALID_EVENT_WAIT_LIST",	"objects in waitlist are not valid events"],
+			["CL_OUT_OF_RESOURCES",			"could not queue the execution instance of kernel on the command-queue because of insufficient resources needed to execute the kernel. For example, the explicitly specified local_work_size causes a failure to execute the kernel because of insufficient resources such as registers or local memory. Another example would be the number of read-only image args used in kernel exceed the CL_DEVICE_MAX_READ_IMAGE_ARGS value for device or the number of write-only image args used in kernel exceed the CL_DEVICE_MAX_WRITE_IMAGE_ARGS value for device or the number of samplers used in kernel exceed CL_DEVICE_MAX_SAMPLERS for device"],
+			["CL_OUT_OF_HOST_MEMORY",		""]
 		));
 		
 		return new CLEvent(event);

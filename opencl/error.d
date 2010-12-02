@@ -181,6 +181,11 @@ mixin(mixinExceptionClasses(
 		ECD("CL_INVALID_EVENT_WAIT_LIST",		"",	"CLCommandQueueException"),
 		ECD("CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST",	"",	"CLCommandQueueException"),
 		ECD("CL_MEM_COPY_OVERLAP",				"", "CLCommandQueueException"),
+		ECD("CL_INVALID_GLOBAL_WORK_SIZE",		"", "CLCommandQueueException"),
+		ECD("CL_INVALID_GLOBAL_OFFSET",			"", "CLCommandQueueException"),
+		ECD("CL_INVALID_WORK_GROUP_SIZE",		"", "CLCommandQueueException"),
+		ECD("CL_INVALID_WORK_ITEM_SIZE",		"", "CLCommandQueueException"),
+		ECD("CL_INVALID_IMAGE_SIZE",			"", "CLCommandQueueException"),
 		
 		// memory object errors
 		ECD("CL_INVALID_MEM_OBJECT",		"memobj is not a valid memory object", "CLBufferException"),
