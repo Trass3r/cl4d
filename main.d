@@ -54,7 +54,7 @@ void main(string[] args)
 		// Create CL buffers
 		auto bufferA = new CLBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, va.sizeof, va.ptr);
 		auto bufferB = new CLBuffer(context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, vb.sizeof, vb.ptr);
-		auto bufferC = new CLBuffer(context, CL_MEM_WRITE_ONLY, vc.sizeof);
+		auto bufferC = new CLBuffer(context, CL_MEM_WRITE_ONLY | CL_MEM_USE_HOST_PTR, vc.sizeof, vc.ptr);
 	
 		// Copy lists A and B to the memory buffers
 	//	queue.enqueueWriteBuffer(bufferA, CL_TRUE, 0, va.sizeof, va.ptr);
@@ -65,11 +65,11 @@ void main(string[] args)
 	
 		// Run the kernel on specific ND range
 		auto global	= NDRange(VECTOR_SIZE);
-		auto local	= NDRange(1);
-		queue.enqueueNDRangeKernel(kernel, NullRange, global, local);
-	
+		//auto local	= NDRange(1);
+		queue.enqueueNDRangeKernel(kernel, global);
+
 		// Read buffer vc into a local list
-		queue.enqueueReadBuffer(bufferC, CL_TRUE, 0, vc.sizeof, vc.ptr);
+//		queue.enqueueReadBuffer(bufferC, CL_TRUE, 0, vc.sizeof, vc.ptr);
 	
 		foreach(i,e; vc)
 			writef("%d + %d = %d\n", va[i], vb[i], vc[i]);

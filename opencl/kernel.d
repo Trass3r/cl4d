@@ -20,6 +20,7 @@ import opencl.wrapper;
 import std.string : toStringz;
 
 //! NDRange struct
+// TODO: more dimensions needed? => CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS
 struct NDRange
 {
 	size_t[3] sizes;
@@ -35,13 +36,17 @@ struct NDRange
 	//! returns a pointer to the sizes array
 	@property const ptr()
 	{
-		return &sizes[0];
+		// TODO: any better way to make a NullRange return null?
+		if (dimensions == 0)
+			return cast(const(size_t)*) null;
+		else
+			return &sizes[0];
 	}
 	
 	//! returns number of work dimensions
 	@property cl_uint dimensions() const
 	{
-		return sizes[2] != 0 ? 3 : (sizes[1] != 0 ? 2 : 1);
+		return sizes[2] != 0 ? 3 : (sizes[1] != 0 ? 2 : (sizes[0] != 0 ? 1 : 0));
 	}
 }
 

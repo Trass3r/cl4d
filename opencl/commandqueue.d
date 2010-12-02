@@ -94,7 +94,41 @@ public:
 		));
 	}
 	
-	CLEvent enqueueNDRangeKernel(CLKernel kernel, ref NDRange offset, ref NDRange global, ref NDRange local,
+	/**
+	 *	enqueues a command to execute a kernel on the device associated with this queue
+	 *
+	 *
+	 *	Params:
+	 *	    offset = can be used to specify an array of work_dim unsigned values that describe
+	 *				 the offset used to calculate the global ID of a work-item. If a NullRange, the
+	 *				 global IDs start at offset (0, 0, ... 0)
+	 *		global = describes the number of global work-items in each dimension that will execute the kernel function.
+	 *				 The total number of global work-items is computed as global[0] * ... * global[dims – 1].
+	 *				 See CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS.
+	 *	    local =	 describes the number of work-items that make up a work-group (also referred to as the size of the work-group)
+	 *				 that will execute the kernel and is computed as local[0] * ... * local[dims - 1]
+	 *				 must be less than or equal to the CL_DEVICE_MAX_WORK_GROUP_SIZE value and the number of workitems
+	 *				 specified in local[0], ... local[dims – 1] must be less than or equal to the corresponding values specified by
+	 *				 CL_DEVICE_MAX_WORK_ITEM_SIZES[0], ..., CL_DEVICE_MAX_WORK_ITEM_SIZES[dims – 1].
+	 *
+	 *				 The explicitly specified local worksize will be used to determine how to break the global work-items specified by global into
+	 *				 appropriate work-group instances. If local is specified, the values specified in global[0], ... global[dims - 1] must be evenly
+	 *				 divisible by the corresponding values specified in local[0], ..., local[dims – 1].
+	 *
+	 *				 The work-group size to be used for kernel can also be specified in the program source using the
+	 *				 __attribute__((reqd_work_group_size(X, Y, Z)))qualifier (see section 6.8.2). In this case the size of work group
+	 *				 specified by local_work_size must match the value specified by the reqd_work_group_size attribute qualifier.
+	 *
+	 *				 If local is a NullRange the OpenCL implementation will determine how to be break the global work-items into appropriate work-group instances.
+	 *
+	 *				 These work-group instances are executed in parallel across multiple compute units or concurrently on the same compute unit.
+	 *
+	 *				 Each work-item is uniquely identified by a global identifier. The global ID, which can be read inside the kernel,
+	 *				 is computed using the value given by global_work_size and global_work_offset. In addition, a work-item is also identified
+	 *				 within a work-group by a unique local ID. The local ID, which can also be read by the kernel, is computed using the value given
+	 *				 by local_work_size. The starting local ID is always (0, 0, … 0)
+	 */
+	CLEvent enqueueNDRangeKernel(CLKernel kernel, const ref NDRange global, const ref NDRange local = NullRange, const ref NDRange offset = NullRange,
 							CLEvents waitlist = null)
 	{
 		cl_event event;
@@ -106,7 +140,7 @@ public:
 			["CL_INVALID_KERNEL",			""],
 			["CL_INVALID_CONTEXT",			""],
 			["CL_INVALID_KERNEL_ARGS",		"the kernel argument values have not been specified"],
-			["CL_INVALID_WORK_DIMENSION",	""]
+			["CL_INVALID_WORK_DIMENSION",	"global.dimensions is not valid (i.e. between 1 and 3)"]
 		));
 		
 		return new CLEvent(event);
