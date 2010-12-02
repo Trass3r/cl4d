@@ -93,6 +93,13 @@ public:
 		// TODO: rather use callback?
 		res = clBuildProgram(_object, devices is null ? 0 : cldevices.length, devices is null ? null : cldevices.ptr, options.ptr, null, null);
 		
+		// handle build failures specifically
+		if (res == CL_BUILD_PROGRAM_FAILURE)
+		{
+			throw new CLBuildProgramFailureException(buildLogs());
+			return this;
+		}
+
 		mixin(exceptionHandling(
 			["CL_INVALID_PROGRAM",		""],
 			["CL_INVALID_VALUE",		"device_list is NULL and num_devices is greater than zero, or if device_list is not NULL and num_devices is zero OR pfn_notify is NULL but user_data is not NULL"],
@@ -101,7 +108,6 @@ public:
 			["CL_INVALID_BUILD_OPTIONS","build options specified by options are invalid"],
 			["CL_INVALID_OPERATION",	"the build of a program executable for any of the devices listed in device_list by a previous call to clBuildProgram for program has not completed OR there already are kernel objects attached to the program"],
 			["CL_COMPILER_NOT_AVAILABLE","program is created with clCreateProgramWithSource and a compiler is not available i.e. CL_DEVICE_COMPILER_AVAILABLE specified in table 4.3 is set to CL_FALSE"],
-			["CL_BUILD_PROGRAM_FAILURE","there is a failure to build the program executable. This error will be returned if clBuildProgram does not return until the build has completed"],
 			["CL_OUT_OF_HOST_MEMORY",	""]
 		));
 
@@ -178,42 +184,55 @@ public:
 			throw new CLException(res, "failed unloading compiler, this shouldn't happen in OpenCL 1.0");
 	}
 	
+	/**
+	 *	Returns the build status of program for the specific device.
+	 *
+	 *	This can be one of the following:
+	 *		CL_BUILD_NONE. The build status returned if no build has been performed
+	 *						on the specified program object for device.
+	 *		CL_BUILD_ERROR. The build status returned if the last call to clBuildProgram on the specified
+	 *						program object for device generated an error
+	 *		CL_BUILD_SUCCESS. The build status retrned if the last call to clBuildProgram on the specified
+	 *						program object for device was successful.
+	 *		CL_BUILD_IN_PROGRESS. The build status returned if the last call to clBuildProgram on the specified
+	 *						program object for device has not finished.
+	 */
+	auto buildStatus(CLDevice device)
+	{
+		return getInfo2!(cl_build_status, clGetProgramBuildInfo)(device.getObject(), CL_PROGRAM_BUILD_STATUS);
+	}
+	
+	/**
+	 *	Return the build options specified by the options argument in build() for device.
+	 *	If build status of program for device is CL_BUILD_NONE, an empty string is returned.
+	 */
+	string buildOptions(CLDevice device)
+	{
+		return getArrayInfo2!(ichar, clGetProgramBuildInfo)(device.getObject(), CL_PROGRAM_BUILD_OPTIONS);
+	}
+	
+	/**
+	 *	Return the build log when clBuildProgram was called for device.
+	 *	If build status of program for device is CL_BUILD_NONE, an empty string is returned.
+	 */
+	string buildLog(CLDevice device)
+	{
+		return getArrayInfo2!(ichar, clGetProgramBuildInfo)(device.getObject(), CL_PROGRAM_BUILD_LOG);
+	}
+	
 	@property
 	{
-		/**
-		 *	Returns the build status of program for the specific device.
-		 *
-		 *	This can be one of the following:
-		 *		CL_BUILD_NONE. The build status returned if no build has been performed
-		 *						on the specified program object for device.
-		 *		CL_BUILD_ERROR. The build status returned if the last call to clBuildProgram on the specified
-		 *						program object for device generated an error
-		 *		CL_BUILD_SUCCESS. The build status retrned if the last call to clBuildProgram on the specified
-		 *						program object for device was successful.
-		 *		CL_BUILD_IN_PROGRESS. The build status returned if the last call to clBuildProgram on the specified
-		 *						program object for device has not finished.
-		 */
-		auto buildStatus(CLDevice device)
+		string buildLogs()
 		{
-			return getInfo2!(cl_build_status, clGetProgramBuildInfo)(device.getObject(), CL_PROGRAM_BUILD_STATUS);
-		}
-		
-		/**
-		 *	Return the build options specified by the options argument in build() for device.
-		 *	If build status of program for device is CL_BUILD_NONE, an empty string is returned.
-		 */
-		string buildOptions(CLDevice device)
-		{
-			return getArrayInfo2!(ichar, clGetProgramBuildInfo)(device.getObject(), CL_PROGRAM_BUILD_OPTIONS);
-		}
-		
-		/**
-		 *	Return the build log when clBuildProgram was called for device.
-		 *	If build status of program for device is CL_BUILD_NONE, an empty string is returned.
-		 */
-		string buildLog(CLDevice device)
-		{
-			return getArrayInfo2!(ichar, clGetProgramBuildInfo)(device.getObject(), CL_PROGRAM_BUILD_LOG);
+			auto devices = context.devices;
+			string res = "Build logs:\n";
+			foreach(device; devices)
+			{
+				// TODO: currently build just builds for all devices, but what if build(specific_device) is added?
+				res ~=  device.name ~ ": " ~ buildLog(device) ~ "\n";
+			}
+			
+			return res;
 		}
 		
 		/// TODO: check those stuff for consistency with getInfo results
