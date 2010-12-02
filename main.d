@@ -66,7 +66,10 @@ void main(string[] args)
 		// Run the kernel on specific ND range
 		auto global	= NDRange(VECTOR_SIZE);
 		//auto local	= NDRange(1);
-		queue.enqueueNDRangeKernel(kernel, global);
+		CLEvent execEvent = queue.enqueueNDRangeKernel(kernel, global);
+
+		// wait for the kernel to be executed
+		execEvent.wait();
 
 		// Read buffer vc into a local list
 //		queue.enqueueReadBuffer(bufferC, CL_TRUE, 0, vc.sizeof, vc.ptr);

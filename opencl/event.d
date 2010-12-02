@@ -63,6 +63,8 @@ public:
 	 *		commands that wait on this user event to be terminated.
 	 *
 	 *	clSetUserEventStatus can only be called once to change the execution status of event
+	 *
+	 * TODO: this needs to be put into a CLUserEvent subclass
 	 */
 	@property void status(cl_int executionStatus)
 	{
