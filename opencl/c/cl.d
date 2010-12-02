@@ -46,7 +46,6 @@ typedef const(void*)
 // on the other hand typedefs are needed to be type-safe, esp. for bitfields
 //alias cl_uint			cl_bool;		// WARNING!  Unlike cl_ types in cl_platform.h, cl_bool is not guaranteed to be the same size as the bool in kernels.
 alias cl_ulong		cl_bitfield;
-//typedef cl_bitfield		cl_device_type;
 alias cl_uint			cl_platform_info;
 alias cl_uint			cl_device_info;
 alias cl_bitfield		cl_device_fp_config;

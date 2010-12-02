@@ -49,7 +49,9 @@ public:
 }
 
 /**
+ *	Event objects can be used to track the execution status of a command
  *
+ *	API calls that enqueue commands to a command-queue create a new event object that is returned in the event argument
  */
 class CLEvent
 {
@@ -104,6 +106,7 @@ public:
 		{
 			auto res = getInfo!cl_command_execution_status(CL_EVENT_COMMAND_EXECUTION_STATUS);
 			
+			// error values are negative in this case
 			if (res < 0)
 				throw new CLException(res, "error occured while retrieving event execution status");
 			

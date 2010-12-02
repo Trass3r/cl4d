@@ -52,10 +52,10 @@ public:
 	}
 	
 	/// create a context from all available devices
-	this()
+	this(cl_device_type type = CL_DEVICE_TYPE_ALL)
 	{
 		cl_int res;
-		_object = clCreateContextFromType(null, CL_DEVICE_TYPE_ALL, null, null, &res);
+		_object = clCreateContextFromType(null, type, null, null, &res);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_PLATFORM",		"no platform could be selected"],
@@ -76,146 +76,6 @@ public:
 		CLDevices devices()
 		{
 			return _devices;
-		}
-	}
-}
-
-/**
- * a context using all available GPU devices
- */
-class CLGPUContext : CLContext
-{
-	this()
-	{
-		cl_int res;
-		_object = clCreateContextFromType(null, CL_DEVICE_TYPE_GPU, null, null, &res);
-		
-		switch(res)
-		{
-			case CL_SUCCESS:
-				break;
-			case CL_INVALID_PLATFORM:
-				throw new CLInvalidPlatformException("no platform could be selected");
-				break;
-			case CL_INVALID_VALUE:
-				throw new CLInvalidValueException("internal invalid value error");
-				break;
-			case CL_DEVICE_NOT_AVAILABLE:
-				throw new CLDeviceNotAvailableException("no GPU devices currently available");
-				break;
-			case CL_DEVICE_NOT_FOUND:
-				throw new CLDeviceNotFoundException("no GPU devices were found");
-				break;
-			case CL_OUT_OF_HOST_MEMORY:
-				throw new CLOutOfHostMemoryException();
-				break;
-			default:
-				throw new CLUnrecognizedException(res);
-		}
-	}
-}
-
-/**
-* a context using all available CPU devices
-*/
-class CLCPUContext : CLContext
-{
-	this()
-	{
-		cl_int res;
-		_object = clCreateContextFromType(null, CL_DEVICE_TYPE_CPU, null, null, &res);
-		
-		switch(res)
-		{
-			case CL_SUCCESS:
-				break;
-			case CL_INVALID_PLATFORM:
-				throw new CLInvalidPlatformException("no platform could be selected");
-				break;
-			case CL_INVALID_VALUE:
-				throw new CLInvalidValueException("internal invalid value error");
-				break;
-			case CL_DEVICE_NOT_AVAILABLE:
-				throw new CLDeviceNotAvailableException("no CPU devices currently available");
-				break;
-			case CL_DEVICE_NOT_FOUND:
-				throw new CLDeviceNotFoundException("no CPU devices were found");
-				break;
-			case CL_OUT_OF_HOST_MEMORY:
-				throw new CLOutOfHostMemoryException();
-				break;
-			default:
-				throw new CLUnrecognizedException(res);
-		}
-	}
-}
-
-/**
-* a context using all available accelerator devices
-*/
-class CLAccelContext : CLContext
-{
-	this()
-	{
-		cl_int res;
-		_object = clCreateContextFromType(null, CL_DEVICE_TYPE_ACCELERATOR, null, null, &res);
-		
-		switch(res)
-		{
-			case CL_SUCCESS:
-				break;
-			case CL_INVALID_PLATFORM:
-				throw new CLInvalidPlatformException("no platform could be selected");
-				break;
-			case CL_INVALID_VALUE:
-				throw new CLInvalidValueException("internal invalid value error");
-				break;
-			case CL_DEVICE_NOT_AVAILABLE:
-				throw new CLDeviceNotAvailableException("no accelerator devices currently available");
-				break;
-			case CL_DEVICE_NOT_FOUND:
-				throw new CLDeviceNotFoundException("no accelerator devices were found");
-				break;
-			case CL_OUT_OF_HOST_MEMORY:
-				throw new CLOutOfHostMemoryException();
-				break;
-			default:
-				throw new CLUnrecognizedException(res);
-		}
-	}
-}
-
-/**
-* a context using all available default devices
-*/
-class CLDefaultContext : CLContext
-{
-	this()
-	{
-		cl_int res;
-		_object = clCreateContextFromType(null, CL_DEVICE_TYPE_DEFAULT, null, null, &res);
-		
-		switch(res)
-		{
-			case CL_SUCCESS:
-				break;
-			case CL_INVALID_PLATFORM:
-				throw new CLInvalidPlatformException("no platform could be selected");
-				break;
-			case CL_INVALID_VALUE:
-				throw new CLInvalidValueException("internal invalid value error");
-				break;
-			case CL_DEVICE_NOT_AVAILABLE:
-				throw new CLDeviceNotAvailableException("no devices currently available");
-				break;
-			case CL_DEVICE_NOT_FOUND:
-				throw new CLDeviceNotFoundException("no devices were found");
-				break;
-			case CL_OUT_OF_HOST_MEMORY:
-				throw new CLOutOfHostMemoryException();
-				break;
-			default:
-				throw new CLUnrecognizedException(res);
 		}
 	}
 }
