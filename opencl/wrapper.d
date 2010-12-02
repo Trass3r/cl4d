@@ -17,8 +17,6 @@ import opencl.platform;
 import opencl.device;
 import opencl.event;
 
-import std.stdio;
-
 package
 {
 	alias const(char) cchar;
@@ -46,14 +44,24 @@ protected:
 
 package:
 	this() {}
-	this(T obj)
+
+private import std.stdio;
+	/**
+	 *	create a wrapper around a CL Object
+	 *
+	 *	Params:
+	 *	    increment = increase the object's reference count, necessary e.g. in CLCollection
+	 */
+	this(T obj, bool increment = false)
 	{
 		_object = obj;
 		debug writefln("new reference to %s object created. Reference count before was: %d", typeid(typeof(this)), referenceCount);
 		// increment reference count
-		retain();
+		if (increment)
+			retain();
 	}
 
+	//! release the object
 	~this()
 	{
 		debug writefln("%s object destroyed. Reference count before was: %d", typeid(typeof(this)), referenceCount);
@@ -266,20 +274,21 @@ protected:
 	static if(is(T == cl_event))
 		alias CLEvent Wrapper;
 	// TODO: rest of the types
-	
+
 public:
-	/// takes a list of OpenCL objects returned by some OpenCL functions like GetPlatformIDs
-	this(T[] objects)
+	//! takes a list of OpenCL objects returned by some OpenCL functions like GetPlatformIDs
+	this(T[] objects, bool increment = false)
 	{
 		_objects = objects.dup;
 		
+		if (increment)
 		for(uint i=0; i<objects.length; i++)
 		{
 			// increment the reference counter so the objects won't be destroyed
 			// TODO: is there a better way than replicating the retain/release code from above?
 			static if (T.stringof[$-3..$] != "_id")
 			{
-				mixin("cl_int res = clRetain" ~ toCamelCase(T.stringof[2..$].dup) ~ (T.stringof == "cl_mem" ? "Object" : "") ~ "(_objects[i]);");
+				mixin("cl_int res = clRetain" ~ toCamelCase(T.stringof[2..$].dup) ~ (T.stringof == "cl_mem" ? "Object" : "") ~ "(objects[i]);");
 				mixin(exceptionHandling(
 					["CL_OUT_OF_RESOURCES",		""],
 					["CL_OUT_OF_HOST_MEMORY",	""]
@@ -288,6 +297,7 @@ public:
 		}
 	}
 	
+	//! release all objects
 	~this()
 	{
 		for(uint i=0; i<_objects.length; i++)
@@ -326,7 +336,7 @@ public:
 	Wrapper opIndex(size_t i)
 	{
 		// increment reference count
-		return new Wrapper(_objects[i]);
+		return new Wrapper(_objects[i], true);
 	}
 	
 	/// for foreach to work
@@ -336,7 +346,7 @@ public:
 		
 		for(uint i=0; i<_objects.length; i++)
 		{
-			Wrapper w = new Wrapper(_objects[i]);
+			Wrapper w = new Wrapper(_objects[i], true);
 			result = dg(w);
 			if(result)
 				break;
