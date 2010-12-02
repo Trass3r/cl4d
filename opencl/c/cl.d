@@ -27,6 +27,8 @@ string bringToCurrentScope(alias EnumType)()
     return res;
 }
 
+//OpenCL Version
+version = CL_VERSION_1_1;
 extern(System):
 
 typedef const(void*)
@@ -40,9 +42,11 @@ typedef const(void*)
 	cl_event,
 	cl_sampler;
 
-alias cl_uint			cl_bool;		// WARNING!  Unlike cl_ types in cl_platform.h, cl_bool is not guaranteed to be the same size as the bool in kernels.
-alias cl_ulong			cl_bitfield;
-alias cl_bitfield		cl_device_type;
+// TODO: info types should be aliases so getInfo isn't instantiated too often for the same types?
+// on the other hand typedefs are needed to be type-safe, esp. for bitfields
+//alias cl_uint			cl_bool;		// WARNING!  Unlike cl_ types in cl_platform.h, cl_bool is not guaranteed to be the same size as the bool in kernels.
+alias cl_ulong		cl_bitfield;
+//typedef cl_bitfield		cl_device_type;
 alias cl_uint			cl_platform_info;
 alias cl_uint			cl_device_info;
 alias cl_bitfield		cl_device_fp_config;
@@ -145,15 +149,13 @@ enum
 	CL_INVALID_GLOBAL_WORK_SIZE                 = -63,
 }
 
-// OpenCL Version
-version = CL_VERSION_1_0;
-version = CL_VERSION_1_1;
-
-enum : cl_bool
+enum cl_bool : cl_uint
 {
 	CL_FALSE                                    = 0,
 	CL_TRUE                                     = 1,
 }
+mixin(bringToCurrentScope!cl_bool());
+
 enum : cl_platform_info
 {
 	CL_PLATFORM_PROFILE                         = 0x0900,
@@ -162,7 +164,7 @@ enum : cl_platform_info
 	CL_PLATFORM_VENDOR                          = 0x0903,
 	CL_PLATFORM_EXTENSIONS                      = 0x0904,
 }
-enum : cl_device_type // bitfield
+enum cl_device_type : cl_bitfield
 {
 	CL_DEVICE_TYPE_DEFAULT                      = (1 << 0),
 	CL_DEVICE_TYPE_CPU                          = (1 << 1),
@@ -170,6 +172,8 @@ enum : cl_device_type // bitfield
 	CL_DEVICE_TYPE_ACCELERATOR                  = (1 << 3),
 	CL_DEVICE_TYPE_ALL                          = 0xFFFFFFFF,
 }
+mixin(bringToCurrentScope!cl_device_type());
+
 enum : cl_device_info
 {
 	CL_DEVICE_TYPE                              = 0x1000,

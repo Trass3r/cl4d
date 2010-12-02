@@ -34,9 +34,9 @@ void main(string[] args)
 		auto queue = new CLCommandQueue(context, devices[0]);
 	    
 		auto program = context.createProgram(`
-				__kernel void sum(	__global const float* a,
-									__global const float* b,
-									__global float* c)
+				__kernel void sum(	__global const int* a,
+									__global const int* b,
+									__global int* c)
 				{
 					int i = get_global_id(0);
 					c[i] = a[i] + b[i];
@@ -47,8 +47,8 @@ void main(string[] args)
 		
 		// create input vectors
 		immutable VECTOR_SIZE = 100;
-		int[VECTOR_SIZE] va; foreach(i,e; va) va[i] = i;
-		int[VECTOR_SIZE] vb; foreach(i,e; vb) vb[i] = vb.length - i;
+		int[VECTOR_SIZE] va = void; foreach(i,e; va) va[i] = i;
+		int[VECTOR_SIZE] vb = void; foreach(i,e; vb) vb[i] = vb.length - i;
 		int[VECTOR_SIZE] vc;
 	
 		// Create CL buffers
@@ -72,7 +72,7 @@ void main(string[] args)
 		queue.enqueueReadBuffer(bufferC, CL_TRUE, 0, vc.sizeof, vc.ptr);
 	
 		foreach(i,e; vc)
-			write("%d + %d = %d\n", va[i], vb[i], vc[i]);
+			writef("%d + %d = %d\n", va[i], vb[i], vc[i]);
 	}
 	catch(Exception e)
 	{

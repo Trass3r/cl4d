@@ -15,6 +15,7 @@ import opencl.device;
 import opencl.error;
 import opencl.wrapper;
 
+//! Platform collection
 alias CLObjectCollection!(cl_platform_id) CLPlatforms;
 
 //! Platform class

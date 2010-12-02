@@ -22,11 +22,6 @@ public:
     {
     	_errcode = errcode;
     	
-    	// TODO: mapping
-    	switch(errcode)
-    	{
-    		
-    	}
         super(msg, next);
     }
 

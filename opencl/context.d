@@ -70,14 +70,17 @@ public:
 		));
 	}
 	
-	~this()
-	{
-		release();
-	}
-	
 	CLProgram createProgram(string sourceCode)
 	{
 		return new CLProgram(this, sourceCode);
+	}
+	
+	@property
+	{
+		CLDevices devices()
+		{
+			return _devices;
+		}
 	}
 }
 

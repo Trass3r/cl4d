@@ -17,6 +17,8 @@ import opencl.platform;
 import opencl.device;
 import opencl.event;
 
+import std.stdio;
+
 package
 {
 	alias const(char) cchar;

@@ -18,18 +18,36 @@ module opencl.c.cl_platform;
 // TODO: on MacOSX API calls are __attribute__((weak_import))
 
 // scalar types, leave as aliases for template instantiation
-alias byte		cl_char;
-alias ubyte		cl_uchar;
-alias short		cl_short;
-alias ushort	cl_ushort;
-alias int		cl_int;
-alias uint		cl_uint;
-alias long		cl_long;
-alias ulong		cl_ulong;
-
-alias ushort	cl_half;
-alias float		cl_float;
-alias double	cl_double;
+version(GNU)
+{
+	alias byte		cl_char;
+	alias ubyte		cl_uchar;
+	pragma(GNU_attribute, aligned(2)) alias short	cl_short;
+	pragma(GNU_attribute, aligned(2)) alias ushort	cl_ushort;
+	pragma(GNU_attribute, aligned(4)) alias int		cl_int;
+	pragma(GNU_attribute, aligned(4)) alias uint	cl_uint;
+	pragma(GNU_attribute, aligned(8)) alias long	cl_long;
+	pragma(GNU_attribute, aligned(8)) alias ulong	cl_ulong;
+	
+	pragma(GNU_attribute, aligned(2)) alias ushort	cl_half;
+	pragma(GNU_attribute, aligned(4)) alias float	cl_float;
+	pragma(GNU_attribute, aligned(8)) alias double	cl_double;
+}
+else
+{
+	alias byte		cl_char;
+	alias ubyte		cl_uchar;
+	alias short		cl_short;
+	alias ushort	cl_ushort;
+	alias int		cl_int;
+	alias uint		cl_uint;
+	alias long		cl_long;
+	alias ulong		cl_ulong;
+	
+	alias ushort	cl_half;
+	alias float		cl_float;
+	alias double	cl_double;
+}
 
 /+
 // Macro names and corresponding values defined by OpenCL
