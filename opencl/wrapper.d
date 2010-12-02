@@ -37,8 +37,10 @@ private alias extern(C) cl_int function(const(void)*, const(void*), cl_uint, siz
  *	This is the base class of all CLObjects
  *	provides getInfo, retain and release functions
  */ 
-abstract class CLWrapper(T, alias infoFunction)
+package string CLWrapper(cstring T, cstring infoFunction)
 {
+//	pragma(msg, infoFunction.stringof);
+	return cast(string)("private:\nalias " ~ T ~ " T;\n alias " ~ infoFunction ~ " infoFunction;\n" ~ q{
 protected:
 	T _object = null;
 
@@ -242,8 +244,7 @@ protected:
 		return cast(string) getArrayInfo!(ichar)(infoname);
 	}
 
-	//	static cl_int getInfo(Arg0, Arg1)(Arg0 arg0, Arg1)
-
+}); // end of q{} wysiwyg string
 }
 
 /**

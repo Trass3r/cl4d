@@ -25,9 +25,9 @@ private:
 
 protected:
 	//!
-	this(cl_mem buffer)
+	this(cl_mem buffer, bool increment = false)
 	{
-		super(buffer);
+		super(buffer, increment);
 	}
 	
 public:

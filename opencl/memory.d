@@ -18,19 +18,10 @@ import opencl.wrapper;
 /**
  *	Memory objects are reserved regions of global device memory that can serve as containers for your data
  */
-abstract class CLMemory : CLWrapper!(cl_mem, clGetMemObjectInfo)
+abstract class CLMemory
 {
-private:
+	mixin(CLWrapper("cl_mem", "clGetMemObjectInfo"));
 
-protected:
-	this(){}
-
-	//!
-	this(cl_mem buffer)
-	{
-		super(buffer);
-	}
-	
 public:
 	/**
 	 *	registers a user callback function with a memory object

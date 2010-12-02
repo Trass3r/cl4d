@@ -23,8 +23,10 @@ import opencl.error;
  * functions and constant data that can be used by __kernel functions. The program executable
  * can be generated online or offline by the OpenCL compiler for the appropriate target device(s).
  */
-class CLProgram : CLWrapper!(cl_program, clGetProgramInfo)
+class CLProgram
 {
+	mixin(CLWrapper("cl_program", "clGetProgramInfo"));
+
 private:
 	CLContext	_context; // the context that contains this program
 //	CLDevices	_devices; // can be subset specified with CreateWithBinary

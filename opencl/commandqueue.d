@@ -20,14 +20,9 @@ import opencl.kernel;
 import opencl.wrapper;
 
 //!
-class CLCommandQueue : CLWrapper!(cl_command_queue, clGetCommandQueueInfo)
+class CLCommandQueue
 {
-protected:
-	//! 
-	this(cl_command_queue commandQueue)
-	{
-		super(commandQueue);
-	}
+	mixin(CLWrapper("cl_command_queue", "clGetCommandQueueInfo"));
 
 public:
 	/**

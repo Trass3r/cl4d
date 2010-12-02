@@ -51,22 +51,11 @@ public:
 /**
  *
  */
-class CLEvent : CLWrapper!(cl_event, clGetEventInfo)
+class CLEvent
 {
-private:
-	CLProgram	_program;
-	string		_eventName;
+	mixin(CLWrapper("cl_event", "clGetEventInfo"));
 
 public:
-	// TODO: this cons. is only here for UserEvent because of implicit super() call
-	this() {}
-
-	//! 
-	this(cl_event event)
-	{
-		super(event);
-	}
-
 	/**
 	 *	waits on the host thread for commands identified by event to complete.
 	 *
