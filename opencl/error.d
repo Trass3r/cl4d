@@ -65,7 +65,7 @@ class CLCommandQueueException : CLException {this(cl_int errcode, string msg = "
 
 /**
  *	this function generates exception handling code that is used all over the place when calling OpenCL functions
- *	thus it is easy to change global behaviour, e.g. removing exception handling completely in release mode
+ *	thus it is easy to change global behavior, e.g. removing exception handling completely in release mode
  *
  *	NOTE that this function expects the return value of the preceding OpenCL function call to be in cl_int res;
  */

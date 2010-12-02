@@ -253,7 +253,7 @@ protected:
  */
 class CLObjectCollection(T)
 {
-private:
+protected:
 	T[] _objects;
 
 	static if(is(T == cl_platform_id))

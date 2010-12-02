@@ -15,9 +15,31 @@ import opencl.error;
 import opencl.program;
 import opencl.wrapper;
 
-//! collection of several devices
-// TODO
-alias CLObjectCollection!(cl_event) CLEvents;
+//! Event collection
+class CLEvents : CLObjectCollection!(cl_event)
+{
+public:
+
+	//!
+	this(cl_event[] objects)
+	{
+		super(objects);
+	}
+
+	/**
+	 *	waits on the host thread for commands identified by events in this list to complete.
+	 *
+	 *	A command is considered complete if its execution status is CL_COMPLETE or a negative value.
+	 *	This way the events in this list act as synchronization points.
+	 */
+	void wait()
+	{
+		foreach(cl_event event; _objects)
+		{
+			(new CLEvent(event)).wait();
+		}
+	}
+}
 
 /**
  *
