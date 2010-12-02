@@ -11,6 +11,7 @@
 module opencl.event;
 
 import opencl.c.cl;
+import opencl.context;
 import opencl.error;
 import opencl.program;
 import opencl.wrapper;
@@ -34,10 +35,16 @@ public:
 	 */
 	void wait()
 	{
-		foreach(cl_event event; _objects)
-		{
-			(new CLEvent(event)).wait();
-		}
+		cl_int res = clWaitForEvents(_objects.length, _objects.ptr);
+
+		mixin(exceptionHandling(
+			["CL_INVALID_VALUE",		"event _objects is null"],
+			["CL_INVALID_CONTEXT",		"the events in this list do not belong to the same context"],
+			["CL_INVALID_EVENT",		""],
+			["CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST",	"execution status of any of the events is a negative integer value"],
+			["CL_OUT_OF_RESOURCES",		""],
+			["CL_OUT_OF_HOST_MEMORY",	""]
+		));
 	}
 }
 
@@ -51,6 +58,9 @@ private:
 	string		_eventName;
 
 public:
+	// TODO: this cons. is only here for UserEvent because of implicit super() call
+	this() {}
+
 	//! 
 	this(cl_event event)
 	{
@@ -76,6 +86,69 @@ public:
 		));
 	}
 	
+	@property
+	{
+		/**
+		 *	the command-queue associated with event
+		 *
+		 *	For user event objects, a null value is returned
+		 */
+		auto commandQueue()
+		{
+			return getInfo!cl_command_queue(CL_EVENT_COMMAND_QUEUE);
+		}
+		
+		//! the context associated with event
+		auto context()
+		{
+			return getInfo!cl_context(CL_EVENT_CONTEXT);
+		}
+
+		//! the command associated with event
+		auto commandType()
+		{
+			return getInfo!cl_command_type(CL_EVENT_COMMAND_TYPE);
+		}
+
+		//! the execution status of the command identified by event
+		auto status()
+		{
+			auto res = getInfo!cl_command_execution_status(CL_EVENT_COMMAND_EXECUTION_STATUS);
+			
+			if (res < 0)
+				throw new CLException(res, "error occured while retrieving event execution status");
+			
+			return res;
+		}
+	} // of @property
+}
+
+/**
+ *	User event class
+ *
+ *	allows applications to enqueue commands that wait on a user event to finish before the command is executed by the device
+ *
+ *	NOTE: Enqueued commands that specify user events in the waitlist argument of
+ *	enqueue*** commands must ensure that the status of these user events being waited on are set
+ *	using the status property before any OpenCL APIs that release OpenCL objects except for
+ *	event objects are called; otherwise the behavior is undefined.
+ */
+class CLUserEvent : CLEvent
+{
+public:
+	//! creates a user event object
+	this(CLContext context)
+	{
+		cl_int res;
+		_object = clCreateUserEvent(context.getObject(), &res);
+		
+		mixin(exceptionHandling(
+			["CL_INVALID_CONTEXT",	""],
+			["CL_OUT_OF_RESOURCES",	""],
+			["CL_OUT_OF_HOST_MEMORY",""]
+		));
+	}
+
 	/**
 	 *	sets the execution status of a user event object
 	 *
@@ -85,13 +158,10 @@ public:
 	 *		commands that wait on this user event to be terminated.
 	 *
 	 *	clSetUserEventStatus can only be called once to change the execution status of event
-	 *
-	 * TODO: this needs to be put into a CLUserEvent subclass
 	 */
-	@property void status(cl_int executionStatus)
+	@property void status(cl_command_execution_status executionStatus)
 	{
-		cl_int res;
-		res = clSetUserEventStatus(_object, executionStatus);
+		cl_int res = clSetUserEventStatus(_object, executionStatus);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_EVENT",		"this is not a valid user event object"],

@@ -18,22 +18,24 @@ protected:
 	cl_int _errcode;
 	
 public:
-    this(cl_int errcode, string msg = "", CLException next = null)
-    {
-    	_errcode = errcode;
-    	
-        super(msg, next);
-    }
+	this(cl_int errcode, string msg = "", CLException next = null)
+	{
+		_errcode = errcode;
+		
+		super(msg, next);
+	}
 
-    this(cl_int errcode, string file, size_t line, CLException next = null)
-    {
-    	_errcode = errcode;
-    	
-    	super("CLException: ", file, line, next);
-    }
-    
-    /// errcode getter
-    cl_int errCode() {return _errcode;}
+	this(cl_int errcode, string file, size_t line, CLException next = null)
+	{
+		_errcode = errcode;
+		
+		super("CLException: ", file, line, next);
+	}
+
+	// TODO: overload toString to contain errcode
+
+	/// errcode getter
+	@property cl_int errCode() {return _errcode;}
 }
 
 /// an unrecognized OpenCL exception

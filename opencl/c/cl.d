@@ -75,7 +75,6 @@ alias cl_uint			cl_build_status;
 alias cl_uint			cl_kernel_info;
 alias cl_uint			cl_kernel_work_group_info;
 alias cl_uint			cl_event_info;
-alias cl_uint			cl_command_type;
 alias cl_uint			cl_profiling_info;
 
 //!
@@ -433,7 +432,9 @@ enum : cl_event_info
 	CL_EVENT_COMMAND_EXECUTION_STATUS           = 0x11D3,
 	CL_EVENT_CONTEXT                            = 0x11D4,
 }
-enum : cl_command_type
+
+//!
+enum cl_command_type : cl_uint
 {
 	CL_COMMAND_NDRANGE_KERNEL                   = 0x11F0,
 	CL_COMMAND_TASK                             = 0x11F1,
@@ -456,13 +457,19 @@ enum : cl_command_type
 	CL_COMMAND_WRITE_BUFFER_RECT                = 0x1202,
 	CL_COMMAND_COPY_BUFFER_RECT                 = 0x1203,
 	CL_COMMAND_USER                             = 0x1204,
-
-	// command execution status
-	CL_COMPLETE                                 = 0x0,
-	CL_RUNNING                                  = 0x1,
-	CL_SUBMITTED                                = 0x2,
-	CL_QUEUED                                   = 0x3,
 }
+mixin(bringToCurrentScope!cl_command_type());
+
+//! used for user events
+enum cl_command_execution_status : cl_uint
+{
+	CL_COMPLETE                                 = 0x0, //! the command has completed
+	CL_RUNNING                                  = 0x1, //! device is currently executing this command
+	CL_SUBMITTED                                = 0x2, //! enqueued command has been submitted by the host to the device associated with the command-queue
+	CL_QUEUED                                   = 0x3, //! command has been enqueued in the command-queue
+}
+mixin(bringToCurrentScope!cl_command_execution_status());
+
 enum : cl_buffer_create_type
 {
 	CL_BUFFER_CREATE_TYPE_REGION                = 0x1220,
@@ -888,7 +895,7 @@ cl_int clReleaseEvent(
 //!
 cl_int clSetUserEventStatus(
 	cl_event	event,
-	cl_int		execution_status);
+	cl_command_execution_status execution_status);
 
 //!
 typedef extern(System) void function(
