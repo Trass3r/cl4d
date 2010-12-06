@@ -57,10 +57,6 @@ alias cl_bitfield		cl_command_queue_properties;
 alias cl_bitfield		cl_context_properties;
 alias cl_uint			cl_context_info;
 alias cl_uint			cl_command_queue_info;
-alias cl_uint			cl_channel_order;
-alias cl_uint			cl_channel_type;
-alias cl_bitfield		cl_mem_flags;
-alias cl_uint			cl_mem_object_type;
 alias cl_uint			cl_mem_info;
 alias cl_uint			cl_image_info;
 alias cl_uint			cl_buffer_create_type;
@@ -287,7 +283,9 @@ enum : cl_command_queue_info
 	CL_QUEUE_REFERENCE_COUNT                    = 0x1092,
 	CL_QUEUE_PROPERTIES                         = 0x1093,
 }
-enum : cl_mem_flags // bitfield
+
+//! CL memory types
+enum cl_mem_flags : cl_bitfield
 {
 	CL_MEM_READ_WRITE                           = (1 << 0),
 	CL_MEM_WRITE_ONLY                           = (1 << 1),
@@ -296,7 +294,10 @@ enum : cl_mem_flags // bitfield
 	CL_MEM_ALLOC_HOST_PTR                       = (1 << 4),
 	CL_MEM_COPY_HOST_PTR                        = (1 << 5),
 }
-enum : cl_channel_order
+mixin(bringToCurrentScope!cl_mem_flags);
+
+//!
+enum cl_channel_order : cl_uint
 {
 	CL_R                                        = 0x10B0,
 	CL_A                                        = 0x10B1,
@@ -312,7 +313,10 @@ enum : cl_channel_order
 	CL_RGx                                      = 0x10BB,
 	CL_RGBx                                     = 0x10BC,
 }
-enum : cl_channel_type
+mixin(bringToCurrentScope!cl_channel_order);
+
+//!
+enum cl_channel_type : cl_uint
 {
 	CL_SNORM_INT8                               = 0x10D0,
 	CL_SNORM_INT16                              = 0x10D1,
@@ -330,12 +334,17 @@ enum : cl_channel_type
 	CL_HALF_FLOAT                               = 0x10DD,
 	CL_FLOAT                                    = 0x10DE,
 }
-enum : cl_mem_object_type
+mixin(bringToCurrentScope!cl_channel_type);
+
+//! 
+enum cl_mem_object_type : cl_uint
 {
 	CL_MEM_OBJECT_BUFFER                        = 0x10F0,
 	CL_MEM_OBJECT_IMAGE2D                       = 0x10F1,
 	CL_MEM_OBJECT_IMAGE3D                       = 0x10F2,
 }
+mixin(bringToCurrentScope!cl_mem_object_type);
+
 enum : cl_mem_info
 {
 	CL_MEM_TYPE                                 = 0x1100,
@@ -896,10 +905,19 @@ cl_int clSetUserEventStatus(
 	cl_event	event,
 	cl_command_execution_status execution_status);
 
-//!
+/**
+ *	callback function type for clSetEventCallback, called asynchronously, must return promptly
+ *
+ *	Params:
+ *		event = the event object for which the callback function is invoked
+ *		command_exec_status = execution status of command for which this callback function is invoked
+ *			If the callback is called as the result of the command associated with
+ *			event being abnormally terminated, an appropriate error code for the error that caused
+ *			the termination will be passed to event_command_exec_status instead
+ */
 typedef extern(System) void function(
-	cl_event,
-	cl_int,
+	cl_event event,
+	cl_int command_exec_status,
 	void*) evt_notify_fn;
 
 //!

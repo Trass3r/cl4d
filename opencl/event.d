@@ -76,6 +76,31 @@ public:
 			["CL_OUT_OF_HOST_MEMORY",	""]
 		));
 	}
+
+	/**
+	 *	registers a user callback function for a specific command execution status.
+	 *
+	 *	The registered callback function will be called when the execution status of command associated with event
+	 *	changes to the specified execution status
+	 *
+	 *	Each call to clSetEventCallback registers the specified user callback function on a callback
+	 *	stack associated with event. The order in which the registered user callback functions are called is undefined
+	 *
+	 *	Params:
+	 *		command_exec_callback_type = The command execution callback values for which a callback can be registered are: CL_COMPLETE
+	 *		pfn_notify = the function to be registered, will be called asynchronously
+	 */
+	void setCallback(cl_command_execution_status command_exec_callback_type, evt_notify_fn pfn_notify, void* userData = null)
+	{
+		cl_int res = clSetEventCallback(_object, command_exec_callback_type, pfn_notify, userData);
+		
+		mixin(exceptionHandling(
+			["CL_INVALID_EVENT",	""],
+			["CL_INVALID_VALUE",	"pfn_notify is null or callback type is not supported"],
+			["CL_OUT_OF_RESOURCES",	""],
+			["CL_OUT_OF_HOST_MEMORY",""]
+		));
+	}
 	
 	@property
 	{
