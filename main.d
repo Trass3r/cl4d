@@ -33,14 +33,14 @@ void main(string[] args)
 		// Create a command queue and use the first device
 		auto queue = new CLCommandQueue(context, devices[0]);
 	    
-		auto program = context.createProgram(`
+		auto program = context.createProgram(q{
 				__kernel void sum(	__global const int* a,
 									__global const int* b,
 									__global int* c)
 				{
 					int i = get_global_id(0);
 					c[i] = a[i] + b[i];
-				} `);
+				} });
 		program.build("-Werror");
 		
 		auto kernel = new CLKernel(program, "sum");
@@ -67,7 +67,7 @@ void main(string[] args)
 		auto global	= NDRange(VECTOR_SIZE);
 		//auto local	= NDRange(1);
 		CLEvent execEvent = queue.enqueueNDRangeKernel(kernel, global);
-
+		queue.flush();
 		// wait for the kernel to be executed
 		execEvent.wait();
 

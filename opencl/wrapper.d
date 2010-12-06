@@ -17,28 +17,26 @@ import opencl.platform;
 import opencl.device;
 import opencl.event;
 
+import std.string;
+
 package
 {
-	alias const(char) cchar;
-	alias const(wchar) cwchar;
-	alias const(dchar) cdchar;
-	alias immutable(char) ichar;
-	alias immutable(wchar) iwchar;
-	alias immutable(dchar) idchar;
-	alias const(char)[] cstring;
+	alias const(char) cchar; //!
+	alias const(wchar) cwchar; //!
+	alias const(dchar) cdchar; //!
+	alias immutable(char) ichar; //!
+	alias immutable(wchar) iwchar; //!
+	alias immutable(dchar) idchar; //!
+	alias const(char)[] cstring; //!
 }
-
-// alternate Info getter functions
-private alias extern(C) cl_int function(const(void)*, const(void*), cl_uint, size_t, void*, size_t*) Func;
 
 /**
  *	This is the base class of all CLObjects
  *	provides getInfo, retain and release functions
  */ 
-package string CLWrapper(cstring T, cstring infoFunction)
+package string CLWrapper(string T, string classInfoFunction)
 {
-//	pragma(msg, infoFunction.stringof);
-	return cast(string)("private:\nalias " ~ T ~ " T;\n alias " ~ infoFunction ~ " infoFunction;\n" ~ q{
+	return "private:\nalias " ~ T ~ " T;\n" ~ replace(q{
 protected:
 	T _object = null;
 
@@ -130,7 +128,7 @@ public:
 protected:
 	// used for all non-array types
 	// TODO: make infoname type-safe, not cl_uint (can vary for certain _object, see cl_mem)
-	U getInfo(U)(cl_uint infoname)
+	U getInfo(U, alias infoFunction = classInfoFunction)(cl_uint infoname)
 	{
 		assert(_object !is null);
 		cl_int res;
@@ -195,7 +193,7 @@ protected:
 	
 	// helper function for all OpenCL Get*Info functions
 	// used for all array return types
-	U[] getArrayInfo(U)(cl_uint infoname)
+	U[] getArrayInfo(U, alias infoFunction = classInfoFunction)(cl_uint infoname)
 	{
 		assert(_object !is null);
 		size_t needed;
@@ -247,12 +245,12 @@ protected:
 		return buffer;
 	}
 	
-	string getStringInfo(cl_uint infoname)
+	string getStringInfo(alias infoFunction = classInfoFunction)(cl_uint infoname)
 	{
-		return cast(string) getArrayInfo!(ichar)(infoname);
+		return cast(string) getArrayInfo!(ichar, infoFunction)(infoname);
 	}
 
-}); // end of q{} wysiwyg string
+}, "classInfoFunction", classInfoFunction); // end of q{} token string and replace call
 }
 
 /**
@@ -267,13 +265,14 @@ protected:
 
 	static if(is(T == cl_platform_id))
 		alias CLPlatform Wrapper;
-	static if(is(T == cl_device_id))
+	else static if(is(T == cl_device_id))
 		alias CLDevice Wrapper;
-	static if(is(T == cl_kernel))
+	else static if(is(T == cl_kernel))
 		alias CLKernel Wrapper;
-	static if(is(T == cl_event))
+	else static if(is(T == cl_event))
 		alias CLEvent Wrapper;
-	// TODO: rest of the types
+	else
+		static assert(0, "object type not supported by CLObjectCollection");
 
 public:
 	//! takes a list of OpenCL objects returned by some OpenCL functions like GetPlatformIDs
