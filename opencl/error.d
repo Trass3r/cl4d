@@ -187,11 +187,13 @@ mixin(mixinExceptionClasses(
 		ECD("CL_INVALID_GLOBAL_OFFSET",			"", "CLCommandQueueException"),
 		ECD("CL_INVALID_WORK_GROUP_SIZE",		"", "CLCommandQueueException"),
 		ECD("CL_INVALID_WORK_ITEM_SIZE",		"", "CLCommandQueueException"),
-		ECD("CL_INVALID_IMAGE_SIZE",			"", "CLCommandQueueException"),
 		
 		// memory object errors
 		ECD("CL_INVALID_MEM_OBJECT",		"memobj is not a valid memory object", "CLBufferException"),
 		ECD("CL_INVALID_BUFFER_SIZE",		"",	"CLBufferException"),
 		ECD("CL_INVALID_HOST_PTR",			"",	"CLBufferException"),
-		ECD("CL_MISALIGNED_SUB_BUFFER_OFFSET","", "CLBufferException")
+		ECD("CL_MISALIGNED_SUB_BUFFER_OFFSET","", "CLBufferException"),
+		ECD("CL_INVALID_IMAGE_FORMAT_DESCRIPTOR","", "CLBufferException"),
+		ECD("CL_INVALID_IMAGE_SIZE",		"",	"CLBufferException"),
+		ECD("CL_IMAGE_FORMAT_NOT_SUPPORTED","", "CLBufferException")
 ));
