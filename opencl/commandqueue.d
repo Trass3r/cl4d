@@ -349,6 +349,47 @@ public:
 		return new CLEvent(event); // TODO: what happens if the return value is ignored in terms of release(event)?
 	}
 	
+	/**
+	 *	enqueues a marker command
+	 *
+	 *	The marker command is not completed until all commands enqueued before it have completed.
+	 *
+	 *	Returns:
+	 *		an event which can be waited on, i.e. this event can be waited on to ensure that all commands, which have been
+	 *		queued before the marker command, have been completed
+	 */
+	CLEvent enqueueMarker()
+	{
+		cl_event event;
+		cl_int res = clEnqueueMarker(_object, &event);
+		
+		mixin(exceptionHandling(
+			["CL_INVALID_COMMAND_QUEUE",	""],
+			["CL_OUT_OF_RESOURCES",			""],
+			["CL_OUT_OF_HOST_MEMORY",		""]
+		));
+		
+		return new CLEvent(event);
+	}
+	
+	/**
+	 *	enqueues a barrier operation
+	 *
+	 *	The clEnqueueBarrier command ensures that all queued
+	 *	commands in command_queue have finished execution before the next batch of commands can
+	 *	begin execution. The clEnqueueBarrier command is a synchronization point
+	 */
+	void enqueueBarrier()
+	{
+		cl_int res = clEnqueueBarrier(_object);
+		
+		mixin(exceptionHandling(
+			["CL_INVALID_COMMAND_QUEUE",	""],
+			["CL_OUT_OF_RESOURCES",			""],
+			["CL_OUT_OF_HOST_MEMORY",		""]
+		));
+	}
+	
 	//! are the commands queued in the command queue executed out-of-order
 	@property bool outOfOrder()
 	{

@@ -57,7 +57,6 @@ __gshared immutable NullRange = NDRange();
 alias CLObjectCollection!(cl_kernel) CLKernels;
 
 /**
- *
  *	Kernel objects can only be created once you have a program object with a valid program source
  *	or binary loaded into the program object and the program executable has been successfully built
  *	for one or more devices associated with program.  No changes to the program executable are
@@ -122,7 +121,11 @@ public:
 	 */
 	void setArg(cl_uint idx, size_t size, const void* value)
 	{
-		cl_int res = clSetKernelArg(_object, idx, size, value);
+		// clSetKernelArg is safe to call from any host thread, and is safe to call re-entrantly so long as concurrent calls operate on different cl_kernel objects
+		// the behavior of the cl_kernel object is undefined if clSetKernelArg is called from multiple host threads on the same cl_kernel object at the same time
+		// TODO: thus, if multiple CLKernel objects wrap the same cl_kernel one, this still makes problems
+		cl_int res = void;
+		synchronized(this) res = clSetKernelArg(_object, idx, size, value);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_KERNEL",		""],

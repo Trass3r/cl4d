@@ -153,6 +153,14 @@ public:
 class CLUserEvent : CLEvent
 {
 public:
+	~this()
+	{
+		// if the last reference is released and status isn't CL_COMPLETE or an error
+		// this event might block enqueue commands or other events waiting for it
+		if(referenceCount == 1)
+			assert(0, "user event will be destroyed that hasn't been set to CL_COMPLETE or an error");
+	}
+
 	//! creates a user event object
 	this(CLContext context)
 	{
