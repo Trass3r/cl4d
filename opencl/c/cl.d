@@ -468,7 +468,7 @@ enum cl_command_type : cl_uint
 }
 mixin(bringToCurrentScope!cl_command_type());
 
-//! used for user events
+//! used for user events etc.
 enum cl_command_execution_status : cl_uint
 {
 	CL_COMPLETE                                 = 0x0, //! the command has completed

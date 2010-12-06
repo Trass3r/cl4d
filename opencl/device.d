@@ -23,16 +23,7 @@ class CLDevice
 {
 	mixin(CLWrapper("cl_device_id", "clGetDeviceInfo"));
 
-private:
-	CLPlatform _platform;
-
 public:
-	///
-	this(CLPlatform platform, cl_device_id device)
-	{
-		_object = device;
-		_platform = platform;
-	}
 
 @property
 {
@@ -357,7 +348,10 @@ public:
 	}
 	
 	/// get the associated platform
-	CLPlatform platform() {return _platform;} // TODO: maybe check with GetDeviceInfo(CL_DEVICE_PLATFORM ) if IDs match
+	CLPlatform platform()
+	{
+		return new CLPlatform(getInfo!cl_platform_id(CL_DEVICE_PLATFORM));
+	}
 	
 	/// get device name
 	string name() {return getStringInfo(CL_DEVICE_NAME);}

@@ -53,16 +53,18 @@ private import std.stdio;
 	this(T obj, bool increment = false)
 	{
 		_object = obj;
-		debug writefln("new reference to %s object created. Reference count before was: %d", typeid(typeof(this)), referenceCount);
+
 		// increment reference count
 		if (increment)
 			retain();
+		
+		debug writefln("wrapped a %s object instance. Reference count is now: %d", T.stringof, referenceCount);
 	}
 
 	//! release the object
 	~this()
 	{
-		debug writefln("%s object destroyed. Reference count before was: %d", typeid(typeof(this)), referenceCount);
+		debug writefln("%s object destroyed. Reference count before destruction: %d", typeid(typeof(this)), referenceCount);
 		release();
 	}
 

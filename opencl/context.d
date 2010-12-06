@@ -27,8 +27,8 @@ class CLContext
 	mixin(CLWrapper("cl_context", "clGetContextInfo"));
 
 private:
-	CLPlatform	_platform;
-	CLDevices	_devices;
+//	CLPlatform	_platform;
+//	CLDevices	_devices;
 
 public:
 	/// creates an OpenCL context with the given devices
@@ -40,22 +40,24 @@ public:
 		auto deviceIDs = devices.getObjArray();
 
 		// TODO: user notification function
-		_object = clCreateContext(null, deviceIDs.length, deviceIDs.ptr, null, null, &res);
-		if(!_object)
-			mixin(exceptionHandling(
-				["CL_INVALID_PLATFORM",		"no valid platform could be selected for context creation"],
-				["CL_INVALID_VALUE",		"devices array has length 0 or a null pointer"],
-				["CL_INVALID_DEVICE",		"devices contains an invalid device or are not associated with the specified platfor"],
-				["CL_DEVICE_NOT_AVAILABLE",	"a device is currently not available even though the device was returned by getDevices"],
-				["CL_OUT_OF_HOST_MEMORY",	""]
-			));
+		cl_context_properties[3] cps = [CL_CONTEXT_PLATFORM, cast(cl_context_properties) (devices[0].platform.getObject()), 0];
+		_object = clCreateContext(cps.ptr, deviceIDs.length, deviceIDs.ptr, null, null, &res);
+
+		mixin(exceptionHandling(
+			["CL_INVALID_PLATFORM",		"no valid platform could be selected for context creation"],
+//			["CL_INVALID_PROPERTY",		"context property name in properties is not a supported property name, the value specified for a supported property name is not valid, OR the same property name is specified more than once"],
+			["CL_INVALID_VALUE",		"devices array has length 0 or a null pointer"],
+			["CL_INVALID_DEVICE",		"devices contains an invalid device or are not associated with the specified platfor"],
+			["CL_DEVICE_NOT_AVAILABLE",	"a device is currently not available even though the device was returned by getDevices"],
+			["CL_OUT_OF_HOST_MEMORY",	""]
+		));
 	}
 	
 	/// create a context from all available devices
 	this(cl_device_type type = CL_DEVICE_TYPE_ALL)
 	{
 		cl_int res;
-		_object = clCreateContextFromType(null, type, null, null, &res);
+		_object = clCreateContextFromType(null, type, null, null, &res); // TODO: make ICD-compatible
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_PLATFORM",		"no platform could be selected"],
@@ -75,7 +77,7 @@ public:
 	{
 		CLDevices devices()
 		{
-			return _devices;
+			assert(0);
 		}
 	}
 }
