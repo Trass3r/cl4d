@@ -27,10 +27,6 @@ class CLProgram
 {
 	mixin(CLWrapper("cl_program", "clGetProgramInfo"));
 
-private:
-	CLContext	_context; // the context that contains this program
-//	CLDevices	_devices; // can be subset specified with CreateWithBinary
-	string		_sourceCode; // the OpenCL C source code
 public:
 	/**
 	 * creates a program object for a context, and loads the source code specified by the text strings in
@@ -43,26 +39,12 @@ public:
 		size_t* lengths = cast(size_t*) [sourceCode.length];
 		char** ptrs = cast(char**) [sourceCode.ptr];
 		_object = clCreateProgramWithSource(context.getObject(), 1, ptrs, lengths, &res);
-		
-		switch (res)
-		{
-			case CL_SUCCESS:
-				_context = context; // TODO: ok like that?
-				_sourceCode = sourceCode;
-				break;
-			case CL_INVALID_CONTEXT:
-				throw new CLInvalidContextException();
-				break;
-			case CL_INVALID_VALUE:
-				throw new CLInvalidValueException("source code string pointer is invalid");
-				break;
-			case CL_OUT_OF_HOST_MEMORY:
-				throw new CLOutOfHostMemoryException();
-				break;
-			default:
-				throw new CLUnrecognizedException(res);
-				break;
-		}
+
+		mixin(exceptionHandling(
+			["CL_INVALID_CONTEXT",		""],
+			["CL_INVALID_VALUE",		"source code string pointer is invalid"],
+			["CL_OUT_OF_HOST_MEMORY",	""]
+		));
 	}
 	
 	/*
@@ -237,12 +219,18 @@ public:
 			return res;
 		}
 		
-		/// TODO: check those stuff for consistency with getInfo results
+		//! the context specified when the program object was created
 		CLContext context()
 		{
-			return _context;
+			return new CLContext(getInfo!cl_context(CL_PROGRAM_CONTEXT));
 		}
-		
+
+		//! number of devices associated with program
+		cl_uint numDevices()
+		{
+			return getInfo!cl_uint(CL_PROGRAM_NUM_DEVICES);
+		}
+
 		/**
 		 * Return the list of devices associated with the program object. This can be the devices associated with context on
 		 * which the program object has been created or can be a subset of devices that are specified when a progam object
@@ -250,20 +238,29 @@ public:
 		 */
 		auto devices()
 		{
-			// TODO: maybe save the devices as a class member
 			cl_device_id[] ids = getArrayInfo!(cl_device_id)(CL_PROGRAM_DEVICES);
 			return new CLDevices(ids);
 		}
-		
-		///
+
+		/**
+		 *	the program source code specified in the constructor
+		 *
+		 *	the source string returned is a concatenation of all source strings specified,
+		 *	with a null terminator. The concatenation strips any nulls in the original source strings.
+		 *
+		 *	If program is created from binaries, a null string or the appropriate program source
+		 *	code is returned depending on whether or not the program source code is stored in the binary
+		 */
 		string sourceCode()
 		{
-			return _sourceCode;
+			return getStringInfo(CL_PROGRAM_SOURCE);
 		}
-		
+
 		/**
-		 * Return the program binaries for all devices associated with the program.
-		 * Returns:
+		 *	the program binaries for all devices associated with the program
+		 *
+		 *	can be an implementation-specific intermediate representation (a.k.a. IR) or
+		 *	device specific executable bits or both
 		 */
 		ubyte[][] binaries()
 		{

@@ -88,4 +88,23 @@ public:
 		
 		return ret;
 	}
+	
+@property
+{
+	//! offset of a sub-buffer object, 0 otherwise
+	size_t offset()
+	{
+		return getInfo!size_t(CL_MEM_OFFSET);
+	}
+	
+	//! the the memory object specified as buffer argument to createSubBuffer, null otherwise
+	CLBuffer superBuffer()
+	{
+		cl_mem sub = getInfo!cl_mem(CL_MEM_ASSOCIATED_MEMOBJECT);
+		if (sub is null)
+			return null;
+		else
+			return new CLBuffer(sub);
+	}
+}
 }

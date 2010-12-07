@@ -45,33 +45,46 @@ public:
 		));
 	}
 
+@property
+{
 	version(CL_VERSION_1_1)
 	//! ditto
-	@property void destructorCallback(mem_notify_fn fpNotify)
+	void destructorCallback(mem_notify_fn fpNotify)
 	{
 		setDestructorCallback(fpNotify);
 	}
-	
-	@property CLContext context()
-	{
-		return null;
-		// TODO
-	}
-	/+
-	@property
-	{
-		bool isBuffer()
-		{
-			auto type = getInfo!cl_mem_object_type(CL_MEM_TYPE);
-			switch(type)
-			{
-				case CL_MEM_OBJECT_BUFFER:
-				
-				break;
 
-				default:
-				break;
-			}
-		}
-	}+/
-}
+	//! context specified when memory object was created
+	CLContext context()
+	{
+		return new CLContext(getInfo!cl_context(CL_MEM_CONTEXT));
+	}
+
+	//! Map count
+	cl_uint mapCount()
+	{
+		return getInfo!cl_uint(CL_MEM_MAP_COUNT);
+	}
+
+	/**
+	 *	If memobj is a Buffer or Image = hostPtr argument value used for creation
+	 *	For a sub-buffer, return the hostPtr + origin value specified when created.
+	 */
+	void* hostPtr()
+	{
+		return getInfo!(void*)(CL_MEM_HOST_PTR);
+	}
+
+	//! actual size of this CLMemory's data store in bytes
+	size_t size()
+	{
+		return getInfo!size_t(CL_MEM_SIZE);
+	}
+
+	//! the flags argument value specified when memobj was created
+	cl_mem_flags flags()
+	{
+		return getInfo!cl_mem_flags(CL_MEM_FLAGS);
+	}
+} // of @property
+} // of CLMemory
