@@ -66,10 +66,6 @@ class CLKernel
 {
 	mixin(CLWrapper("cl_kernel", "clGetKernelInfo"));
 
-private:
-	CLProgram	_program;
-	string		_kernelName;
-
 public:
 	/**
 	 *	create a kernel object
@@ -82,9 +78,6 @@ public:
 	{
 		cl_int res;
 
-		_program = program;
-		_kernelName = kernelName;
-		
 		_object = clCreateKernel(program.getObject(), toStringz(kernelName), &res);
 		
 		mixin(exceptionHandling(
@@ -144,8 +137,7 @@ public:
 		/// Return the kernel function name
 		string kernelName()
 		{
-			assert(getStringInfo(CL_KERNEL_FUNCTION_NAME) == _kernelName);
-			return _kernelName;
+			return getStringInfo(CL_KERNEL_FUNCTION_NAME);
 		}
 		
 		/// Return the number of arguments to kernel
@@ -157,15 +149,13 @@ public:
 		/// Return the context associated with kernel
 		CLContext context()
 		{
-			assert(0, "not implemented yet");
 			return new CLContext(getInfo!(cl_context)(CL_KERNEL_CONTEXT));
 		}
 		
 		//! Return the program object associated with kernel
 		CLProgram program()
 		{
-			// TODO: return new CLProgram(getInfo!(cl_program)(CL_KERNEL_PROGRAM));
-			return _program;
+			return new CLProgram(getInfo!(cl_program)(CL_KERNEL_PROGRAM));
 		}
 
 		/**
