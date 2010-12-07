@@ -25,11 +25,11 @@ public:
 		super(msg, next);
 	}
 
-	this(cl_int errcode, string file, size_t line, CLException next = null)
+	this(cl_int errcode, string msg, string file, size_t line, CLException next = null)
 	{
 		_errcode = errcode;
 		
-		super("CLException: ", file, line, next);
+		super(msg, file, line, next);
 	}
 
 	// TODO: overload toString to contain errcode
@@ -39,31 +39,31 @@ public:
 }
 
 /// an unrecognized OpenCL exception
-class CLUnrecognizedException : CLException {this(cl_int errcode) {super(errcode, "unrecognized OpenCL exception occured");}}
+class CLUnrecognizedException : CLException {this(cl_int errcode, string file = "", size_t line = 0) {super(errcode, "unrecognized OpenCL exception occured", file, line);}}
 
 /// platform exceptions base class
-class CLPlatformException : CLException {this(cl_int errcode, string msg = "") {super(errcode, msg);}}
+class CLPlatformException : CLException {this(cl_int errcode, string msg = "", string file = "", size_t line = 0) {super(errcode, msg, file, line);}}
 
 /// device exceptions base class
-class CLDeviceException : CLException {this(cl_int errcode, string msg = "") {super(errcode, msg);}}
+class CLDeviceException : CLException {this(cl_int errcode, string msg = "", string file = "", size_t line = 0) {super(errcode, msg, file, line);}}
 
 /// context exceptions base class
-class CLContextException : CLException {this(cl_int errcode, string msg = "") {super(errcode, msg);}}
+class CLContextException : CLException {this(cl_int errcode, string msg = "", string file = "", size_t line = 0) {super(errcode, msg, file, line);}}
 
 /// event exceptions base class
-class CLEventException : CLException {this(cl_int errcode, string msg = "") {super(errcode, msg);}}
+class CLEventException : CLException {this(cl_int errcode, string msg = "", string file = "", size_t line = 0) {super(errcode, msg, file, line);}}
 
 /// program exceptions base class
-class CLProgramException : CLException {this(cl_int errcode, string msg = "") {super(errcode, msg);}}
+class CLProgramException : CLException {this(cl_int errcode, string msg = "", string file = "", size_t line = 0) {super(errcode, msg, file, line);}}
 
 /// buffer exceptions base class
-class CLBufferException : CLException {this(cl_int errcode, string msg = "") {super(errcode, msg);}}
+class CLBufferException : CLException {this(cl_int errcode, string msg = "", string file = "", size_t line = 0) {super(errcode, msg, file, line);}}
 
 /// kernel exceptions base class
-class CLKernelException : CLException {this(cl_int errcode, string msg = "") {super(errcode, msg);}}
+class CLKernelException : CLException {this(cl_int errcode, string msg = "", string file = "", size_t line = 0) {super(errcode, msg, file, line);}}
 
 /// command queue exceptions base class
-class CLCommandQueueException : CLException {this(cl_int errcode, string msg = "") {super(errcode, msg);}}
+class CLCommandQueueException : CLException {this(cl_int errcode, string msg = "", string file = "", size_t line = 0) {super(errcode, msg, file, line);}}
 
 /**
  *	this function generates exception handling code that is used all over the place when calling OpenCL functions
@@ -82,13 +82,13 @@ package string exceptionHandling(E...)(E es)
 	foreach(e; es)
 	{
 		res ~= `	case ` ~ e[0] ~ `:
-		throw new CL` ~ toCamelCase(e[0][2..$].dup) ~ `Exception("` ~ e[1] ~ `");
+		throw new CL` ~ toCamelCase(e[0][2..$].dup) ~ `Exception("` ~ e[1] ~ `", __FILE__, __LINE__);
 		break;
 `;
 	}
 	
 	res ~= `	default:
-		throw new CLUnrecognizedException(res);
+		throw new CLUnrecognizedException(res, );
 		break;
 }`;
 	return res;
@@ -140,7 +140,7 @@ private string mixinExceptionClasses(E...)(E es)
 		
 		
 		res ~= `/// 
-class CL` ~ toCamelCase(e.name[2..$].dup) ~ `Exception : ` ~ e.baseclass ~ ` {this(string msg = "") {super(` ~ e.name ~ `, ` ~ ((e.msg != "") ? `"` ~ e.msg ~ `" ~ ` : "") ~ `msg);}}
+class CL` ~ toCamelCase(e.name[2..$].dup) ~ `Exception : ` ~ e.baseclass ~ ` {this(string msg = "", string file = "", size_t line = 0) {super(` ~ e.name ~ `, ` ~ ((e.msg != "") ? `"` ~ e.msg ~ `" ~ ` : "") ~ `msg, file, line);}}
 `;
 
 	}
