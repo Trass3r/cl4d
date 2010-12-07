@@ -335,6 +335,11 @@ public:
 
 	/// returns a new instance wrapping object i
 	Wrapper opIndex(size_t i)
+	in
+	{
+		assert(i < _objects.length);
+	}
+	body
 	{
 		// increment reference count
 		return new Wrapper(_objects[i], true);
