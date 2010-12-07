@@ -27,8 +27,6 @@ string bringToCurrentScope(alias EnumType)()
     return res;
 }
 
-//OpenCL Version
-version = CL_VERSION_1_1;
 extern(System):
 
 typedef const(void*)
@@ -636,6 +634,7 @@ cl_mem clCreateBuffer(
 	cl_int *      errcode_ret
 );
 
+version(CL_VERSION_1_1)
 //!
 cl_mem clCreateSubBuffer(
 	cl_mem					buffer,
@@ -712,6 +711,8 @@ cl_int clGetImageInfo(
 alias extern(System) void function(
 	cl_mem memobj,
 	void* user_data) mem_notify_fn;
+
+version(CL_VERSION_1_1)
 //!
 cl_int clSetMemObjectDestructorCallback(
 	cl_mem	memobj,
@@ -885,6 +886,7 @@ cl_int clGetEventInfo(
 	size_t*           param_value_size_ret
 );
 
+version(CL_VERSION_1_1)
 //!
 cl_event clCreateUserEvent(
 	cl_context	context,
@@ -900,6 +902,7 @@ cl_int clReleaseEvent(
 	cl_event  event
 );
 
+version(CL_VERSION_1_1)
 //!
 cl_int clSetUserEventStatus(
 	cl_event	event,
@@ -921,6 +924,7 @@ typedef extern(System) void function(
 	void*) evt_notify_fn;
 
 //!
+version(CL_VERSION_1_1)
 cl_int clSetEventCallback( cl_event	event,
                     cl_int			command_exec_callback_type,
                     evt_notify_fn	pfn_notify,
@@ -961,6 +965,7 @@ cl_int clEnqueueReadBuffer(
 	cl_event*            event
 );
 
+version(CL_VERSION_1_1)
 //!
 cl_int clEnqueueReadBufferRect(
 	cl_command_queue	command_queue,
@@ -991,6 +996,7 @@ cl_int clEnqueueWriteBuffer(
 	cl_event*           event
 );
 
+version(CL_VERSION_1_1)
 //!
 cl_int clEnqueueWriteBufferRect(
 	cl_command_queue	command_queue,
@@ -1021,6 +1027,7 @@ cl_int clEnqueueCopyBuffer(
 	cl_event*            event
 );
 
+version(CL_VERSION_1_1)
 //!
 cl_int clEnqueueCopyBufferRect(
 		cl_command_queue	command_queue,

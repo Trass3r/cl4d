@@ -23,6 +23,7 @@ abstract class CLMemory
 	mixin(CLWrapper("cl_mem", "clGetMemObjectInfo"));
 
 public:
+	version(CL_VERSION_1_1)
 	/**
 	 *	registers a user callback function with a memory object
 	 *	Each call registers the specified user callback function on a callback stack associated with memobj.
@@ -43,7 +44,8 @@ public:
 			["CL_OUT_OF_HOST_MEMORY",	""]
 		));
 	}
-	
+
+	version(CL_VERSION_1_1)
 	//! ditto
 	@property void destructorCallback(mem_notify_fn fpNotify)
 	{

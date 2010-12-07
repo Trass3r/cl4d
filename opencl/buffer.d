@@ -57,7 +57,8 @@ public:
 			["CL_OUT_OF_HOST_MEMORY",			""]
 		));
 	}
-	
+
+	version(CL_VERSION_1_1)
 	/**
 	 *	create a new buffer object representing a specific region in this buffer
 	 *
@@ -66,7 +67,6 @@ public:
 	 *				  memory object being created and is described in table 5.3
 	 *		origin	= defines the region's offset in this buffer
 	 *		size	= defines the size in bytes
-	 *	Returns:
 	 */
 	CLBuffer createRegionSubBuffer(cl_mem_flags flags, size_t origin, size_t size)
 	{

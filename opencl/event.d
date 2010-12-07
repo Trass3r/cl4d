@@ -90,6 +90,7 @@ public:
 	 *		command_exec_callback_type = The command execution callback values for which a callback can be registered are: CL_COMPLETE
 	 *		pfn_notify = the function to be registered, will be called asynchronously
 	 */
+	version(CL_VERSION_1_1)
 	void setCallback(cl_command_execution_status command_exec_callback_type, evt_notify_fn pfn_notify, void* userData = null)
 	{
 		cl_int res = clSetEventCallback(_object, command_exec_callback_type, pfn_notify, userData);
@@ -140,6 +141,7 @@ public:
 	} // of @property
 }
 
+version(CL_VERSION_1_1)
 /**
  *	User event class
  *
