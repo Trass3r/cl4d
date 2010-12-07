@@ -30,6 +30,11 @@ package
 	alias const(char)[] cstring; //!
 }
 
+//! all CL Classes inherit from this one to enable is(T : CLObject)
+abstract class CLObject
+{
+}
+
 /**
  *	This is the base class of all CLObjects
  *	provides getInfo, retain and release functions

@@ -56,8 +56,6 @@ alias cl_uint			cl_command_queue_info;
 alias cl_uint			cl_mem_info;
 alias cl_uint			cl_image_info;
 alias cl_uint			cl_buffer_create_type;
-alias cl_uint			cl_addressing_mode;
-alias cl_uint			cl_filter_mode;
 alias cl_uint			cl_sampler_info;
 alias cl_uint			cl_program_info;
 alias cl_uint			cl_program_build_info;
@@ -370,7 +368,9 @@ enum : cl_image_info
 	CL_IMAGE_HEIGHT                             = 0x1115,
 	CL_IMAGE_DEPTH                              = 0x1116,
 }
-enum : cl_addressing_mode
+
+//! specifies how out-of-range image coordinates are handled when reading from an image
+enum cl_addressing_mode : cl_uint
 {
 	CL_ADDRESS_NONE                             = 0x1130,
 	CL_ADDRESS_CLAMP_TO_EDGE                    = 0x1131,
@@ -378,11 +378,16 @@ enum : cl_addressing_mode
 	CL_ADDRESS_REPEAT                           = 0x1133,
 	CL_ADDRESS_MIRRORED_REPEAT                  = 0x1134,
 }
-enum : cl_filter_mode
+mixin(bringToCurrentScope!cl_addressing_mode);
+
+//! specifies the type of filter that must be applied when reading an image
+enum cl_filter_mode : cl_uint
 {
 	CL_FILTER_NEAREST                           = 0x1140,
 	CL_FILTER_LINEAR                            = 0x1141,
 }
+mixin(bringToCurrentScope!cl_filter_mode);
+
 enum : cl_sampler_info
 {
 	CL_SAMPLER_REFERENCE_COUNT                  = 0x1150,

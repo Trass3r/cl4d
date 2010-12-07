@@ -21,4 +21,5 @@ public import
 	opencl.image,
 	opencl.kernel,
 	opencl.platform,
-	opencl.program;
+	opencl.program,
+	opencl.sampler;
