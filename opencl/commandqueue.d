@@ -37,7 +37,7 @@ public:
 	this(CLContext context, CLDevice device, bool outOfOrder = false, bool profiling = false)
 	{
 		cl_int res;
-		_object = clCreateCommandQueue(context.getObject(), device.getObject(), (outOfOrder ? CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE : 0) | (profiling ? CL_QUEUE_PROFILING_ENABLE : 0), &res);
+		_object = clCreateCommandQueue(context.getObject(), device.getObject(), (outOfOrder ? CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE : cast(cl_command_queue_properties) 0) | (profiling ? CL_QUEUE_PROFILING_ENABLE : cast(cl_command_queue_properties)0), &res);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",			"context is not a valid context"],

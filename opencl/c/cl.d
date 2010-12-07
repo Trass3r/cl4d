@@ -47,11 +47,8 @@ typedef const(void*)
 alias cl_ulong		cl_bitfield;
 alias cl_uint			cl_platform_info;
 alias cl_uint			cl_device_info;
-alias cl_bitfield		cl_device_fp_config;
 alias cl_uint			cl_device_mem_cache_type;
 alias cl_uint			cl_device_local_mem_type;
-alias cl_bitfield		cl_device_exec_capabilities;
-alias cl_bitfield		cl_command_queue_properties;
 
 alias cl_bitfield		cl_context_properties;
 alias cl_uint			cl_context_info;
@@ -62,7 +59,6 @@ alias cl_uint			cl_buffer_create_type;
 alias cl_uint			cl_addressing_mode;
 alias cl_uint			cl_filter_mode;
 alias cl_uint			cl_sampler_info;
-alias cl_bitfield		cl_map_flags;
 alias cl_uint			cl_program_info;
 alias cl_uint			cl_program_build_info;
 alias cl_uint			cl_build_status;
@@ -232,7 +228,8 @@ enum : cl_device_info
 	CL_DEVICE_NATIVE_VECTOR_WIDTH_HALF          = 0x103C,
 	CL_DEVICE_OPENCL_C_VERSION                  = 0x103D,
 }
-enum : cl_device_fp_config // bitfield
+
+enum cl_device_fp_config : cl_bitfield
 {
 	CL_FP_DENORM                                = (1 << 0),
 	CL_FP_INF_NAN                               = (1 << 1),
@@ -242,6 +239,8 @@ enum : cl_device_fp_config // bitfield
 	CL_FP_FMA                                   = (1 << 5),
 	CL_FP_SOFT_FLOAT                            = (1 << 6),
 }
+mixin(bringToCurrentScope!cl_device_fp_config);
+
 enum : cl_device_mem_cache_type
 {
 	CL_NONE                                     = 0x0,
@@ -253,16 +252,21 @@ enum : cl_device_local_mem_type
 	CL_LOCAL                                    = 0x1,
 	CL_GLOBAL                                   = 0x2,
 }
-enum : cl_device_exec_capabilities // bitfield
+
+enum cl_device_exec_capabilities : cl_bitfield
 {
 	CL_EXEC_KERNEL                              = (1 << 0),
 	CL_EXEC_NATIVE_KERNEL                       = (1 << 1),
 }
-enum : cl_command_queue_properties // bitfield
+mixin(bringToCurrentScope!cl_device_exec_capabilities);
+
+enum cl_command_queue_properties : cl_bitfield
 {
 	CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE      = (1 << 0),
 	CL_QUEUE_PROFILING_ENABLE                   = (1 << 1),
 }
+mixin(bringToCurrentScope!cl_command_queue_properties);
+
 enum : cl_context_info
 {
 	CL_CONTEXT_REFERENCE_COUNT                  = 0x1080,
@@ -387,11 +391,13 @@ enum : cl_sampler_info
 	CL_SAMPLER_ADDRESSING_MODE                  = 0x1153,
 	CL_SAMPLER_FILTER_MODE                      = 0x1154,
 }
-enum : cl_map_flags // bitfield
+enum cl_map_flags : cl_bitfield
 {
 	CL_MAP_READ                                 = (1 << 0),
 	CL_MAP_WRITE                                = (1 << 1),
 }
+mixin(bringToCurrentScope!cl_map_flags);
+
 enum : cl_program_info
 {
 	CL_PROGRAM_REFERENCE_COUNT                  = 0x1160,
