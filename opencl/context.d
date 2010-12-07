@@ -40,8 +40,9 @@ public:
 		auto deviceIDs = devices.getObjArray();
 
 		// TODO: user notification function
-		cl_context_properties[3] cps = [CL_CONTEXT_PLATFORM, cast(cl_context_properties) (devices[0].platform.getObject()), 0];
-		_object = clCreateContext(cps.ptr, deviceIDs.length, deviceIDs.ptr, null, null, &res);
+		//cl_context_properties[3] cps = [CL_CONTEXT_PLATFORM, cast(cl_context_properties) (devices[0].platform.getObject()), 0];
+		// TODO: why doesn't it work with cps?
+		_object = clCreateContext(null /*cps.ptr*/, deviceIDs.length, deviceIDs.ptr, null, null, &res);
 
 		mixin(exceptionHandling(
 			["CL_INVALID_PLATFORM",		"no valid platform could be selected for context creation"],

@@ -14,7 +14,9 @@ import opencl.c.cl;
 import opencl.context;
 import opencl.device;
 import opencl.error;
+import opencl.memory;
 import opencl.program;
+import opencl.sampler;
 import opencl.wrapper;
 
 import std.string : toStringz;
@@ -102,17 +104,35 @@ public:
 	body
 	{
 		foreach(idx, arg; args)
-			setArg(idx, arg.sizeof, &arg);
+			setArg(idx, arg);
 	}
-	
+
 	/**
 	 *	set the argument value for a specific argument of a kernel
 	 *
 	 *	Params:
-	 *		idx	=	indices go from 0 for the leftmost argument to n - 1
-	 *		value=	TODO: go through specs pp. 127f
+	 *		idx = indices go from 0 for the leftmost argument to n - 1
+	 *		arg = the argument to be set
 	 */
-	void setArg(cl_uint idx, size_t size, const void* value)
+	void setArg(ArgType)(cl_uint idx, ArgType arg)
+	{
+		// TODO: handle other cases like pointers etc
+		static if (is(ArgType : CLMemory) || is(ArgType == CLSampler))
+			setArgx(idx, arg.getObject().sizeof, &arg.getObject());
+		else static if (is(ArgType : CLObject))
+			static assert(0, "can't set " ~ ArgType.stringof ~ " as a kernel argument!");
+		else
+			setArgx(idx, arg.sizeof, &arg);
+	}
+
+	/*
+	 *	set the argument value for a specific argument of a kernel
+	 *
+	 *	Params:
+	 *		idx	=	indices go from 0 for the leftmost argument to n - 1
+	 *		value=	see specs pp. 127f
+	 */
+	private void setArgx(cl_uint idx, size_t size, const void* value)
 	{
 		// clSetKernelArg is safe to call from any host thread, and is safe to call re-entrantly so long as concurrent calls operate on different cl_kernel objects
 		// the behavior of the cl_kernel object is undefined if clSetKernelArg is called from multiple host threads on the same cl_kernel object at the same time

@@ -74,10 +74,16 @@ private import std.stdio;
 	}
 
 	// should only be used inside here so reference counting works
-	package T getObject()
+	package T getObject() const
 	{
 		return _object;
 	}
+
+	package ref T getObject()
+	{
+		return _object;
+	}
+
 /+
 	//! ensure that _object isn't null
 	invariant()
