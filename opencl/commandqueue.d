@@ -18,6 +18,7 @@ import opencl.error;
 import opencl.event;
 import opencl.image;
 import opencl.kernel;
+import opencl.memory;
 import opencl.wrapper;
 
 //!
@@ -142,6 +143,11 @@ public:
 		return new CLEvent(event);
 	}
 
+	CLEvent enqueueNativeKernel(void function(void*) func, void* args, size_t cb_args, CLMemories memObjects, const void** argsMemLoc, CLEvents waitlist = null)
+	{
+		// TODO:
+		assert(0);
+	}
 
 	/**
 	 *	enqueues a command to execute a kernel on the device associated with this queue
@@ -252,6 +258,23 @@ public:
 	alias enqueueReadWriteBuffer!(clEnqueueReadBuffer, void*) enqueueReadBuffer; //! ditto
 	alias enqueueReadWriteBuffer!(clEnqueueWriteBuffer, const void*) enqueueWriteBuffer; //! ditto
 
+	/**
+	 *	enqueues a command to map a region of the buffer object given by buffer into the host address
+	 *	space and returns a pointer to this mapped region
+	 *
+	 *	Params:
+	 *	    blocking = 
+	 *	    flags = 
+	 *	    offset = 
+	 *	    cb = 
+	 *	    mapPtr = 
+	 */
+	CLEvent enqueueMapBuffer(CLBuffer buffer, cl_bool blocking, cl_map_flags flags, size_t offset, size_t cb, void** mapPtr, CLEvents waitlist = null)
+	{
+		//TODO
+		assert(0);
+	}
+	
 	/**
 	 *	enqueue commands to read from a 2D or 3D image object to host memory or write to a 2D or 3D image object from host memory
 	 *

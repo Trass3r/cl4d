@@ -13,6 +13,7 @@ module opencl.wrapper;
 import opencl.error;
 import opencl.c.cl;
 import opencl.kernel;
+import opencl.memory;
 import opencl.platform;
 import opencl.device;
 import opencl.event;
@@ -292,6 +293,8 @@ protected:
 		alias CLKernel Wrapper;
 	else static if(is(T == cl_event))
 		alias CLEvent Wrapper;
+	else static if(is(T == cl_mem))
+		alias CLMemory Wrapper;
 	else
 		static assert(0, "object type not supported by CLObjectCollection");
 
