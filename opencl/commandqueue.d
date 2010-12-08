@@ -16,6 +16,7 @@ import opencl.context;
 import opencl.device;
 import opencl.error;
 import opencl.event;
+import opencl.image;
 import opencl.kernel;
 import opencl.wrapper;
 
@@ -197,7 +198,58 @@ public:
 	}
 	alias enqueueReadWriteBuffer!(clEnqueueReadBuffer, void*) enqueueReadBuffer; //! ditto
 	alias enqueueReadWriteBuffer!(clEnqueueWriteBuffer, const void*) enqueueWriteBuffer; //! ditto
-	
+
+	/**
+	 *	enqueue commands to read from a 2D or 3D image object to host memory or write to a 2D or 3D image object from host memory
+	 *
+	 *	the command queue and the image must be created with the same OpenCL context
+	 *
+	 *	Params:
+	 *		blocking	=	if false, queues a non-blocking read/write command and returns. The contents of the image that ptr points to
+	 *								cannot be used until the command has completed. The function returns an event
+	 *								object which can be used to query the execution status of the read command. When the read
+	 *								command has completed, the contents of the image that ptr points to can be used by the application
+	 *		origin		=	(x,y,z) offset in pixels in the image from where to read or write. If image is a 2D image object, the z value given by origin[2] must be 0
+	 *		region		=	(width, height, depth) in pixels of the 2D or 3D rectangle being read or written. If image is a 2D image object, the depth value given by region[2] must be 1
+	 *		rowPitch	=	length of each row in bytes. This value must be greater than or equal to the element size in bytes width.
+	 *						If rowPitch is set to 0, the appropriate row pitch is calculated based on the size of each element in bytes multiplied by width
+	 *		slicePitch	=	size in bytes of the 2D slice of the 3D region of a 3D image being read or written respectively. This must be 0 if image is a 2D image.
+	 *						This value must be greater than or equal to rowPitch * height. If slicePitch is set to 0, the appropriate slice pitch is calculated based on the rowPitch * height
+	 *		ptr			=	is the pointer to a buffer in host memory where image data is to be read into or to be written from
+	 *		waitlist	=	specifies events that need to complete before this particular command can be executed
+	 *						they act as synchronization points. The context associated with events in waitlist and the queue must be the same
+	 *
+	 *	Returns:
+	 *		an event object that identifies this particular read / write command and can be used to query or queue a wait for this particular command to complete
+	 */
+	private CLEvent enqueueReadWriteImage(alias func, PtrType)(CLImage image, cl_bool blocking, const size_t[3] origin, const size_t[3] region, PtrType ptr, size_t rowPitch = 0, size_t slicePitch = 0, CLEvents waitlist = null)
+	in
+	{
+		assert(ptr !is null);
+	}
+	body
+	{
+		cl_event event;
+		cl_int res = func (_object, image.getObject(), blocking, origin.ptr, region.ptr, rowPitch, slicePitch, ptr, waitlist is null ? 0 : waitlist.length,  waitlist is null ? null : waitlist.ptr, &event);
+		
+		mixin(exceptionHandling(
+			["CL_INVALID_COMMAND_QUEUE",						""],
+			["CL_INVALID_CONTEXT",								"context associated with command queue and image or waitlist is not the same"],
+			["CL_INVALID_MEM_OBJECT",							"image is invalid"],
+			["CL_INVALID_VALUE",								"region being read/written specified by (offset, size) is out of bounds"],
+			["CL_INVALID_EVENT_WAIT_LIST",						"event objects in waitlist are not valid events"],
+			["CL_MISALIGNED_SUB_BUFFER_OFFSET",					"buffer is a sub-buffer object and offset specified when the sub-buffer object is created is not aligned to CL_DEVICE_MEM_BASE_ADDR_ALIGN value for device associated with queue"],
+			["CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST",	"the read operations are blocking and the execution status of any of the events in waitlist is a negative integer value"],
+			["CL_MEM_OBJECT_ALLOCATION_FAILURE",				"couldn't allocate memory for data store associated with image"],
+			["CL_OUT_OF_RESOURCES",								""],
+			["CL_OUT_OF_HOST_MEMORY",							""]
+		));
+
+		return new CLEvent(event);
+	}
+	alias enqueueReadWriteImage!(clEnqueueReadImage, void*) enqueueReadImage; //! ditto
+	alias enqueueReadWriteImage!(clEnqueueWriteImage, const void*) enqueueWriteImage; //! ditto
+
 	/**
 	 *	enqueues a command to copy a buffer object identified by srcBuffer to another buffer object identified by dstBuffer
 	 *

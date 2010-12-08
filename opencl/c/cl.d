@@ -1062,8 +1062,8 @@ cl_int clEnqueueReadImage(
 	cl_command_queue      command_queue,
 	cl_mem                image,
 	cl_bool               blocking_read, 
-	const(size_t)*        origin[3],
-	const(size_t)*        region[3],
+	const(size_t)*        origin, // size_t[3]
+	const(size_t)*        region, // size_t[3]
 	size_t                row_pitch,
 	size_t                slice_pitch, 
 	void*                 ptr,
@@ -1076,9 +1076,9 @@ cl_int clEnqueueReadImage(
 cl_int clEnqueueWriteImage(
 	cl_command_queue     command_queue,
 	cl_mem               image,
-	cl_bool              blocking_write, 
-	const(size_t)*       origin[3],
-	const(size_t)*       region[3],
+	cl_bool              blocking_write,
+	const(size_t)*       origin, // size_t[3]
+	const(size_t)*       region, // size_t[3]
 	size_t               input_row_pitch,
 	size_t               input_slice_pitch, 
 	const(void)*         ptr,
@@ -1092,9 +1092,9 @@ cl_int clEnqueueCopyImage(
 	cl_command_queue      command_queue,
 	cl_mem                src_image,
 	cl_mem                dst_image, 
-	const(size_t)*        src_origin[3],
-	const(size_t)*        dst_origin[3],
-	const(size_t)*        region[3], 
+	const(size_t)*        src_origin, // size_t[3]
+	const(size_t)*        dst_origin, // size_t[3]
+	const(size_t)*        region, // size_t[3] 
 	cl_uint               num_events_in_wait_list,
 	const(cl_event)*      event_wait_list,
 	cl_event*             event
@@ -1105,8 +1105,8 @@ cl_int clEnqueueCopyImageToBuffer(
 	cl_command_queue  command_queue,
 	cl_mem            src_image,
 	cl_mem            dst_buffer, 
-	const(size_t)*    src_origin[3],
-	const(size_t)*    region[3], 
+	const(size_t)*    src_origin, // size_t[3]
+	const(size_t)*    region, // size_t[3] 
 	size_t            dst_offset,
 	cl_uint           num_events_in_wait_list,
 	const(cl_event)*  event_wait_list,
@@ -1119,8 +1119,8 @@ cl_int clEnqueueCopyBufferToImage(
 	cl_mem            src_buffer,
 	cl_mem            dst_image, 
 	size_t            src_offset,
-	const(size_t)*    dst_origin[3],
-	const(size_t)*    region[3], 
+	const(size_t)*    dst_origin, // size_t[3]
+	const(size_t)*    region, // size_t[3] 
 	cl_uint           num_events_in_wait_list,
 	const(cl_event)*  event_wait_list,
 	cl_event*         event
@@ -1146,8 +1146,8 @@ void* clEnqueueMapImage(
 	cl_mem             image, 
 	cl_bool            blocking_map, 
 	cl_map_flags       map_flags, 
-	const(size_t)*     origin[3],
-	const(size_t)*     region[3],
+	const(size_t)*     origin, // size_t[3]
+	const(size_t)*     region, // size_t[3]
 	size_t*            image_row_pitch,
 	size_t*            image_slice_pitch,
 	cl_uint            num_events_in_wait_list,
