@@ -26,23 +26,17 @@ class CLContext
 {
 	mixin(CLWrapper("cl_context", "clGetContextInfo"));
 
-private:
-//	CLPlatform	_platform;
-//	CLDevices	_devices;
-
 public:
 	/// creates an OpenCL context with the given devices
 	this(CLDevices devices)
 	{
 		cl_int res;
 		
-		// TODO: add platform_id verification and
 		auto deviceIDs = devices.getObjArray();
 
 		// TODO: user notification function
-		//cl_context_properties[3] cps = [CL_CONTEXT_PLATFORM, cast(cl_context_properties) (devices[0].platform.getObject()), 0];
-		// TODO: why doesn't it work with cps?
-		_object = clCreateContext(null /*cps.ptr*/, deviceIDs.length, deviceIDs.ptr, null, null, &res);
+		cl_context_properties[3] cps = [CL_CONTEXT_PLATFORM, cast(cl_context_properties) (devices[0].platform.getObject()), 0];
+		_object = clCreateContext(cps.ptr, deviceIDs.length, deviceIDs.ptr, null, null, &res);
 
 		mixin(exceptionHandling(
 			["CL_INVALID_PLATFORM",		"no valid platform could be selected for context creation"],
@@ -76,9 +70,22 @@ public:
 	
 	@property
 	{
+		//! number of devices in context
+		cl_uint numDevices()
+		{
+			return getInfo!cl_uint(CL_CONTEXT_NUM_DEVICES);
+		}
+
+		//! devices in context
 		CLDevices devices()
 		{
-			assert(0);
+			return new CLDevices(getArrayInfo!cl_device_id(CL_CONTEXT_DEVICES));
+		}
+		
+		//! properties argument specified in the constructor, otherwise null or [0]
+		auto contextProperties()
+		{
+			return getArrayInfo!cl_context_properties(CL_CONTEXT_PROPERTIES);
 		}
 	}
 }

@@ -218,7 +218,11 @@ protected:
 		// error checking
 		if (res != CL_SUCCESS)
 			throw new CLException(res);
-		
+
+		// e.g. CL_CONTEXT_PROPERTIES can return needed = 0
+		if (needed == 0)
+			return null;
+
 		auto buffer = new U[needed/U.sizeof];
 
 		// get actual data
@@ -245,7 +249,11 @@ protected:
 		// error checking
 		if (res != CL_SUCCESS)
 			throw new CLException(res);
-		
+
+		// e.g. CL_CONTEXT_PROPERTIES can return needed = 0
+		if (needed == 0)
+			return null;
+
 		auto buffer = new U[needed/U.sizeof];
 
 		// get actual data
