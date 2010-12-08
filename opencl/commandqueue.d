@@ -89,7 +89,60 @@ public:
 			["CL_OUT_OF_HOST_MEMORY",		""]
 		));
 	}
+
+	/**
+	 *	enqueues a wait for a specific event or a list of events to complete before any future commands queued in the command-queue are executed.
+	 *
+	 * 	Each event in waitlist must be a valid event object returned by a previous call to an enqueue* method
+	 */
+	void enqueueWaitForEvents(CLEvents waitlist)
+	in
+	{
+		assert(waitlist !is null);
+	}
+	body
+	{
+		cl_int res = clEnqueueWaitForEvents(_object, waitlist.length, waitlist.ptr);
+		
+		mixin(exceptionHandling(
+			["CL_INVALID_COMMAND_QUEUE",	""],
+			["CL_INVALID_CONTEXT",			"context associated with queue and events in waitlist are not the same"],
+			["CL_INVALID_VALUE",			"waitlist.length == 0 || waitlist.ptr == null"],
+			["CL_INVALID_EVENT",			"objects specified in waitlist aren't valid events"],
+			["CL_OUT_OF_RESOURCES",			""],
+			["CL_OUT_OF_HOST_MEMORY",		""]
+		));
+	}
 	
+	/**
+	 *	enqueues a command to execute a kernel on the device associated with the queue. The kernel is executed using a single work-item
+	 *
+	 *	Thus it is equivalent to calling enqueueNDRangeKernel with work_dim = 1, global_work_offset = NULL, global_work_size[0] set to 1 and local_work_size[0] set to 1
+	 */
+	CLEvent enqueueTask(CLKernel kernel, CLEvents waitlist = null)
+	{
+		cl_event event;
+		cl_int res = clEnqueueTask(_object, kernel.getObject(), waitlist is null ? 0 : waitlist.length, waitlist is null ? null : waitlist.ptr, &event);
+		
+		mixin(exceptionHandling(
+			["CL_INVALID_PROGRAM_EXECUTABLE",	"there is no successfully built program executable available for device associated with queue"],
+			["CL_INVALID_COMMAND_QUEUE",		""],
+			["CL_INVALID_KERNEL",				""],
+			["CL_INVALID_CONTEXT",				"context associated with queue and kernel are not the same or the context associated with queue and events in waitlist are not the same"],
+			["CL_INVALID_KERNEL_ARGS",			"the kernel argument values have not been specified"],
+			["CL_INVALID_WORK_GROUP_SIZE",		"a work-group size is specified for kernel using the __attribute__((reqd_work_group_size(X, Y, Z))) qualifier in program source and is not (1, 1, 1)"],
+			["CL_MISALIGNED_SUB_BUFFER_OFFSET",	"a sub-buffer object is specified as the value for an argument that is a buffer object and the offset specified when the sub-buffer object is created is not aligned to CL_DEVICE_MEM_BASE_ADDR_ALIGN value for device associated with queue"],
+			["CL_INVALID_IMAGE_SIZE",			"an image object is specified as an argument value and the image dimensions (image width, height, specified or compute row and/or slice pitch) are not supported by device associated with queue"],
+			["CL_MEM_OBJECT_ALLOCATION_FAILURE","could not allocate memory for data store associated with image or buffer objects specified as arguments to kernel"],
+			["CL_INVALID_EVENT_WAIT_LIST",		"event objects in waitlist are not valid events"],
+			["CL_OUT_OF_RESOURCES",				"could not queue the execution instance of kernel on the command-queue because of insufficient resources needed to execute the kernel"],
+			["CL_OUT_OF_HOST_MEMORY",			""]
+		));
+		
+		return new CLEvent(event);
+	}
+
+
 	/**
 	 *	enqueues a command to execute a kernel on the device associated with this queue
 	 *
