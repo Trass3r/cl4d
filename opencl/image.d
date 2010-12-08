@@ -116,7 +116,39 @@ public:
 			["CL_INVALID_HOST_PTR",					"hostPtr is null and CL_MEM_USE_HOST_PTR or CL_MEM_COPY_HOST_PTR are set in flags or if hostPtr is not null but CL_MEM_COPY_HOST_PTR or CL_MEM_USE_HOST_PTR are not set in"],
 			["CL_IMAGE_FORMAT_NOT_SUPPORTED",		"format is not supported"],
 			["CL_MEM_OBJECT_ALLOCATION_FAILURE",	"couldn't allocate memory for image object"],
-			["CL_INVALID_OPERATION",				"there are no devices in context that support images (i.e. CL_DEVICE_IMAGE_SUPPORT specified is CL_FALSE"],
+			["CL_INVALID_OPERATION",				"there are no devices in context that support images (i.e. CL_DEVICE_IMAGE_SUPPORT is CL_FALSE)"],
+			["CL_OUT_OF_RESOURCES",					""],
+			["CL_OUT_OF_HOST_MEMORY",				""]
+		));
+	}
+}
+
+//! 3D Image
+class CLImage3D : CLImage
+{
+public:
+	/**
+	 *	Params:
+	 *		flags		= used to specify allocation and usage info for the image object
+	 *		format		= describes image format properties
+	 *		rowPitch	= scan-line pitch in bytes
+	 *		slicePitch	= size in bytes of each 2D slice in the 3D image
+	 *		hostPtr		= can be a pointer to host-allocated image data to be used
+	 */
+	this(CLContext context, cl_mem_flags flags, const cl_image_format format, size_t width, size_t height, size_t depth, size_t rowPitch, size_t slicePitch, void* hostPtr = null)
+	{
+		cl_int res;
+		_object = clCreateImage3D(context.getObject(), flags, &format, width, height, depth, rowPitch, slicePitch, hostPtr, &res);
+		
+		mixin(exceptionHandling(
+			["CL_INVALID_CONTEXT",					""],
+			["CL_INVALID_VALUE",					"invalid image flags"],
+			["CL_INVALID_IMAGE_FORMAT_DESCRIPTOR",	"values specified in format are not valid or format is null"],
+			["CL_INVALID_IMAGE_SIZE",				"width or height are 0 or depth <= 1 OR exceed CL_DEVICE_IMAGE3D_MAX_WIDTH or CL_DEVICE_IMAGE3D_MAX_HEIGHT or CL_DEVICE_IMAGE3D_MAX_DEPTH resp. OR rowPitch or slicePitch is not valid"],
+			["CL_INVALID_HOST_PTR",					"hostPtr is null and CL_MEM_USE_HOST_PTR or CL_MEM_COPY_HOST_PTR are set in flags or if hostPtr is not null but CL_MEM_COPY_HOST_PTR or CL_MEM_USE_HOST_PTR are not set in"],
+			["CL_IMAGE_FORMAT_NOT_SUPPORTED",		"format is not supported"],
+			["CL_MEM_OBJECT_ALLOCATION_FAILURE",	"couldn't allocate memory for image object"],
+			["CL_INVALID_OPERATION",				"there are no devices in context that support images (i.e. CL_DEVICE_IMAGE_SUPPORT is CL_FALSE)"],
 			["CL_OUT_OF_RESOURCES",					""],
 			["CL_OUT_OF_HOST_MEMORY",				""]
 		));

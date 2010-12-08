@@ -68,6 +68,34 @@ public:
 		return new CLProgram(this, sourceCode);
 	}
 	
+	/**
+	 *	get a list of image formats supported by the OpenCL implementation
+	 */
+	cl_image_format[] supportedImageFormats(cl_mem_flags flags, cl_mem_object_type type) const
+	{
+		cl_uint numFormats;
+		cl_int res = clGetSupportedImageFormats(_object, flags, type, 0, null, &numFormats);
+
+		mixin(exceptionHandling(
+			["CL_INVALID_CONTEXT",		""]
+		));
+
+		if (res != CL_SUCCESS)
+			throw new CLException(res);
+
+		auto formats = new cl_image_format[numFormats];
+
+		res = clGetSupportedImageFormats(_object, flags, type, numFormats, formats.ptr, null);
+
+		mixin(exceptionHandling(
+			["CL_INVALID_VALUE",		""],
+			["CL_OUT_OF_RESOURCES",		""],
+			["CL_OUT_OF_HOST_MEMORY",	""]
+		));
+
+		return formats;
+	}
+
 	@property
 	{
 		//! number of devices in context
@@ -87,5 +115,5 @@ public:
 		{
 			return getArrayInfo!cl_context_properties(CL_CONTEXT_PROPERTIES);
 		}
-	}
+	} // of @property
 }

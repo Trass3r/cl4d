@@ -392,16 +392,37 @@ version(CL_VERSION_1_1)
 			["CL_OUT_OF_HOST_MEMORY",		""]
 		));
 	}
-	
-	//! are the commands queued in the command queue executed out-of-order
-	@property bool outOfOrder()
+
+	@property
 	{
-		return cast(bool) (getInfo!(cl_command_queue_properties)(CL_QUEUE_PROPERTIES) & CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE);
-	}
-	
-	//! is profiling of commands in the command-queue enabled
-	@property bool profiling()
-	{
-		return cast(bool) (getInfo!(cl_command_queue_properties)(CL_QUEUE_PROPERTIES) & CL_QUEUE_PROFILING_ENABLE);
+		//! context associated with queue
+		CLContext context()
+		{
+			return new CLContext(getInfo!cl_context(CL_QUEUE_CONTEXT));
+		}
+
+		//! device associated with queue
+		CLDevice device()
+		{
+			return new CLDevice(getInfo!cl_device_id(CL_QUEUE_DEVICE));
+		}
+
+		//! specified properties for the command-queue
+		auto properties()
+		{
+			return getInfo!(cl_command_queue_properties)(CL_QUEUE_PROPERTIES);
+		}
+
+		//! are the commands queued in the command queue executed out-of-order
+		bool outOfOrder()
+		{
+			return cast(bool) (getInfo!(cl_command_queue_properties)(CL_QUEUE_PROPERTIES) & CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE);
+		}
+		
+		//! is profiling of commands in the command-queue enabled
+		bool profiling()
+		{
+			return cast(bool) (getInfo!(cl_command_queue_properties)(CL_QUEUE_PROPERTIES) & CL_QUEUE_PROFILING_ENABLE);
+		}
 	}
 }
