@@ -61,8 +61,6 @@ public:
 	 * builds (compiles & links) a program executable from the program source or binary for all the
 	 * devices or a specific device(s) in the OpenCL context associated with program. OpenCL allows
 	 * program executables to be built using the source or the binary.
-	 * 
-	 * be sure to use zero-terminated options string
 	 */
 	CLProgram build(string options = "", CLDevices devices = null)
 	{
@@ -75,7 +73,7 @@ public:
 		// If pfn_notify isn't NULL, clBuildProgram does not need to wait for the build to complete and can return immediately
 		// If pfn_notify is NULL, clBuildProgram does not return until the build has completed
 		// TODO: rather use callback?
-		res = clBuildProgram(_object, devices is null ? 0 : cldevices.length, devices is null ? null : cldevices.ptr, options.ptr, null, null);
+		res = clBuildProgram(_object, devices is null ? 0 : cldevices.length, devices is null ? null : cldevices.ptr, toStringz(options), null, null);
 		
 		// handle build failures specifically
 		if (res == CL_BUILD_PROGRAM_FAILURE)
@@ -203,7 +201,7 @@ public:
 	{
 		return getArrayInfo2!(ichar, clGetProgramBuildInfo)(device.getObject(), CL_PROGRAM_BUILD_LOG);
 	}
-	
+
 	@property
 	{
 		string buildLogs()

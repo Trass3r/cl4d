@@ -40,7 +40,7 @@ void main(string[] args)
 					int i = get_global_id(0);
 					c[i] = a[i] + b[i];
 				} });
-		program.build("-Werror");
+		program.build("-w -Werror");
 		
 		auto kernel = new CLKernel(program, "sum");
 		
