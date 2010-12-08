@@ -32,8 +32,7 @@ void main(string[] args)
 		
 		// Create a command queue and use the first device
 		auto queue = new CLCommandQueue(context, devices[0]);
-	    
-		auto program = context.createProgram(q{
+		auto program = context.createProgram( mixin(CL_PROGRAM_STRING_DEBUG_INFO) ~ q{
 				__kernel void sum(	__global const int* a,
 									__global const int* b,
 									__global int* c)

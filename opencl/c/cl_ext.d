@@ -10,7 +10,7 @@
  *		see LICENSE.txt
  */
 
-/* $Revision: 11928 $ on $Date: 2010-07-13 09:04:56 -0700 (Tue, 13 Jul 2010) $ */
+// based on $Revision: 11928 $ on $Date: 2010-07-13 09:04:56 -0700 (Tue, 13 Jul 2010) $
 
 /**
  *	cl_ext contains OpenCL extensions which don't have external (OpenGL, D3D) dependencies.

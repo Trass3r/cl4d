@@ -10,7 +10,7 @@
  *		see LICENSE.txt
  */
 
-// $Revision: 11708 $ on $Date: 2010-06-13 23:36:24 -0700 (Sun, 13 Jun 2010) $
+// based on $Revision: 11708 $ on $Date: 2010-06-13 23:36:24 -0700 (Sun, 13 Jun 2010) $
 
 module opencl.c.cl_d3d10;
 

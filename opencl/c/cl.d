@@ -10,7 +10,7 @@
  *		see LICENSE.txt
  */
 
-// $Revision: 11708 $ on $Date: 2010-06-13 23:36:24 -0700 (Sun, 13 Jun 2010) $
+// based on $Revision: 11985 $ on $Date: 2010-07-15 11:16:06 -0700 (Thu, 15 Jul 2010) $
 
 module opencl.c.cl;
 
@@ -44,13 +44,13 @@ typedef const(void*)
 // TODO: info types should be aliases so getInfo isn't instantiated too often for the same types?
 // on the other hand typedefs are needed to be type-safe, esp. for bitfields
 //alias cl_uint			cl_bool;		// WARNING!  Unlike cl_ types in cl_platform.h, cl_bool is not guaranteed to be the same size as the bool in kernels.
-alias cl_ulong		cl_bitfield;
+alias cl_ulong			cl_bitfield;
 alias cl_uint			cl_platform_info;
 alias cl_uint			cl_device_info;
 alias cl_uint			cl_device_mem_cache_type;
 alias cl_uint			cl_device_local_mem_type;
 
-alias cl_bitfield		cl_context_properties;
+alias ptrdiff_t			cl_context_properties;
 alias cl_uint			cl_context_info;
 alias cl_uint			cl_command_queue_info;
 alias cl_uint			cl_mem_info;
@@ -59,7 +59,7 @@ alias cl_uint			cl_buffer_create_type;
 alias cl_uint			cl_sampler_info;
 alias cl_uint			cl_program_info;
 alias cl_uint			cl_program_build_info;
-alias cl_uint			cl_build_status;
+alias cl_int			cl_build_status;
 alias cl_uint			cl_kernel_info;
 alias cl_uint			cl_kernel_work_group_info;
 alias cl_uint			cl_event_info;
@@ -134,6 +134,7 @@ enum
 	CL_INVALID_BUFFER_SIZE                      = -61,
 	CL_INVALID_MIP_LEVEL                        = -62,
 	CL_INVALID_GLOBAL_WORK_SIZE                 = -63,
+	CL_INVALID_PROPERTY							= -64
 }
 
 enum cl_bool : cl_uint
@@ -983,8 +984,8 @@ cl_int clEnqueueReadBufferRect(
 	cl_command_queue	command_queue,
 	cl_mem				buffer,
 	cl_bool				blocking_read,
-	const(size_t)*		buffer_offset,	// size_t[3]
-	const(size_t)*		host_offset,	// size_t[3]
+	const(size_t)*		buffer_origin,	// size_t[3]
+	const(size_t)*		host_origin,	// size_t[3]
 	const(size_t)*		region,			// size_t[3]
 	size_t				buffer_row_pitch,
 	size_t				buffer_slice_pitch,
@@ -1013,9 +1014,9 @@ version(CL_VERSION_1_1)
 cl_int clEnqueueWriteBufferRect(
 	cl_command_queue	command_queue,
 	cl_mem				buffer,
-	cl_bool				blocking_read,
-	const(size_t)*		buffer_offset,	// size_t[3]
-	const(size_t)*		host_offset,	// size_t[3]
+	cl_bool				blocking_write,
+	const(size_t)*		buffer_origin,	// size_t[3]
+	const(size_t)*		host_origin,	// size_t[3]
 	const(size_t)*		region,			// size_t[3]
 	size_t				buffer_row_pitch,
 	size_t				buffer_slice_pitch,

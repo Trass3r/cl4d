@@ -10,7 +10,7 @@
  *		see LICENSE.txt
  */
 
-// $Revision: 11708 $ on $Date: 2010-06-13 23:36:24 -0700 (Sun, 13 Jun 2010) $
+// based on $Revision: 11803 $ on $Date: 2010-06-25 10:02:12 -0700 (Fri, 25 Jun 2010) $
 
 module opencl.c.cl_platform;
 
@@ -189,6 +189,31 @@ union ` ~ type ~ to!string(size) ~ `
 mixin(genCLVectorTypes());
 // NOTE: There are no vector types for half
 
+/* Macro to facilitate debugging
+ * Usage:
+ *   Place mixin(CL_PROGRAM_STRING_DEBUG_INFO) on the line before the first line of your source.
+ *   The first line ends with:   CL_PROGRAM_STRING_BEGIN \"
+ *   Each line thereafter of OpenCL C source must have a line end
+ *   The last line is empty;
+ *
+ *   Example:
+ *
+ *   string code = mixin(CL_PROGRAM_STRING_DEBUG_INFO) ~ q{
+ *   kernel void foo( int a, float * b )
+ *   {
+ *      // my comment
+ *      *b[ get_global_id(0)] = a;
+ *   }
+ *	 };
+ *
+ * This should correctly set up the line, (column) and file information for your source
+ * string so you can do source level debugging.
+ */
+string CL_PROGRAM_STRING_DEBUG_INFO()
+{
+	return `"#line " ~ __LINE__.stringof ~ " \"" ~ __FILE__ ~ "\" \n\n"`;
+}
+ 
 
 /**************************************************
                     unittests

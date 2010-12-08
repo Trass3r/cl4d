@@ -157,6 +157,7 @@ mixin(mixinExceptionClasses(
 		ECD("CL_DEVICE_NOT_FOUND",			"", "CLDeviceException"),
 		ECD("CL_DEVICE_NOT_AVAILABLE",		"", "CLDeviceException"),
 		ECD("CL_INVALID_CONTEXT",			"context is not a valid Context", "CLContextException"),
+		ECD("CL_INVALID_PROPERTY",			"",	"CLContextException"),
 		ECD("CL_INVALID_PROGRAM",			"", "CLProgramException"),
 		ECD("CL_INVALID_BINARY",			"", "CLProgramException"),
 		ECD("CL_INVALID_BUILD_OPTIONS",		"", "CLProgramException"),
