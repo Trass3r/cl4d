@@ -11,6 +11,7 @@
 module opencl.image;
 
 import opencl.c.cl;
+import opencl.c.cl_gl;
 import opencl.context;
 import opencl.error;
 import opencl.memory;
@@ -96,6 +97,8 @@ public:
 class CLImage2D : CLImage
 {
 public:
+	this() {}
+
 	/**
 	 *	Params:
 	 *		flags	= used to specify allocation and usage info for the image object
@@ -123,10 +126,43 @@ public:
 	}
 }
 
+//! 2D image for GL interop.
+class CLImage2DGL : CLImage2D
+{
+public:
+	/**
+	 *	creates an OpenCL 2D image object from an OpenGL 2D texture object, or a single face of an OpenGL cubemap texture object
+	 *
+	 *	Params:
+	 *		flags	= only CL_MEM_READ_ONLY, CL_MEM_WRITE_ONLY and CL_MEM_READ_WRITE may be used
+	 *		target	= used only to define the image type of texture. No reference to a bound GL texture object is made or implied by this parameter
+	 *		miplevel= mipmap level to be used
+	 *		texobj	= name of a complete GL 2D, cubemap or rectangle texture object
+	 */
+	this(const CLContext context, cl_mem_flags flags, cl_GLenum target, cl_GLint  miplevel, cl_GLuint texobj)
+	{
+		cl_int res;
+		_object = clCreateFromGLTexture2D(context.getObject(), flags, target, miplevel, texobj, &res);
+
+		mixin(exceptionHandling(
+			["CL_INVALID_CONTEXT",		"context is not a valid context or was not created from a GL context"],
+			["CL_INVALID_VALUE",		"flags or target not valid"],
+			["CL_INVALID_MIP_LEVEL",	"miplevel is invalid OR OpenGL implementation does not support creating from mipmap levels > 0"],
+			["CL_INVALID_GL_OBJECT",	"texobj is not a GL texture object whose type matches target OR the specified miplevel of texture is not defined OR width or height of the specified miplevel is zero"],
+			["CL_INVALID_IMAGE_FORMAT_DESCRIPTOR",	"the OpenGL texture internal format does not map to a supported OpenCL image format"],
+			["CL_INVALID_OPERATION",	"texobj is a GL texture object created with a border width value greater than zero (OR implementation does not support miplevel values > 0?)"],
+			["CL_OUT_OF_RESOURCES",		""],
+			["CL_OUT_OF_HOST_MEMORY",	""]
+		));
+	}
+}
+
 //! 3D Image
 class CLImage3D : CLImage
 {
 public:
+	this() {}
+
 	/**
 	 *	Params:
 	 *		flags		= used to specify allocation and usage info for the image object
@@ -151,6 +187,37 @@ public:
 			["CL_INVALID_OPERATION",				"there are no devices in context that support images (i.e. CL_DEVICE_IMAGE_SUPPORT is CL_FALSE)"],
 			["CL_OUT_OF_RESOURCES",					""],
 			["CL_OUT_OF_HOST_MEMORY",				""]
+		));
+	}
+}
+
+//! 3D image for GL interop.
+class CLImage3DGL : CLImage3D
+{
+public:
+	/**
+	 *	creates an OpenCL 3D image object from an OpenGL 3D texture object
+	 *
+	 *	Params:
+	 *		flags	= only CL_MEM_READ_ONLY, CL_MEM_WRITE_ONLY and CL_MEM_READ_WRITE may be used
+	 *		target	= used only to define the image type of texture. No reference to a bound GL texture object is made or implied by this parameter. must be GL_TEXTURE_3D
+	 *		miplevel= mipmap level to be used
+	 *		texobj	= name of a complete GL 3D texture object
+	 */
+	this(const CLContext context, cl_mem_flags flags, cl_GLenum target, cl_GLint  miplevel, cl_GLuint texobj)
+	{
+		cl_int res;
+		_object = clCreateFromGLTexture3D(context.getObject(), flags, target, miplevel, texobj, &res);
+
+		mixin(exceptionHandling(
+			["CL_INVALID_CONTEXT",		"context is not a valid context or was not created from a GL context"],
+			["CL_INVALID_VALUE",		"flags or target not valid"],
+			["CL_INVALID_MIP_LEVEL",	"miplevel is invalid OR OpenGL implementation does not support creating from mipmap levels > 0"],
+			["CL_INVALID_GL_OBJECT",	"texobj is not a GL texture object whose type matches target OR the specified miplevel of texture is not defined OR width or height of the specified miplevel is zero"],
+			["CL_INVALID_IMAGE_FORMAT_DESCRIPTOR",	"the OpenGL texture internal format does not map to a supported OpenCL image format"],
+			["CL_INVALID_OPERATION",	"texobj is a GL texture object created with a border width value greater than zero (OR implementation does not support miplevel values > 0?)"],
+			["CL_OUT_OF_RESOURCES",		""],
+			["CL_OUT_OF_HOST_MEMORY",	""]
 		));
 	}
 }

@@ -196,5 +196,7 @@ mixin(mixinExceptionClasses(
 		ECD("CL_MISALIGNED_SUB_BUFFER_OFFSET","", "CLBufferException"),
 		ECD("CL_INVALID_IMAGE_FORMAT_DESCRIPTOR","", "CLBufferException"),
 		ECD("CL_INVALID_IMAGE_SIZE",		"",	"CLBufferException"),
-		ECD("CL_IMAGE_FORMAT_NOT_SUPPORTED","", "CLBufferException")
+		ECD("CL_IMAGE_FORMAT_NOT_SUPPORTED","", "CLBufferException"),
+		ECD("CL_INVALID_MIP_LEVEL",			"", "CLBufferException"),
+		ECD("CL_INVALID_GL_OBJECT",			"", "CLBufferException")
 ));

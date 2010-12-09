@@ -359,7 +359,7 @@ public:
 	Wrapper opIndex(size_t i)
 	in
 	{
-		assert(i < _objects.length);
+		assert(i < _objects.length, "index out of bounds");
 	}
 	body
 	{
