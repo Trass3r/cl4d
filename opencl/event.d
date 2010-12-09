@@ -138,6 +138,74 @@ public:
 			
 			return res;
 		}
+
+		//! 64-bit value describing the current device time counter in nanoseconds when the command identified by event is enqueued
+		cl_ulong profilingCommandQueued()
+		{
+			cl_ulong timer;
+			try
+				timer = getInfo!(cl_ulong, clGetEventProfilingInfo)(CL_PROFILING_COMMAND_QUEUED);
+			catch(CLException e)
+			{
+				// handle special case that CL_QUEUE_PROFILING_ENABLE is not available or event is not CL_COMPLETE or it is a user event
+				if (e.errcode == CL_PROFILING_INFO_NOT_AVAILABLE)
+					timer = 0;
+				else
+					throw e; // rethrow it
+			}
+			return timer;
+		}
+		
+		//! 64-bit value describing the current device time counter in nanoseconds when the command identified by event that has been enqueued is submitted by the host to the device
+		cl_ulong profilingCommandSubmit()
+		{
+			cl_ulong timer;
+			try
+				timer = getInfo!(cl_ulong, clGetEventProfilingInfo)(CL_PROFILING_COMMAND_SUBMIT);
+			catch(CLException e)
+			{
+				// handle special case that CL_QUEUE_PROFILING_ENABLE is not available or event is not CL_COMPLETE or it is a user event
+				if (e.errcode == CL_PROFILING_INFO_NOT_AVAILABLE)
+					timer = 0;
+				else
+					throw e; // rethrow it
+			}
+			return timer;
+		}
+		
+		//! 64-bit value describing the current device time counter in nanoseconds when the command identified by event starts execution on the device
+		cl_ulong profilingCommandStart()
+		{
+			cl_ulong timer;
+			try
+				timer = getInfo!(cl_ulong, clGetEventProfilingInfo)(CL_PROFILING_COMMAND_START);
+			catch(CLException e)
+			{
+				// handle special case that CL_QUEUE_PROFILING_ENABLE is not available or event is not CL_COMPLETE or it is a user event
+				if (e.errcode == CL_PROFILING_INFO_NOT_AVAILABLE)
+					timer = 0;
+				else
+					throw e; // rethrow it
+			}
+			return timer;
+		}
+		
+		//! 64-bit value describing the current device time counter in nanoseconds when the command identified by event has finished execution on the device
+		cl_ulong profilingCommandEnd()
+		{
+			cl_ulong timer;
+			try
+				timer = getInfo!(cl_ulong, clGetEventProfilingInfo)(CL_PROFILING_COMMAND_END);
+			catch(CLException e)
+			{
+				// handle special case that CL_QUEUE_PROFILING_ENABLE is not available or event is not CL_COMPLETE or it is a user event
+				if (e.errcode == CL_PROFILING_INFO_NOT_AVAILABLE)
+					timer = 0;
+				else
+					throw e; // rethrow it
+			}
+			return timer;
+		}		
 	} // of @property
 }
 

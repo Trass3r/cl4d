@@ -35,7 +35,7 @@ public:
 	// TODO: overload toString to contain errcode
 
 	/// errcode getter
-	@property cl_int errCode() {return _errcode;}
+	@property cl_int errcode() {return _errcode;}
 }
 
 /// an unrecognized OpenCL exception
