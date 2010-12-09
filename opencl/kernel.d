@@ -20,6 +20,14 @@ import opencl.sampler;
 import opencl.wrapper;
 
 import std.string : toStringz;
+import std.traits;
+
+//! used in setArg to specify the size in bytes of the buffer that must be allocated for a kernel __local argument
+struct LocalArgSize
+{
+	size_t size;
+	alias size this;
+}
 
 //! NDRange struct
 // TODO: more dimensions needed? => CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS
@@ -116,13 +124,23 @@ public:
 	 */
 	void setArg(ArgType)(cl_uint idx, ArgType arg)
 	{
-		// TODO: handle other cases like pointers etc
 		static if (is(ArgType : CLMemory) || is(ArgType == CLSampler))
 			setArgx(idx, arg.getObject().sizeof, &arg.getObject());
 		else static if (is(ArgType : CLObject))
 			static assert(0, "can't set " ~ ArgType.stringof ~ " as a kernel argument!");
-		else
+		else static if (is(ArgType == LocalArgSize))
+			setArgx(idx, arg.size, null); // it's a __local parameter, so just set its size
+		else static if (is(ArgType U : U*))
+		{
+			if (arg is null)
+				setArgx(idx, 0, null); // a null value will be used as the value for the argument declared as a pointer to __global or __constant memory in the kernel
+			else
+				assert(0, "arbitrary pointers can't be passed to kernels");
+		}
+		else static if (isNumeric!ArgType)
 			setArgx(idx, arg.sizeof, &arg);
+		else
+			static assert(0, "type " ~ ArgType.stringof ~ " isn't handled in CLKernel.setArg yet");
 	}
 
 	/*
