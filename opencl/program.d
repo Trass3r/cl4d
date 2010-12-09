@@ -79,7 +79,6 @@ public:
 		if (res == CL_BUILD_PROGRAM_FAILURE)
 		{
 			throw new CLBuildProgramFailureException(buildLogs());
-			return this;
 		}
 
 		mixin(exceptionHandling(

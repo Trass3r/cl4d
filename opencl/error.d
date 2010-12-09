@@ -83,13 +83,11 @@ package string exceptionHandling(E...)(E es)
 	{
 		res ~= `	case ` ~ e[0] ~ `:
 		throw new CL` ~ toCamelCase(e[0][2..$].dup) ~ `Exception("` ~ e[1] ~ `", __FILE__, __LINE__);
-		break;
 `;
 	}
 	
 	res ~= `	default:
-		throw new CLUnrecognizedException(res, );
-		break;
+		throw new CLUnrecognizedException(res, __FILE__, __LINE__);
 }`;
 	return res;
 }

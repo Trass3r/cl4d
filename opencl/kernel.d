@@ -137,7 +137,7 @@ public:
 			else
 				assert(0, "arbitrary pointers can't be passed to kernels");
 		}
-		else static if (isNumeric!ArgType)
+		else static if (std.traits.isNumeric!ArgType)
 			setArgx(idx, arg.sizeof, &arg);
 		else
 			static assert(0, "type " ~ ArgType.stringof ~ " isn't handled in CLKernel.setArg yet");
