@@ -61,7 +61,7 @@ enum
 
 /******************************************************************************/
 
-typedef cl_int (*clGetDeviceIDsFromD3D10KHR_fn)(
+typedef extern(System) cl_int (*clGetDeviceIDsFromD3D10KHR_fn)(
 	cl_platform_id				platform,
 	cl_d3d10_device_source_khr	d3d_device_source,
 	void*						d3d_object,
@@ -71,43 +71,43 @@ typedef cl_int (*clGetDeviceIDsFromD3D10KHR_fn)(
 	cl_uint*					num_devices
 );
 
-typedef cl_mem (*clCreateFromD3D10BufferKHR_fn)(
+typedef extern(System) cl_mem function(
 	cl_context		context,
 	cl_mem_flags	flags,
 	void*			resource, // ID3D10Buffer*
 	cl_int*			errcode_ret
-);
+) clCreateFromD3D10BufferKHR_fn;
 
-typedef cl_mem (*clCreateFromD3D10Texture2DKHR_fn)(
+typedef extern(System) cl_mem function(
 	cl_context			context,
 	cl_mem_flags		flags,
 	void*				resource, // ID3D10Texture2D*
 	UINT				subresource,
 	cl_int*				errcode_ret
-);
+) clCreateFromD3D10Texture2DKHR_fn;
 
-typedef cl_mem (*clCreateFromD3D10Texture3DKHR_fn)(
+typedef extern(System) cl_mem function(
 	cl_context			context,
 	cl_mem_flags		flags,
 	void*				resource, // ID3D10Texture3D*
 	UINT				subresource,
 	cl_int*				errcode_ret
-);
+) clCreateFromD3D10Texture3DKHR_fn;
 
-typedef cl_int (*clEnqueueAcquireD3D10ObjectsKHR_fn)(
+typedef extern(System) cl_int function(
 	cl_command_queue	command_queue,
 	cl_uint				num_objects,
 	const(cl_mem)*		mem_objects,
 	cl_uint				num_events_in_wait_list,
 	const(cl_event)*	event_wait_list,
 	cl_event*			event
-);
+) clEnqueueAcquireD3D10ObjectsKHR_fn;
 
-typedef cl_int (*clEnqueueReleaseD3D10ObjectsKHR_fn)(
+typedef extern(System) cl_int function(
 	cl_command_queue	command_queue,
 	cl_uint				num_objects,
 	cl_mem*				mem_objects,
 	cl_uint				num_events_in_wait_list,
 	const(cl_event)*	event_wait_list,
 	cl_event*			event
-);
+) clEnqueueReleaseD3D10ObjectsKHR_fn;
