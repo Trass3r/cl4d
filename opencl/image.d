@@ -90,6 +90,18 @@ public:
 		{
 			return getInfo!(size_t, clGetImageInfo)(CL_IMAGE_DEPTH);
 		}
+
+		//! The target argument specified in CLImage2DGL, CLImage3DGL constructors
+		cl_GLenum textureTarget()
+		{
+			return getInfo!(cl_GLenum, clGetGLTextureInfo)(CL_GL_TEXTURE_TARGET);
+		}
+
+		//! The miplevel argument specified in CLImage2DGL, CLImage3DGL constructors
+		cl_GLint mipmapLevel()
+		{
+			return getInfo!(cl_GLint, clGetGLTextureInfo)(CL_GL_MIPMAP_LEVEL);
+		}
 	} // of @property
 }
 

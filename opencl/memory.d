@@ -11,6 +11,7 @@
 module opencl.memory;
 
 import opencl.c.cl;
+import opencl.c.cl_gl;
 import opencl.context;
 import opencl.error;
 import opencl.wrapper;
@@ -42,6 +43,26 @@ public:
 		mixin(exceptionHandling(
 			["CL_INVALID_MEM_OBJECT",	""],
 			["CL_INVALID_VALUE",		"fpNotify is null"],
+			["CL_OUT_OF_RESOURCES",		""],
+			["CL_OUT_OF_HOST_MEMORY",	""]
+		));
+	}
+
+	/**
+	 *	The OpenGL object used to create the OpenCL memory object (if any) and information about the object
+	 *	type i.e. whether it is a texture, renderbuffer or buffer object can be queried using the following function.
+	 *
+	 *	Params:
+	 *	    glObjectType = returns the type of GL object attached to this memory object
+	 *	    glObjectName = returns the GL object used to create this memory object
+	 */
+	void getGLObjectInfo(out cl_gl_object_type glObjectType, out cl_GLuint glObjectName)
+	{
+		cl_int res = clGetGLObjectInfo(_object, &glObjectType, &glObjectName);
+		
+		mixin(exceptionHandling(
+			["CL_INVALID_MEM_OBJECT",	""],
+			["CL_INVALID_GL_OBJECT",	"there is no GL object associated with memobj"],
 			["CL_OUT_OF_RESOURCES",		""],
 			["CL_OUT_OF_HOST_MEMORY",	""]
 		));

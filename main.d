@@ -41,6 +41,7 @@ void main(string[] args)
 					c[i] = a[i] + b[i];
 				} });
 		program.build("-w -Werror");
+		writeln(program.buildLog(devices[0]));
 		
 		auto kernel = new CLKernel(program, "sum");
 		

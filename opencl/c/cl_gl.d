@@ -25,8 +25,8 @@ import opencl.c.cl;
 extern(System):
 
 typedef cl_uint	 cl_gl_object_type;
-typedef cl_uint	 cl_gl_texture_info;
-typedef cl_uint	 cl_gl_platform_info;
+alias cl_uint	 cl_gl_texture_info;
+alias cl_uint	 cl_gl_platform_info;
 typedef void* cl_GLsync; // typedef struct __GLsync *cl_GLsync;
 
 enum

@@ -11,6 +11,7 @@
 module opencl.buffer;
 
 import opencl.c.cl;
+import opencl.c.cl_gl;
 import opencl.context;
 import opencl.error;
 import opencl.memory;
@@ -21,9 +22,9 @@ import opencl.wrapper;
  */
 class CLBuffer : CLMemory
 {
-private:
+package:
+	this() {}
 
-protected:
 	//!
 	this(cl_mem buffer, bool increment = false)
 	{
@@ -31,6 +32,7 @@ protected:
 	}
 	
 public:
+
 	/**
 	 *	create a buffer object from hostbuf
 	 *
@@ -107,4 +109,75 @@ public:
 			return new CLBuffer(sub);
 	}
 }
+}
+
+//! Memory buffer interface for GL interop.
+class CLBufferGL : CLBuffer
+{
+public:
+	/**
+	 *	creates an OpenCL buffer object from an OpenGL buffer object
+	 *
+	 *	Params:
+	 *		context	=	a valid OpenCL context created from an OpenGL context
+	 *		flags	=	only CL_MEM_READ_ONLY, CL_MEM_WRITE_ONLY and CL_MEM_READ_WRITE can be used
+	 *		bufobj	=	a GL buffer object. The data store of the GL buffer object must have have
+	 *					been previously created by calling glBufferData, although its contents need not be initialized.
+	 *					The size of the data store will be used to determine the size of the CL buffer object
+	 */
+	this(CLContext context, cl_mem_flags flags, cl_GLuint bufobj)
+	{
+		cl_int res;
+		_object = clCreateFromGLBuffer(context.getObject(), flags, bufobj, &res);
+		
+		mixin(exceptionHandling(
+			["CL_INVALID_CONTEXT",		"context is not a valid context or was not created from a GL context"],
+			["CL_INVALID_VALUE",		"invalid flags"],
+			["CL_INVALID_GL_OBJECT",	"bufobj is not a GL buffer object or is a GL buffer object but does not have an existing data store"],
+			["CL_OUT_OF_RESOURCES",		""],
+			["CL_OUT_OF_HOST_MEMORY",	""]
+			
+		));
+	}
+}
+
+/**
+ *	memory buffer interface for GL interop with renderbuffer
+ * 
+ *	NB: If the state of a GL renderbuffer object is modified through the GL API (i.e. changes to the
+ *	dimensions or format used to represent pixels of the GL renderbuffer using appropriate GL API
+ *	calls such as glRenderbufferStorage) while there exists a corresponding CL image object,
+ *	subsequent use of the CL image object will result in undefined behavior
+ */
+class CLBufferRenderGL : CLBuffer
+{
+public:
+	/**
+	 *	creates an OpenCL 2D image object from an OpenGL renderbuffer object
+	 *
+	 *	Params:
+	 *		context			=	a valid OpenCL context created from an OpenGL context
+	 *		flags			=	only CL_MEM_READ_ONLY, CL_MEM_WRITE_ONLY and CL_MEM_READ_WRITE can be used
+	 *		renderbuffer	=	renderbuffer is the name of a GL renderbuffer object.
+	 *							The renderbuffer storage must be specified before the image object can be created. The renderbuffer format and dimensions
+	 *							defined by OpenGL will be used to create the 2D image object. Only GL renderbuffers with
+	 *							internal formats that maps to appropriate image channel order and data type specified in tables
+	 *							5.5 and 5.6 of the spec can be used to create the 2D image object
+	 */
+	this(CLContext context, cl_mem_flags flags, cl_GLuint renderbuffer)
+	{
+		cl_int res;
+		_object = clCreateFromGLRenderbuffer(context.getObject(), flags, renderbuffer, &res);
+		
+		mixin(exceptionHandling(
+			["CL_INVALID_CONTEXT",					"context is not a valid context or was not created from a GL context"],
+			["CL_INVALID_VALUE",					"invalid flags"],
+			["CL_INVALID_GL_OBJECT",				"renderbuffer is not a GL renderbuffer object or if the width or height of renderbuffer is zero"],
+			["CL_INVALID_IMAGE_FORMAT_DESCRIPTOR",	"the OpenGL renderbuffer internal format does not map to a supported OpenCL image format"],
+			["CL_INVALID_OPERATION",				"renderbuffer is a multi-sample GL renderbuffer object"],
+			["CL_OUT_OF_RESOURCES",					""],
+			["CL_OUT_OF_HOST_MEMORY",				""]
+			
+		));
+	}
 }
