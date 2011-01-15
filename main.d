@@ -20,11 +20,23 @@ void main(string[] args)
 {
 	try
 	{
-		auto platform = CLPlatform.getPlatforms[1];
+		auto platforms = CLPlatform.getPlatforms();
+		if (platforms.length < 1)
+		{
+			writeln("No platforms available.");
+			return;
+		}
+		
+		auto platform = platforms[0];
 		writefln("%s\n\t%s\n\t%s\n\t%s\n\t%s", platform.name, platform.vendor, platform.clversion, platform.profile, platform.extensions);
 	
 		auto devices = platform.allDevices;
-		
+		if (devices.length < 1)
+		{
+			writeln("No devices available.");
+			return;
+		}
+
 		foreach(device; devices)
 			writefln("%s\n\t%s\n\t%s\n\t%s\n\t%s", device.name, device.vendor, device.driverVersion, device.clVersion, device.profile, device.extensions);
 		
