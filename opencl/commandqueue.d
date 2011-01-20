@@ -274,7 +274,26 @@ public:
 		//TODO
 		assert(0);
 	}
-	
+
+	/**
+	 *	enqueues a command to map a region in the image object given by image into the host address
+	 *	space and returns a pointer to this mapped region
+	 *
+	 *	Params:
+	 *	    blocking = 
+	 *	    flags = 
+	 *	    origin = 
+	 *	    region = 
+	 *	    rowPitch = 
+	 *	    slicePitch = 
+	 *	    mapPtr = 
+	 */
+	CLEvent enqueueMapImage(CLImage image, cl_bool blocking, cl_map_flags flags, const size_t[3] origin, const size_t[3] region, out size_t rowPitch, out size_t slicePitch, void** mapPtr, CLEvents waitlist = null)
+	{
+		//TODO
+		assert(0);
+	}
+
 	/**
 	 *	enqueue commands to read from a 2D or 3D image object to host memory or write to a 2D or 3D image object from host memory
 	 *
@@ -358,6 +377,116 @@ public:
 			["CL_OUT_OF_HOST_MEMORY",			""]
 		));
 		
+		return new CLEvent(event);
+	}
+	
+	/**
+	 *	enqueues a command to copy image objects.
+	 *
+	 *	srcImage and dstImage can be 2D or 3D image objects allowing us to perform the following actions:
+	 *		Copy a 2D image object to a 2D image object.
+	 *		Copy a 2D image object to a 2D slice of a 3D image object.
+	 *		Copy a 2D slice of a 3D image object to a 2D image object.
+	 *		Copy a 3D image object to a 3D image object.
+	 *
+	 *	Params:
+	 *		srcOrigin	= the starting (x, y, z) location in pixels in srcImage from where to start the
+	 *					  data copy. If srcImage is a 2D image object, the z value given by srcOrigin[2] must be 0
+	 *		dstOrigin	= the starting (x, y, z) location in pixels in dstImage from where to start the data copy.
+	 *					  If dstImage is a 2D image object, the z value given by dstOrigin[2] must be 0
+	 *		region		= (width, height, depth) in pixels of the 2D or 3D rectangle to copy.
+	 *					  If srcImage or dstImage is a 2D image object, the depth value given by region[2] must be 1
+	 *
+	 *	Returns:
+	 *		an event object that identifies this particular copy command and can be used to query or queue a wait for this particular command to complete
+	 */
+	CLEvent enqueueCopyImage(CLImage srcImage, CLImage dstImage, const size_t[3] srcOrigin, const size_t[3] dstOrigin, const size_t[3] region, CLEvents waitlist = null)
+	{
+		cl_event event;
+		cl_int res = clEnqueueCopyImage(_object, srcImage.getObject(), dstImage.getObject(), srcOrigin.ptr, dstOrigin.ptr, region.ptr, waitlist is null ? 0 : waitlist.length,  waitlist is null ? null : waitlist.ptr, &event);
+		
+		mixin(exceptionHandling(
+			["CL_INVALID_COMMAND_QUEUE",			""],
+			["CL_INVALID_CONTEXT",					"context associated with command queue and images or waitlist is not the same"],
+			["CL_INVALID_MEM_OBJECT",				"images are invalid"],
+			["CL_IMAGE_FORMAT_MISMATCH",			"images don't use the same image format"],
+			["CL_INVALID_VALUE",					"region being read/written specified by (origin, origin+region) is out of bounds OR one of the images is a 2D image object and corresponding origin[2] != 0 or region[2] != 1"],
+			["CL_INVALID_EVENT_WAIT_LIST",			"event objects in waitlist are not valid events"],
+			["CL_INVALID_IMAGE_SIZE",				"image dimensions (image width, height, specified or compute row and/or slice pitch) for an image are not supported by device associated with queue"],
+			["CL_MEM_OBJECT_ALLOCATION_FAILURE",	"couldn't allocate memory for data store associated with image"],
+			["CL_OUT_OF_RESOURCES",					""],
+			["CL_OUT_OF_HOST_MEMORY",				""],
+			["CL_INVALID_OPERATION",				"the device associated with command queue does not support images"],
+			["CL_MEM_COPY_OVERLAP",					"srcImage and dstImage are the same image object and the source and destination regions overlap"]
+		));
+
+		return new CLEvent(event);
+	}
+
+	/**
+	 *	enqueues a command to copy an image object to a buffer object
+	 *
+	 *	Params:
+	 *		srcOrigin	= the starting (x, y, z) location in pixels in srcImage from where to start the
+	 *					  data copy. If srcImage is a 2D image object, the z value given by srcOrigin[2] must be 0
+	 *		region		= (width, height, depth) in pixels of the 2D or 3D rectangle to copy. If srcImage is a 2D image object, the depth value given by region[2] must be 1
+	 *		dstOffset	= offset where to begin copying data into dstBuffer. The size in bytes of the region to be copied is computed as width * height * depth * bytes/image
+	 *					  element if src_image is a 3D image object and is computed as width * height * bytes/image element if src_image is a 2D image object
+	 *	Returns:
+	 *		an event object that identifies this particular copy command and can be used to query or queue a wait for this particular command to complete
+	 */
+	CLEvent enqueueCopyImageToBuffer(CLImage srcImage, CLBuffer dstBuffer, const size_t[3] srcOrigin, const size_t[3] region, size_t dstOffset, CLEvents waitlist = null)
+	{
+		cl_event event;
+		cl_int res = clEnqueueCopyImageToBuffer(_object, srcImage.getObject(), dstBuffer.getObject(), srcOrigin.ptr, region.ptr, dstOffset, waitlist is null ? 0 : waitlist.length,  waitlist is null ? null : waitlist.ptr, &event);
+
+		mixin(exceptionHandling(
+			["CL_INVALID_COMMAND_QUEUE",			""],
+			["CL_INVALID_CONTEXT",					"context associated with command queue and srcImage or dstBuffer or waitlist is not the same"],
+			["CL_INVALID_MEM_OBJECT",				"srcImage or dstBuffer is invalid"],
+			["CL_INVALID_VALUE",					"region being read/written is out of bounds OR srcImage is a 2D image object and corresponding origin[2] != 0 or region[2] != 1"],
+			["CL_INVALID_EVENT_WAIT_LIST",			"event objects in waitlist are not valid events"],
+			["CL_MISALIGNED_SUB_BUFFER_OFFSET",		"dstBuffer is a sub-buffer object and offset specified when the sub-buffer object is created is not aligned to CL_DEVICE_MEM_BASE_ADDR_ALIGN value for device associated with queue"],
+			["CL_INVALID_IMAGE_SIZE",				"image dimensions (image width, height, specified or compute row and/or slice pitch) for srcImage are not supported by device associated with queue"],
+			["CL_MEM_OBJECT_ALLOCATION_FAILURE",	"couldn't allocate memory for data store associated with srcImage or dstBuffer"],
+			["CL_INVALID_OPERATION",				"the device associated with command queue does not support images"],
+			["CL_OUT_OF_RESOURCES",					""],
+			["CL_OUT_OF_HOST_MEMORY",				""]
+		));
+
+		return new CLEvent(event);
+	}
+	
+	/**
+	 *	enqueues a command to copy a buffer object to an image object
+	 *
+	 *	Params:
+	 *		srcOffset	= the offset where to begin copying data from srcBuffer
+	 *		dstOrigin	= the (x, y, z) offset in pixels where to begin copying data to dstImage.
+	 *					  If dstImage is a 2D image object, the z value given by dstOrigin[2] must be 0
+	 *		region		= (width, height, depth) in pixels of the 2D or 3D rectangle to copy. If dstImage is a 2D image object, the depth value given by region[2] must be 1
+	 *	Returns:
+	 *		an event object that identifies this particular copy command and can be used to query or queue a wait for this particular command to complete
+	 */
+	CLEvent enqueueCopyBufferToImage(CLBuffer srcBuffer, CLImage dstImage, size_t srcOffset, const size_t[3] dstOrigin, const size_t[3] region, CLEvents waitlist = null)
+	{
+		cl_event event;
+		cl_int res = clEnqueueCopyBufferToImage(_object, srcBuffer.getObject(), dstImage.getObject(), srcOffset, dstOrigin.ptr, region.ptr, waitlist is null ? 0 : waitlist.length,  waitlist is null ? null : waitlist.ptr, &event);
+
+		mixin(exceptionHandling(
+			["CL_INVALID_COMMAND_QUEUE",			""],
+			["CL_INVALID_CONTEXT",					"context associated with command queue and dstImage or srcBuffer or waitlist is not the same"],
+			["CL_INVALID_MEM_OBJECT",				"dstImage or srcBuffer is invalid"],
+			["CL_INVALID_VALUE",					"region being read/written is out of bounds OR dstImage is a 2D image object and corresponding origin[2] != 0 or region[2] != 1"],
+			["CL_INVALID_EVENT_WAIT_LIST",			"event objects in waitlist are not valid events"],
+			["CL_MISALIGNED_SUB_BUFFER_OFFSET",		"srcBuffer is a sub-buffer object and offset specified when the sub-buffer object is created is not aligned to CL_DEVICE_MEM_BASE_ADDR_ALIGN value for device associated with queue"],
+			["CL_INVALID_IMAGE_SIZE",				"image dimensions (image width, height, specified or compute row and/or slice pitch) for dstImage are not supported by device associated with queue"],
+			["CL_MEM_OBJECT_ALLOCATION_FAILURE",	"couldn't allocate memory for data store associated with dstImage or srcBuffer"],
+			["CL_INVALID_OPERATION",				"the device associated with command queue does not support images"],
+			["CL_OUT_OF_RESOURCES",					""],
+			["CL_OUT_OF_HOST_MEMORY",				""]
+		));
+
 		return new CLEvent(event);
 	}
 
