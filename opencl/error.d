@@ -186,6 +186,7 @@ mixin(mixinExceptionClasses(
 		ECD("CL_INVALID_GLOBAL_OFFSET",			"", "CLCommandQueueException"),
 		ECD("CL_INVALID_WORK_GROUP_SIZE",		"", "CLCommandQueueException"),
 		ECD("CL_INVALID_WORK_ITEM_SIZE",		"", "CLCommandQueueException"),
+		ECD("CL_MAP_FAILURE",					"",	"CLCommandQueueException"),
 		
 		// memory object errors
 		ECD("CL_INVALID_MEM_OBJECT",		"memobj is not a valid memory object", "CLBufferException"),

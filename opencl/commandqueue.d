@@ -263,16 +263,41 @@ public:
 	 *	space and returns a pointer to this mapped region
 	 *
 	 *	Params:
-	 *	    blocking = 
-	 *	    flags = 
-	 *	    offset = 
-	 *	    cb = 
-	 *	    mapPtr = 
+	 *		blocking	= indicates if the map operation is blocking or non-blocking
+	 *		flags		= a bit-field that can be set to CL_MAP_READ to indicate that the region specified by
+	 *					  (offset, cb) in the buffer object is being mapped for reading, and/or CL_MAP_WRITE to indicate
+	 *					  that the region specified by (offset, cb) in the buffer object is being mapped for writing
+	 *		offset		= offset in bytes of the region in the buffer object that is being mapped
+	 *		cb			= size of the region in the buffer object that is being mapped
+	 *		map			= the returned mapped region starting at offset and at least cb bytes in size
 	 */
-	CLEvent enqueueMapBuffer(CLBuffer buffer, cl_bool blocking, cl_map_flags flags, size_t offset, size_t cb, void** mapPtr, CLEvents waitlist = null)
+	CLEvent enqueueMapBuffer(CLBuffer buffer, cl_bool blocking, cl_map_flags flags, size_t offset, size_t cb, out ubyte[] map, CLEvents waitlist = null)
 	{
-		//TODO
-		assert(0);
+		cl_event event;
+		cl_int res;
+
+		void* mapPtr = clEnqueueMapBuffer(_object, buffer.getObject(), blocking, flags, offset, cb, waitlist is null ? 0 : waitlist.length,  waitlist is null ? null : waitlist.ptr, &event, &res);
+
+		mixin(exceptionHandling(
+			["CL_INVALID_COMMAND_QUEUE",					""],
+			["CL_INVALID_CONTEXT",							"context associated with command queue and buffer or events in waitlist are not the same"],
+			["CL_INVALID_MEM_OBJECT",						"buffer is invalid"],
+			["CL_INVALID_VALUE",							"region being mapped given by (offset, cb) is out of bounds OR flags are invalid"],
+			["CL_INVALID_EVENT_WAIT_LIST",					"event objects in walitlist are invalid"],
+			["CL_MISALIGNED_SUB_BUFFER_OFFSET",				"buffer is a sub-buffer object and offset specified when the sub-buffer object is created is not aligned to CL_DEVICE_MEM_BASE_ADDR_ALIGN value for device associated with queue"],
+			["CL_MAP_FAILURE",								"couldn't map the requested region into the host address space. This error cannot occur for buffer objects created with CL_MEM_USE_HOST_PTR or CL_MEM_ALLOC_HOST_PTR"],
+			["CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST","the map operation is blocking and the execution status of any of the events in waitlist is a negative integer value"],
+			["CL_MEM_OBJECT_ALLOCATION_FAILURE",			"couldn't allocate memory for data store associated with buffer"],
+			["CL_OUT_OF_RESOURCES",							""],
+			["CL_OUT_OF_HOST_MEMORY",						""]
+		));
+
+		// if we reach this point, no exception was thrown and it is safe to construct the map
+		// nevertheless we check if the pointer is null in case exceptionHandling is disabled via the mixin
+		map = (cast(ubyte*)mapPtr)[0 .. cb];
+		debug if(mapPtr is null) map = null;
+
+		return new CLEvent(event);
 	}
 
 	/**
@@ -280,18 +305,42 @@ public:
 	 *	space and returns a pointer to this mapped region
 	 *
 	 *	Params:
-	 *	    blocking = 
-	 *	    flags = 
-	 *	    origin = 
-	 *	    region = 
-	 *	    rowPitch = 
-	 *	    slicePitch = 
-	 *	    mapPtr = 
+	 *		blocking	= indicates if the map operation is blocking or non-blocking
+	 *		flags		= a bit-field that can be set to CL_MAP_READ to indicate that the region specified by
+	 *					  (origin, region) in the image object is being mapped for reading, and/or CL_MAP_WRITE to indicate
+	 *					  that the region specified by (origin, region) in the buffer object is being mapped for writing
+	 *		origin		= (x, y, z) offset in pixels
+	 *		region		= (width, height, depth) in pixels of the 2D or 3D rectangle region that is to be mapped
+	 *		rowPitch	= returns the scan-line pitch in bytes for the mapped region
+	 *		slicePitch	= returns the size in bytes of each 2D slice for the mapped region. For a 2D image, zero is returned.
+	 *		map			= the returned mapped 2D or 3D region starting at origin and at least (rowPitch * region[1]) pixels in size for a 2D image,
+	 *					  and is at least (slicePitch * region[2]) pixels in size for a 3D image
 	 */
-	CLEvent enqueueMapImage(CLImage image, cl_bool blocking, cl_map_flags flags, const size_t[3] origin, const size_t[3] region, out size_t rowPitch, out size_t slicePitch, void** mapPtr, CLEvents waitlist = null)
+	CLEvent enqueueMapImage(CLImage image, cl_bool blocking, cl_map_flags flags, const size_t[3] origin, const size_t[3] region, out size_t rowPitch, out size_t slicePitch, out void* map, CLEvents waitlist = null)
 	{
-		//TODO
-		assert(0);
+		cl_event event;
+		cl_int res;
+
+		// TODO: can we somehow determine the size in bytes of the returned pointer?
+		// Note that images can have different pixel formats
+		map = clEnqueueMapImage(_object, image.getObject(), blocking, flags, origin.ptr, region.ptr, &rowPitch, &slicePitch, waitlist is null ? 0 : waitlist.length,  waitlist is null ? null : waitlist.ptr, &event, &res);
+
+		mixin(exceptionHandling(
+			["CL_INVALID_COMMAND_QUEUE",					""],
+			["CL_INVALID_CONTEXT",							"context associated with command queue and image or events in waitlist are not the same"],
+			["CL_INVALID_MEM_OBJECT",						"image is invalid"],
+			["CL_INVALID_VALUE",							"region being mapped given by (origin, origin+region) is out of bounds OR flags are invalid OR image is a 2D image object and origin[2] is not equal to 0 or region[2] is not equal to 1"],
+			["CL_INVALID_EVENT_WAIT_LIST",					"event objects in walitlist are invalid"],
+			["CL_INVALID_IMAGE_SIZE",						"image dimensions (image width, height, specified or compute row and/or slice pitch) for image are not supported by device associated with queue"],
+			["CL_MAP_FAILURE",								"couldn't map the requested region into the host address space. This error cannot occur for buffer objects created with CL_MEM_USE_HOST_PTR or CL_MEM_ALLOC_HOST_PTR"],
+			["CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST","the map operation is blocking and the execution status of any of the events in waitlist is a negative integer value"],
+			["CL_MEM_OBJECT_ALLOCATION_FAILURE",			"couldn't allocate memory for data store associated with image"],
+			["CL_INVALID_OPERATION",						"device associated with command_queue does not support images"],
+			["CL_OUT_OF_RESOURCES",							""],
+			["CL_OUT_OF_HOST_MEMORY",						""]
+		));
+
+		return new CLEvent(event);
 	}
 
 	/**
