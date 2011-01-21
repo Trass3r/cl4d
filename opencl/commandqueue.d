@@ -344,6 +344,36 @@ public:
 	}
 
 	/**
+	 *	enqueues a command to unmap a previously mapped region of a memory object.
+	 *
+	 * 	Reads or writes from the host using the pointer returned by clEnqueueMapBuffer or clEnqueueMapImage are considered to be complete
+	 *	enqueueMapBuffer and enqueueMapImage increment the mapped count of the memory object.
+	 *	The initial mapped count value of the memory object is zero.
+	 *	Multiple calls to enqueueMapBuffer, or enqueueMapImage on the same memory object will increment this mapped count by appropriate number of calls.
+	 *	enqueueUnmapMemObject decrements the mapped count of the memory object
+	 *
+	 *	Params:
+	 *		map = the host address returned by a previous call to enqueueMapBuffer, or enqueueMapImage for mem
+	 */
+	CLEvent enqueueUnmapMemory(CLMemory mem, void* map, CLEvents waitlist = null)
+	{
+		cl_event event;
+		cl_int res = clEnqueueUnmapMemObject(_object, mem.getObject(), map, waitlist is null ? 0 : waitlist.length,  waitlist is null ? null : waitlist.ptr, &event);
+
+		mixin(exceptionHandling(
+			["CL_INVALID_COMMAND_QUEUE",					""],
+			["CL_INVALID_CONTEXT",							"context associated with command queue and mem or events in waitlist are not the same"],
+			["CL_INVALID_MEM_OBJECT",						"mem is invalid"],
+			["CL_INVALID_VALUE",							"map is not a valid pointer returned by enqueueMapBuffer, or enqueueMapImage for mem"],
+			["CL_INVALID_EVENT_WAIT_LIST",					"event objects in walitlist are invalid"],
+			["CL_OUT_OF_RESOURCES",							""],
+			["CL_OUT_OF_HOST_MEMORY",						""]
+		));
+
+		return new CLEvent(event);
+	}
+
+	/**
 	 *	enqueue commands to read from a 2D or 3D image object to host memory or write to a 2D or 3D image object from host memory
 	 *
 	 *	the command queue and the image must be created with the same OpenCL context
