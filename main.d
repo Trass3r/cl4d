@@ -3,7 +3,7 @@
  *	written in the D programming language
  *
  *	Copyright:
- *		(C) 2009-2010 Andreas Hollandt
+ *		(C) 2009-2011 Andreas Hollandt
  *
  *	License:
  *		see LICENSE.txt

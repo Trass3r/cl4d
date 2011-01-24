@@ -3,8 +3,7 @@
  *	written in the D programming language
  *
  *	Copyright:
- *		(c) 2008-2010 The Khronos Group Inc. (original C headers)
- *		(c) 2009-2010 Andreas Hollandt
+ *		(c) 2009-2011 Andreas Hollandt
  *
  *	License:
  *		see LICENSE.txt

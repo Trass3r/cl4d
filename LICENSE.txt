@@ -1,7 +1,7 @@
 cl4d - object-oriented wrapper for the OpenCL C API
 written in the D programming language
 
-Copyright (C) 2009-2010 Andreas Hollandt
+Copyright (C) 2009-2011 Andreas Hollandt
 
 Permission is hereby granted, free of charge, to any person or organization
 obtaining a copy of the software and accompanying documentation covered by
