@@ -11,6 +11,7 @@
 module opencl.kernel;
 
 import opencl.c.cl;
+import opencl.commandqueue;
 import opencl.context;
 import opencl.device;
 import opencl.error;
@@ -169,7 +170,13 @@ public:
 			["CL_OUT_OF_HOST_MEMORY",	""]
 		));
 	}
-	
+
+	//! bind this kernel to a command queue and specific NDRanges
+	CLKernelFunctor bind(CLCommandQueue queue, const ref NDRange global, const ref NDRange local = NullRange, const ref NDRange offset = NullRange)
+	{
+		return new CLKernelFunctor(this, queue, global, local, offset);
+	}
+
 	@property
 	{
 		/// Return the kernel function name
@@ -195,6 +202,7 @@ public:
 		{
 			return new CLProgram(getInfo!(cl_program)(CL_KERNEL_PROGRAM));
 		}
+	} // of @property
 
 		/**
 		 *	This provides a mechanism for the application to query the maximum
@@ -250,5 +258,31 @@ public:
 		{
 			return getInfo2!(cl_ulong, clGetKernelWorkGroupInfo)(device.getObject(), CL_KERNEL_PRIVATE_MEM_SIZE);
 		}
-	} // of @property
+}
+
+
+class CLKernelFunctor
+{
+private:
+	CLKernel		_kernel;
+	CLCommandQueue	_commandqueue;
+	NDRange			_offset;
+	NDRange			_global;
+	NDRange			_local;
+
+public:
+	this(CLKernel kernel, CLCommandQueue commandqueue, const ref NDRange global, const ref NDRange local = NullRange, const ref NDRange offset = NullRange)
+	{
+		_kernel			= kernel;
+		_commandqueue	= commandqueue;
+		_offset			= offset;
+		_global			= global;
+		_local 			= local;
+	}
+	
+	CLEvent opCall(T...)(T args)
+	{
+		_kernel.setArgs(args);
+		return _commandqueue.enqueueNDRangeKernel(_kernel, _global, _local, _offset);
+	}
 }
