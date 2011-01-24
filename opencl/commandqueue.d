@@ -11,6 +11,7 @@
 module opencl.commandqueue;
 
 import opencl.c.cl;
+import opencl.c.cl_gl;
 import opencl.buffer;
 import opencl.context;
 import opencl.device;
@@ -368,6 +369,57 @@ public:
 			["CL_INVALID_EVENT_WAIT_LIST",					"event objects in walitlist are invalid"],
 			["CL_OUT_OF_RESOURCES",							""],
 			["CL_OUT_OF_HOST_MEMORY",						""]
+		));
+
+		return new CLEvent(event);
+	}
+
+	/**
+	 *	acquire OpenCL memory objects that have been created from OpenGL objects
+	 *
+	 *	These objects need to be acquired before they can be used by any OpenCL commands queued to a
+	 *	command-queue. The OpenGL objects are acquired by the OpenCL context associated with
+	 *	this command queue and can therefore be used by all command-queues associated with the OpenCL context
+	 */
+	CLEvent enqueueAcquireGLObjects(CLMemories memories, CLEvents waitlist = null)
+	{
+		cl_event event;
+		cl_int res = clEnqueueAcquireGLObjects(_object, memories.length, memories.ptr, waitlist is null ? 0 : waitlist.length,  waitlist is null ? null : waitlist.ptr, &event);
+
+		mixin(exceptionHandling(
+			["CL_INVALID_VALUE",		"memories is an invalid array"],
+			["CL_INVALID_MEM_OBJECT",	"memory objects in memories are not valid OpenCL memory objects"],
+			["CL_INVALID_COMMAND_QUEUE",""],
+			["CL_INVALID_CONTEXT",		"context associated with this command queue was not created from an OpenGL context"],
+			["CL_INVALID_GL_OBJECT",	"memory objects in memories have not been created from GL object(s)"],
+			["CL_INVALID_EVENT_WAIT_LIST","invalid event objects in waitlist"],
+			["CL_OUT_OF_RESOURCES",		""],
+			["CL_OUT_OF_HOST_MEMORY",	""]
+		));
+
+		return new CLEvent(event);
+	}
+
+	/**
+	 *	release OpenCL memory objects that have been created from OpenGL objects
+	 *
+	 *	These objects need to be released before they can be used by OpenGL.
+	 *	The OpenGL objects are released by the OpenCL context associated with this command queue
+	 */
+	CLEvent enqueueReleaseGLObjects(CLMemories memories, CLEvents waitlist = null)
+	{
+		cl_event event;
+		cl_int res = clEnqueueReleaseGLObjects(_object, memories.length, memories.ptr, waitlist is null ? 0 : waitlist.length,  waitlist is null ? null : waitlist.ptr, &event);
+
+		mixin(exceptionHandling(
+			["CL_INVALID_VALUE",		"memories is an invalid array"],
+			["CL_INVALID_MEM_OBJECT",	"memory objects in memories are not valid OpenCL memory objects"],
+			["CL_INVALID_COMMAND_QUEUE",""],
+			["CL_INVALID_CONTEXT",		"context associated with this command queue was not created from an OpenGL context"],
+			["CL_INVALID_GL_OBJECT",	"memory objects in memories have not been created from GL object(s)"],
+			["CL_INVALID_EVENT_WAIT_LIST","invalid event objects in waitlist"],
+			["CL_OUT_OF_RESOURCES",		""],
+			["CL_OUT_OF_HOST_MEMORY",	""]
 		));
 
 		return new CLEvent(event);
