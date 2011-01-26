@@ -336,13 +336,13 @@ public:
 			}
 		}
 	}
-	
+
 	/// used to internally get the underlying object pointers
 	package T[] getObjArray()
 	{
 		return _objects;
 	}
-	
+
 	//!
 	package @property T* ptr()
 	{
@@ -350,13 +350,13 @@ public:
 	}
 
 	//! get number of Objects
-	@property size_t length()
+	@property size_t length() const
 	{
 		return _objects.length;
 	}
 
 	/// returns a new instance wrapping object i
-	Wrapper opIndex(size_t i)
+	Wrapper opIndex(size_t i) const
 	in
 	{
 		assert(i < _objects.length, "index out of bounds");
@@ -366,7 +366,7 @@ public:
 		// increment reference count
 		return new Wrapper(_objects[i], true);
 	}
-	
+
 	/// for foreach to work
 	int opApply(int delegate(ref Wrapper) dg)
 	{

@@ -188,7 +188,8 @@ union ` ~ type ~ to!string(size) ~ `
 mixin(genCLVectorTypes());
 // NOTE: There are no vector types for half
 
-/* Macro to facilitate debugging
+/**
+ * Macro to facilitate debugging
  * Usage:
  *   Place mixin(CL_PROGRAM_STRING_DEBUG_INFO) on the line before the first line of your source.
  *   The first line ends with:   CL_PROGRAM_STRING_BEGIN \"
