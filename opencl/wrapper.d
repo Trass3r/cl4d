@@ -140,7 +140,20 @@ public:
 	}
 
 protected:
-	// used for all non-array types
+	/**
+	 *	a wrapper around OpenCL's tedious clGet*Info info retrieval system
+	 *	this version is used for all non-array types
+	 *
+	 *	USE WITH CAUTION!
+	 *
+	 *	Params:
+	 *		U				= the return type of the information to be queried
+	 *		infoFunction	= optionally specify a special info function to be used
+	 *		infoname		= information op-code
+	 *
+	 *	Returns:
+	 *		queried information
+	 */
 	// TODO: make infoname type-safe, not cl_uint (can vary for certain _object, see cl_mem)
 	U getInfo(U, alias infoFunction = classInfoFunction)(cl_uint infoname)
 	{
@@ -173,7 +186,12 @@ protected:
 		return info;
 	}
 	
-	// this special version is only used for clGetProgramBuildInfo and clGetKernelWorkgroupInfo
+	/**
+	 *	this special version is only used for clGetProgramBuildInfo and clGetKernelWorkgroupInfo
+	 *
+	 *	See_Also:
+	 *		getInfo
+	 */
 	U getInfo2(U, alias altFunction)( cl_device_id device, cl_uint infoname)
 	{
 		assert(_object !is null);
@@ -204,7 +222,16 @@ protected:
 		
 		return info;
 	}
-	
+
+	/**
+	 *	this version is used for all array return types
+	 *
+	 *	Params:
+	 *		U	= array element type
+	 *
+	 *	See_Also:
+	 *		getInfo
+	 */
 	// helper function for all OpenCL Get*Info functions
 	// used for all array return types
 	U[] getArrayInfo(U, alias infoFunction = classInfoFunction)(cl_uint infoname)
@@ -236,8 +263,12 @@ protected:
 		return buffer;
 	}
 	
-	// this special version is only used for clGetProgramBuildInfo and clGetKernelWorkgroupInfo
-	// used for all array return types
+	/**
+	 *	special version only used for clGetProgramBuildInfo and clGetKernelWorkgroupInfo
+	 *
+	 *	See_Also:
+	 *		getArrayInfo
+	 */
 	U[] getArrayInfo2(U, alias altFunction)(cl_device_id device, cl_uint infoname)
 	{
 		assert(_object !is null);
@@ -266,14 +297,20 @@ protected:
 		
 		return buffer;
 	}
-	
+
+	/**
+	 *	convenience shortcut
+	 *
+	 *	See_Also:
+	 *		getArrayInfo
+	 */
 	string getStringInfo(alias infoFunction = classInfoFunction)(cl_uint infoname)
 	{
 		return cast(string) getArrayInfo!(ichar, infoFunction)(infoname);
 	}
 
-}, "classInfoFunction", classInfoFunction); // end of q{} token string and replace call
-}
+}, "classInfoFunction", classInfoFunction); // end of return (q{} token string ~ replace call)
+} // of CLWrapper function
 
 /**
  *	a collection of OpenCL objects returned by some methods
