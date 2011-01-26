@@ -18,12 +18,8 @@ import opencl.c.cl;
 extern(System):
 
 /******************************************************************************
- * cl_nv_d3d11_sharing														*/
-
-typedef cl_uint cl_d3d11_device_source_nv;
-typedef cl_uint cl_d3d11_device_set_nv;
-
-/******************************************************************************/
+ * cl_nv_d3d11_sharing														  *
+ ******************************************************************************/
 
 enum
 {
@@ -32,14 +28,6 @@ enum
 	CL_INVALID_D3D11_RESOURCE_NV			= -1007,
 	CL_D3D11_RESOURCE_ALREADY_ACQUIRED_NV	= -1008,
 	CL_D3D11_RESOURCE_NOT_ACQUIRED_NV		= -1009,
-
-// cl_d3d11_device_source_nv
-	CL_D3D11_DEVICE_NV						= 0x4019,
-	CL_D3D11_DXGI_ADAPTER_NV				= 0x401A,
-
-// cl_d3d11_device_set_nv
-	CL_PREFERRED_DEVICES_FOR_D3D11_NV		= 0x401B,
-	CL_ALL_DEVICES_FOR_D3D11_NV				= 0x401C,
 
 // cl_context_info
 	CL_CONTEXT_D3D11_DEVICE_NV				= 0x401D,
@@ -54,6 +42,21 @@ enum
 	CL_COMMAND_ACQUIRE_D3D11_OBJECTS_NV		= 0x4020,
 	CL_COMMAND_RELEASE_D3D11_OBJECTS_NV		= 0x4021,
 }
+
+enum cl_d3d11_device_source_nv : cl_uint
+{
+	CL_D3D11_DEVICE_NV						= 0x4019,
+	CL_D3D11_DXGI_ADAPTER_NV				= 0x401A,
+}
+mixin(bringToCurrentScope!cl_d3d11_device_source_nv);
+
+enum cl_d3d11_device_set_nv : cl_uint
+{
+	CL_PREFERRED_DEVICES_FOR_D3D11_NV		= 0x401B,
+	CL_ALL_DEVICES_FOR_D3D11_NV				= 0x401C,
+}
+mixin(bringToCurrentScope!cl_d3d11_device_set_nv);
+
 
 /******************************************************************************/
 

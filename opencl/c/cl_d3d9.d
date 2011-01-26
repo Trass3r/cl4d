@@ -18,12 +18,8 @@ import opencl.c.cl;
 extern(System):
 
 /******************************************************************************
- * cl_nv_d3d9_sharing														 */
-
-typedef cl_uint cl_d3d9_device_source_nv;
-typedef cl_uint cl_d3d9_device_set_nv;
-
-/******************************************************************************/
+ * cl_nv_d3d9_sharing														  *
+ ******************************************************************************/
 
 // Error Codes
 enum
@@ -32,14 +28,6 @@ enum
 	CL_INVALID_D3D9_RESOURCE_NV				= -1011,
 	CL_D3D9_RESOURCE_ALREADY_ACQUIRED_NV	= -1012,
 	CL_D3D9_RESOURCE_NOT_ACQUIRED_NV		= -1013,
-
-// cl_d3d9_device_source_nv
-	CL_D3D9_DEVICE_NV					= 0x4022,
-	CL_D3D9_ADAPTER_NAME_NV				= 0x4023,
-
-// cl_d3d9_device_set_nv
-	CL_PREFERRED_DEVICES_FOR_D3D9_NV	= 0x4024,
-	CL_ALL_DEVICES_FOR_D3D9_NV			= 0x4025,
 
 // cl_context_info
 	CL_CONTEXT_D3D9_DEVICE_NV			= 0x4026,
@@ -55,6 +43,21 @@ enum
 	CL_COMMAND_ACQUIRE_D3D9_OBJECTS_NV	= 0x402A,
 	CL_COMMAND_RELEASE_D3D9_OBJECTS_NV	= 0x402B,
 }
+
+enum cl_d3d9_device_source_nv : cl_uint
+{
+	CL_D3D9_DEVICE_NV					= 0x4022,
+	CL_D3D9_ADAPTER_NAME_NV				= 0x4023,
+}
+mixin(bringToCurrentScope!cl_d3d9_device_source_nv);
+
+enum cl_d3d9_device_set_nv : cl_uint
+{
+	CL_PREFERRED_DEVICES_FOR_D3D9_NV	= 0x4024,
+	CL_ALL_DEVICES_FOR_D3D9_NV			= 0x4025,
+}
+mixin(bringToCurrentScope!cl_d3d9_device_set_nv);
+
 
 /******************************************************************************/
 

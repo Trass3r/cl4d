@@ -18,14 +18,9 @@ import opencl.c.cl;
 
 extern(System):
 
-/******************************************************************************/
-
-const cl_khr_d3d10_sharing = 1;
-
-typedef cl_uint cl_d3d10_device_source_khr;
-typedef cl_uint cl_d3d10_device_set_khr;
-
-/******************************************************************************/
+/******************************************************************************
+ * cl_khr_d3d10_sharing
+ ******************************************************************************/
 
 enum
 {
@@ -34,14 +29,6 @@ enum
 	CL_INVALID_D3D10_RESOURCE_KHR			= -1003,
 	CL_D3D10_RESOURCE_ALREADY_ACQUIRED_KHR	= -1004,
 	CL_D3D10_RESOURCE_NOT_ACQUIRED_KHR		= -1005,
-
-//	cl_d3d10_device_source_nv
-	CL_D3D10_DEVICE_KHR						= 0x4010,
-	CL_D3D10_DXGI_ADAPTER_KHR				= 0x4011,
-
-//	cl_d3d10_device_set_nv
-	CL_PREFERRED_DEVICES_FOR_D3D10_KHR		= 0x4012,
-	CL_ALL_DEVICES_FOR_D3D10_KHR			= 0x4013,
 
 //	cl_context_info
 	CL_CONTEXT_D3D10_DEVICE_KHR						= 0x4014,
@@ -58,9 +45,24 @@ enum
 	CL_COMMAND_RELEASE_D3D10_OBJECTS_KHR	= 0x4018,
 }
 
+enum cl_d3d10_device_source_khr : cl_uint
+{
+	CL_D3D10_DEVICE_KHR						= 0x4010,
+	CL_D3D10_DXGI_ADAPTER_KHR				= 0x4011,
+}
+mixin(bringToCurrentScope!cl_d3d10_device_source_khr);
+
+enum cl_d3d10_device_set_khr : cl_uint
+{
+	CL_PREFERRED_DEVICES_FOR_D3D10_KHR		= 0x4012,
+	CL_ALL_DEVICES_FOR_D3D10_KHR			= 0x4013,
+}
+mixin(bringToCurrentScope!cl_d3d10_device_set_khr);
+
+
 /******************************************************************************/
 
-typedef extern(System) cl_int (*clGetDeviceIDsFromD3D10KHR_fn)(
+typedef extern(System) cl_int function(
 	cl_platform_id				platform,
 	cl_d3d10_device_source_khr	d3d_device_source,
 	void*						d3d_object,
@@ -68,7 +70,7 @@ typedef extern(System) cl_int (*clGetDeviceIDsFromD3D10KHR_fn)(
 	cl_uint						num_entries,
 	cl_device_id*				devices,
 	cl_uint*					num_devices
-);
+) clGetDeviceIDsFromD3D10KHR_fn;
 
 typedef extern(System) cl_mem function(
 	cl_context		context,
