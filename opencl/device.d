@@ -216,6 +216,12 @@ public:
 	{
 		return getInfo!cl_device_fp_config(CL_DEVICE_SINGLE_FP_CONFIG);
 	}
+
+	//! Describes double precision floating-point capability of the device. Make sure the cl_khr_fp64 extension is supported
+	auto doubleFpConfig()
+	{
+		return getInfo!cl_device_fp_config(CL_DEVICE_DOUBLE_FP_CONFIG);
+	}
 	
 	/**
 	 *	Type of global memory cache supported. Valid values are:

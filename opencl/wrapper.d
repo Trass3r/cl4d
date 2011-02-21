@@ -37,12 +37,12 @@ abstract class CLObject
 }
 
 /**
- *	This is the base class of all CLObjects
- *	provides getInfo, retain and release functions
+ *	this provides basic functionality that is mixed into all CLObjects,
+ *	namely info retrieval and reference counting methods
  */ 
 package string CLWrapper(string T, string classInfoFunction)
 {
-	return "private:\nalias " ~ T ~ " T;\n" ~ replace(q{
+	return "private:\nalias " ~ T ~ " T;\n" ~ q{
 protected:
 	T _object = null;
 
@@ -75,15 +75,17 @@ private import std.stdio;
 	}
 
 	// should only be used inside here so reference counting works
-	package T getObject() const
+	final package T getObject() const
 	{
 		return _object;
 	}
 
+/+
 	package ref T getObject()
 	{
 		return _object;
 	}
++/
 
 /+
 	//! ensure that _object isn't null
@@ -94,7 +96,7 @@ private import std.stdio;
 +/
 public:
 	//! increments the object reference count
-	void retain()
+	final void retain()
 	{
 		// NOTE: cl_platform_id and cl_device_id don't have reference counting
 		// T.stringof is compared instead of T itself so it also works with T being an alias
@@ -113,7 +115,7 @@ public:
 	 *	decrements the context reference count
 	 *	The object is deleted once the number of instances that are retained to it become zero
 	 */
-	void release()
+	final void release()
 	{
 		static if (T.stringof[$-3..$] != "_id")
 		{
@@ -131,7 +133,7 @@ public:
 	 *	The reference count returned should be considered immediately stale. It is unsuitable for general use in 
 	 *	applications. This feature is provided for identifying memory leaks
 	 */
-	@property cl_uint referenceCount()
+	final @property cl_uint referenceCount()
 	{
 		static if (T.stringof[$-3..$] != "_id")
 			mixin("return getInfo!cl_uint(CL_" ~ (T.stringof == "cl_command_queue" ? "QUEUE" : toupper(T.stringof[3..$])) ~ "_REFERENCE_COUNT);");
@@ -155,7 +157,7 @@ protected:
 	 *		queried information
 	 */
 	// TODO: make infoname type-safe, not cl_uint (can vary for certain _object, see cl_mem)
-	U getInfo(U, alias infoFunction = classInfoFunction)(cl_uint infoname)
+	final U getInfo(U, alias infoFunction = classInfoFunction)(cl_uint infoname)
 	{
 		assert(_object !is null);
 		cl_int res;
@@ -192,7 +194,7 @@ protected:
 	 *	See_Also:
 	 *		getInfo
 	 */
-	U getInfo2(U, alias altFunction)( cl_device_id device, cl_uint infoname)
+	final U getInfo2(U, alias altFunction)( cl_device_id device, cl_uint infoname)
 	{
 		assert(_object !is null);
 		cl_int res;
@@ -234,7 +236,7 @@ protected:
 	 */
 	// helper function for all OpenCL Get*Info functions
 	// used for all array return types
-	U[] getArrayInfo(U, alias infoFunction = classInfoFunction)(cl_uint infoname)
+	final U[] getArrayInfo(U, alias infoFunction = classInfoFunction)(cl_uint infoname)
 	{
 		assert(_object !is null);
 		size_t needed;
@@ -269,7 +271,7 @@ protected:
 	 *	See_Also:
 	 *		getArrayInfo
 	 */
-	U[] getArrayInfo2(U, alias altFunction)(cl_device_id device, cl_uint infoname)
+	final U[] getArrayInfo2(U, alias altFunction)(cl_device_id device, cl_uint infoname)
 	{
 		assert(_object !is null);
 		size_t needed;
@@ -304,12 +306,12 @@ protected:
 	 *	See_Also:
 	 *		getArrayInfo
 	 */
-	string getStringInfo(alias infoFunction = classInfoFunction)(cl_uint infoname)
+	final string getStringInfo(alias infoFunction = classInfoFunction)(cl_uint infoname)
 	{
 		return cast(string) getArrayInfo!(ichar, infoFunction)(infoname);
 	}
 
-}, "classInfoFunction", classInfoFunction); // end of return (q{} token string ~ replace call)
+}.replace("classInfoFunction", classInfoFunction); // return q{...}.replace(...)
 } // of CLWrapper function
 
 /**
