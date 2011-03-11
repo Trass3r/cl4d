@@ -11,6 +11,7 @@
 module opencl.device;
 
 import opencl.c.cl;
+import opencl.c.cl_ext;
 import opencl.error;
 import opencl.platform;
 import opencl.wrapper;
