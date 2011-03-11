@@ -18,7 +18,7 @@ import opencl.platform;
 import opencl.device;
 import opencl.event;
 
-import std.string;
+import std.array;
 
 package
 {
@@ -338,7 +338,17 @@ protected:
 		static assert(0, "object type not supported by CLObjectCollection");
 
 public:
-	//! takes a list of OpenCL objects returned by some OpenCL functions like GetPlatformIDs
+	//! takes a list of cl4d CLObjects
+	this(Wrapper[] clObjects, bool increment = false)
+	{
+		T[] tmp = new T[clObjects.length];
+		foreach(obj; clObjects)
+			tmp[i] = obj.getObject();
+
+		this(tmp, increment);
+	}
+
+	//! takes a list of OpenCL C objects returned by some OpenCL functions like GetPlatformIDs
 	this(T[] objects, bool increment = false)
 	{
 		_objects = objects.dup;
