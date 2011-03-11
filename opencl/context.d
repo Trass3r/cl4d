@@ -27,15 +27,23 @@ class CLContext
 	mixin(CLWrapper("cl_context", "clGetContextInfo"));
 
 public:
-	/// creates an OpenCL context with the given devices
-	this(CLDevices devices)
+	/**
+	 *	creates an OpenCL context using the given devices
+	 *
+	 *	Params:
+	 *		props = additional properties, note that you don't need to specify the platform in props nor append a 0
+	 */
+	this(CLDevices devices, cl_context_properties[] props = null)
 	{
 		cl_int res;
 		
 		auto deviceIDs = devices.getObjArray();
 
 		// TODO: user notification function
-		cl_context_properties[3] cps = [CL_CONTEXT_PLATFORM, cast(cl_context_properties) (devices[0].platform.getObject()), 0];
+
+		if (props !is null) assert(props[$-1] != 0);
+
+		cl_context_properties[] cps = props ~ [CL_CONTEXT_PLATFORM, cast(cl_context_properties) (devices[0].platform.cptr), 0];
 		_object = clCreateContext(cps.ptr, deviceIDs.length, deviceIDs.ptr, null, null, &res);
 
 		mixin(exceptionHandling(
@@ -48,11 +56,18 @@ public:
 		));
 	}
 	
-	/// create a context from all available devices
-	this(cl_device_type type = CL_DEVICE_TYPE_ALL)
+	/**
+	 *	create a context using all available devices of a specific type
+	 *
+	 *	Params:
+	 *		props = additional properties, note that you don't need to append a 0
+	 */
+	this(cl_device_type type = CL_DEVICE_TYPE_ALL, cl_context_properties[] props = null)
 	{
 		cl_int res;
-		_object = clCreateContextFromType(null, type, null, null, &res); // TODO: make ICD-compatible
+
+		cl_context_properties[] cps = props ~ 0; // TODO: make ICD-compatible
+		_object = clCreateContextFromType(cps.ptr, type, null, null, &res);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_PLATFORM",		"no platform could be selected"],
