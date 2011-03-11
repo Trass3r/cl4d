@@ -38,7 +38,7 @@ public:
 	 */
 	void setDestructorCallback(mem_notify_fn fpNotify, void* userData = null)
 	{
-		cl_int res = clSetMemObjectDestructorCallback(this.getObject(), fpNotify, userData);
+		cl_int res = clSetMemObjectDestructorCallback(this.cptr, fpNotify, userData);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_MEM_OBJECT",	""],

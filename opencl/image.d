@@ -121,7 +121,7 @@ public:
 	this(CLContext context, cl_mem_flags flags, const cl_image_format format, size_t width, size_t height, size_t rowPitch, void* hostPtr = null)
 	{
 		cl_int res;
-		_object = clCreateImage2D(context.getObject(), flags, &format, width, height, rowPitch, hostPtr, &res);
+		_object = clCreateImage2D(context.cptr, flags, &format, width, height, rowPitch, hostPtr, &res);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",					""],
@@ -154,7 +154,7 @@ public:
 	this(const CLContext context, cl_mem_flags flags, cl_GLenum target, cl_GLint  miplevel, cl_GLuint texobj)
 	{
 		cl_int res;
-		_object = clCreateFromGLTexture2D(context.getObject(), flags, target, miplevel, texobj, &res);
+		_object = clCreateFromGLTexture2D(context.cptr, flags, target, miplevel, texobj, &res);
 
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",		"context is not a valid context or was not created from a GL context"],
@@ -186,7 +186,7 @@ public:
 	this(CLContext context, cl_mem_flags flags, const cl_image_format format, size_t width, size_t height, size_t depth, size_t rowPitch, size_t slicePitch, void* hostPtr = null)
 	{
 		cl_int res;
-		_object = clCreateImage3D(context.getObject(), flags, &format, width, height, depth, rowPitch, slicePitch, hostPtr, &res);
+		_object = clCreateImage3D(context.cptr, flags, &format, width, height, depth, rowPitch, slicePitch, hostPtr, &res);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",					""],
@@ -219,7 +219,7 @@ public:
 	this(const CLContext context, cl_mem_flags flags, cl_GLenum target, cl_GLint  miplevel, cl_GLuint texobj)
 	{
 		cl_int res;
-		_object = clCreateFromGLTexture3D(context.getObject(), flags, target, miplevel, texobj, &res);
+		_object = clCreateFromGLTexture3D(context.cptr, flags, target, miplevel, texobj, &res);
 
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",		"context is not a valid context or was not created from a GL context"],

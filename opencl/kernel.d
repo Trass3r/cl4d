@@ -89,7 +89,7 @@ public:
 	{
 		cl_int res;
 
-		_object = clCreateKernel(program.getObject(), toStringz(kernelName), &res);
+		_object = clCreateKernel(program.cptr, toStringz(kernelName), &res);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_PROGRAM",				"program is not a valid program object"],
@@ -126,7 +126,7 @@ public:
 	void setArg(ArgType)(cl_uint idx, ArgType arg)
 	{
 		static if (is(ArgType : CLMemory) || is(ArgType == CLSampler))
-			setArgx(idx, arg.getObject().sizeof, &arg.getObject());
+			setArgx(idx, arg.cptr().sizeof, &arg.cptr());
 		else static if (is(ArgType : CLObject))
 			static assert(0, "can't set " ~ ArgType.stringof ~ " as a kernel argument!");
 		else static if (is(ArgType == LocalArgSize))
@@ -212,7 +212,7 @@ public:
 		 */
 		size_t workGroupSize(CLDevice device)
 		{
-			return getInfo2!(size_t, clGetKernelWorkGroupInfo)(device.getObject(), CL_KERNEL_WORK_GROUP_SIZE);
+			return getInfo2!(size_t, clGetKernelWorkGroupInfo)(device.cptr, CL_KERNEL_WORK_GROUP_SIZE);
 		}
 		
 		/**
@@ -223,7 +223,7 @@ public:
 		size_t[3] compileWorkGroupSize(CLDevice device)
 		{
 			// TODO: check if this works
-			return getInfo2!(size_t[3], clGetKernelWorkGroupInfo)(device.getObject(), CL_KERNEL_COMPILE_WORK_GROUP_SIZE);
+			return getInfo2!(size_t[3], clGetKernelWorkGroupInfo)(device.cptr, CL_KERNEL_COMPILE_WORK_GROUP_SIZE);
 		}
 		
 		/**
@@ -235,7 +235,7 @@ public:
 		 */
 		cl_ulong localMemSize(CLDevice device)
 		{
-			return getInfo2!(cl_ulong, clGetKernelWorkGroupInfo)(device.getObject(), CL_KERNEL_LOCAL_MEM_SIZE);
+			return getInfo2!(cl_ulong, clGetKernelWorkGroupInfo)(device.cptr, CL_KERNEL_LOCAL_MEM_SIZE);
 		}
 		
 		/**
@@ -246,7 +246,7 @@ public:
 		 */
 		size_t preferredWorkGroupSizeMultiple(CLDevice device)
 		{
-			return getInfo2!(size_t, clGetKernelWorkGroupInfo)(device.getObject(), CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE);
+			return getInfo2!(size_t, clGetKernelWorkGroupInfo)(device.cptr, CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE);
 		}
 		
 		/**
@@ -256,7 +256,7 @@ public:
 		 */
 		cl_ulong privateMemSize(CLDevice device)
 		{
-			return getInfo2!(cl_ulong, clGetKernelWorkGroupInfo)(device.getObject(), CL_KERNEL_PRIVATE_MEM_SIZE);
+			return getInfo2!(cl_ulong, clGetKernelWorkGroupInfo)(device.cptr, CL_KERNEL_PRIVATE_MEM_SIZE);
 		}
 }
 

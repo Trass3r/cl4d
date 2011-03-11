@@ -38,7 +38,7 @@ public:
 		cl_int res;
 		size_t* lengths = cast(size_t*) [sourceCode.length];
 		char** ptrs = cast(char**) [sourceCode.ptr];
-		_object = clCreateProgramWithSource(context.getObject(), 1, ptrs, lengths, &res);
+		_object = clCreateProgramWithSource(context.cptr, 1, ptrs, lengths, &res);
 
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",		""],
@@ -53,7 +53,7 @@ public:
 	this(CLContext context, ubyte[][] binaries, CLDevice[] devices = null)
 	{
 		cl_int res, binary_status;
-		super(clCreateProgramWithBinary(context.getObject(), 0, devices, binaries.length, ));
+		super(clCreateProgramWithBinary(context.cptr, 0, devices, binaries.length, ));
 		
 	}//*/
 	
@@ -130,7 +130,7 @@ public:
 		cl_int res;
 		cl_uint numKernels;
 		
-		res = clCreateKernelsInProgram(getObject(), 0, null, &numKernels);
+		res = clCreateKernelsInProgram(this.cptr, 0, null, &numKernels);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_PROGRAM",				"program is not a valid program object"],
@@ -138,7 +138,7 @@ public:
 		));
 		
 		auto kernels = new cl_kernel[numKernels];
-		res = clCreateKernelsInProgram(getObject(), kernels.length, kernels.ptr, null);
+		res = clCreateKernelsInProgram(this.cptr, kernels.length, kernels.ptr, null);
 
 		mixin(exceptionHandling(
 			["CL_INVALID_VALUE",				"kernels is not NULL and num_kernels is less than the number of kernels in program"],
@@ -180,7 +180,7 @@ public:
 	 */
 	auto buildStatus(CLDevice device)
 	{
-		return getInfo2!(cl_build_status, clGetProgramBuildInfo)(device.getObject(), CL_PROGRAM_BUILD_STATUS);
+		return getInfo2!(cl_build_status, clGetProgramBuildInfo)(device.cptr, CL_PROGRAM_BUILD_STATUS);
 	}
 	
 	/**
@@ -189,7 +189,7 @@ public:
 	 */
 	string buildOptions(CLDevice device)
 	{
-		return getArrayInfo2!(ichar, clGetProgramBuildInfo)(device.getObject(), CL_PROGRAM_BUILD_OPTIONS);
+		return getArrayInfo2!(ichar, clGetProgramBuildInfo)(device.cptr, CL_PROGRAM_BUILD_OPTIONS);
 	}
 	
 	/**
@@ -198,7 +198,7 @@ public:
 	 */
 	string buildLog(CLDevice device)
 	{
-		return getArrayInfo2!(ichar, clGetProgramBuildInfo)(device.getObject(), CL_PROGRAM_BUILD_LOG);
+		return getArrayInfo2!(ichar, clGetProgramBuildInfo)(device.cptr, CL_PROGRAM_BUILD_LOG);
 	}
 
 	@property

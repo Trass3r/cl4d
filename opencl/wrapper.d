@@ -74,19 +74,20 @@ private import std.stdio;
 		release();
 	}
 
+	// return the internal OpenCL C object
 	// should only be used inside here so reference counting works
-	final package T getObject() const
+	final package @property T cptr() const
 	{
 		return _object;
 	}
-
-/+
-	package ref T getObject()
+	
+	// return the internal OpenCL C object as a ref type
+	// should only be used inside here so reference counting works
+	final package @property ref T cptr()
 	{
 		return _object;
 	}
-+/
-
+	
 /+
 	//! ensure that _object isn't null
 	invariant()
@@ -342,8 +343,8 @@ public:
 	this(Wrapper[] clObjects, bool increment = false)
 	{
 		T[] tmp = new T[clObjects.length];
-		foreach(obj; clObjects)
-			tmp[i] = obj.getObject();
+		foreach(i, obj; clObjects)
+			tmp[i] = obj.cptr;
 
 		this(tmp, increment);
 	}

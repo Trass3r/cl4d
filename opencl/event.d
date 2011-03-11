@@ -235,7 +235,7 @@ public:
 	this(CLContext context)
 	{
 		cl_int res;
-		_object = clCreateUserEvent(context.getObject(), &res);
+		_object = clCreateUserEvent(context.cptr, &res);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",	""],

@@ -20,6 +20,7 @@ import opencl.wrapper;
 /**
  *	buffer objects are generic memory objects for containing any type of data
  */
+// TODO: make CLBuffer know its type?
 class CLBuffer : CLMemory
 {
 package:
@@ -48,7 +49,7 @@ public:
 		// TODO: perform argument checks? is it necessary or just leave it to OpenCL?
 
 		cl_int res;
-		_object = clCreateBuffer(context.getObject(), flags, datasize, hostptr, &res);
+		_object = clCreateBuffer(context.cptr, flags, datasize, hostptr, &res);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",				""],
@@ -75,7 +76,7 @@ public:
 		cl_buffer_region reg = {origin, size};
 
 		cl_int res;
-		auto ret = new CLBuffer(clCreateSubBuffer(this.getObject(), flags, CL_BUFFER_CREATE_TYPE_REGION, &reg, &res));
+		auto ret = new CLBuffer(clCreateSubBuffer(this.cptr, flags, CL_BUFFER_CREATE_TYPE_REGION, &reg, &res));
 
 		// TODO: handle flags separately? see CL_INVALID_VALUE message
 		mixin(exceptionHandling(
@@ -128,7 +129,7 @@ public:
 	this(CLContext context, cl_mem_flags flags, cl_GLuint bufobj)
 	{
 		cl_int res;
-		_object = clCreateFromGLBuffer(context.getObject(), flags, bufobj, &res);
+		_object = clCreateFromGLBuffer(context.cptr, flags, bufobj, &res);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",		"context is not a valid context or was not created from a GL context"],
@@ -167,7 +168,7 @@ public:
 	this(CLContext context, cl_mem_flags flags, cl_GLuint renderbuffer)
 	{
 		cl_int res;
-		_object = clCreateFromGLRenderbuffer(context.getObject(), flags, renderbuffer, &res);
+		_object = clCreateFromGLRenderbuffer(context.cptr, flags, renderbuffer, &res);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",					"context is not a valid context or was not created from a GL context"],
