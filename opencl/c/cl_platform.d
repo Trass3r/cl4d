@@ -127,9 +127,9 @@ enum
 +/
 
 // Mirror types to GL types. Mirror types allow us to avoid deciding which headers to load based on whether we are using GL or GLES here.
-typedef uint	cl_GLuint;
-typedef int		cl_GLint;
-typedef uint	cl_GLenum;
+alias uint	cl_GLuint;
+alias int	cl_GLint;
+alias uint	cl_GLenum;
 
 /*
  * Vector types 
