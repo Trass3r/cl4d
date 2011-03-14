@@ -23,7 +23,7 @@ import opencl.memory;
 import opencl.wrapper;
 
 //!
-class CLCommandQueue
+class CLCommandQueue : CLObject
 {
 	mixin(CLWrapper("cl_command_queue", "clGetCommandQueueInfo"));
 

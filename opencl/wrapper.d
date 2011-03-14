@@ -39,6 +39,8 @@ abstract class CLObject
 /**
  *	this provides basic functionality that is mixed into all CLObjects,
  *	namely info retrieval and reference counting methods
+ *
+ *	It should be a template mixin, but unfortunately those can't add constructors to classes
  */ 
 package string CLWrapper(string T, string classInfoFunction)
 {
@@ -134,7 +136,7 @@ public:
 	 *	The reference count returned should be considered immediately stale. It is unsuitable for general use in 
 	 *	applications. This feature is provided for identifying memory leaks
 	 */
-	final @property cl_uint referenceCount()
+	final @property cl_uint referenceCount() const
 	{
 		static if (T.stringof[$-3..$] != "_id")
 			mixin("return getInfo!cl_uint(CL_" ~ (T.stringof == "cl_command_queue" ? "QUEUE" : toupper(T.stringof[3..$])) ~ "_REFERENCE_COUNT);");
@@ -418,7 +420,7 @@ public:
 	}
 
 	/// for foreach to work
-	int opApply(int delegate(ref Wrapper) dg)
+	int opApply(scope int delegate(ref Wrapper) dg)
 	{
 		int result = 0;
 		
