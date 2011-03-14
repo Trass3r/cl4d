@@ -83,13 +83,6 @@ private import std.stdio;
 		return _object;
 	}
 	
-	// return the internal OpenCL C object as a ref type
-	// should only be used inside here so reference counting works
-	final package @property ref T cptr()
-	{
-		return _object;
-	}
-	
 /+
 	//! ensure that _object isn't null
 	invariant()
@@ -136,7 +129,7 @@ public:
 	 *	The reference count returned should be considered immediately stale. It is unsuitable for general use in 
 	 *	applications. This feature is provided for identifying memory leaks
 	 */
-	final @property cl_uint referenceCount()
+	final @property cl_uint referenceCount() // TODO: make const
 	{
 		static if (T.stringof[$-3..$] != "_id")
 			mixin("return getInfo!cl_uint(CL_" ~ (T.stringof == "cl_command_queue" ? "QUEUE" : toupper(T.stringof[3..$])) ~ "_REFERENCE_COUNT);");

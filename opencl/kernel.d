@@ -126,7 +126,10 @@ public:
 	void setArg(ArgType)(cl_uint idx, ArgType arg)
 	{
 		static if (is(ArgType : CLMemory) || is(ArgType == CLSampler))
-			setArgx(idx, arg.cptr().sizeof, &arg.cptr());
+		{
+			auto tmp = arg.cptr;
+			setArgx(idx, arg.cptr.sizeof, &tmp);
+		}
 		else static if (is(ArgType : CLObject))
 			static assert(0, "can't set " ~ ArgType.stringof ~ " as a kernel argument!");
 		else static if (is(ArgType == LocalArgSize))
@@ -156,8 +159,9 @@ public:
 		// clSetKernelArg is safe to call from any host thread, and is safe to call re-entrantly so long as concurrent calls operate on different cl_kernel objects
 		// the behavior of the cl_kernel object is undefined if clSetKernelArg is called from multiple host threads on the same cl_kernel object at the same time
 		// TODO: thus, if multiple CLKernel objects wrap the same cl_kernel one, this still makes problems
-		cl_errcode res = void;
-		synchronized(this) res = clSetKernelArg(_object, idx, size, value);
+		cl_errcode res;
+		// TODO:
+		/* synchronized(this) */ res = clSetKernelArg(_object, idx, size, value);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_KERNEL",		""],
