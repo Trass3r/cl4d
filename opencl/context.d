@@ -35,7 +35,7 @@ public:
 	 */
 	this(CLDevices devices, cl_context_properties[] props = null)
 	{
-		cl_int res;
+		cl_errcode res;
 		
 		auto deviceIDs = devices.getObjArray();
 
@@ -64,7 +64,7 @@ public:
 	 */
 	this(cl_device_type type = CL_DEVICE_TYPE_ALL, cl_context_properties[] props = null)
 	{
-		cl_int res;
+		cl_errcode res;
 
 		cl_context_properties[] cps = props ~ 0; // TODO: make ICD-compatible
 		_object = clCreateContextFromType(cps.ptr, type, null, null, &res);
@@ -89,7 +89,7 @@ public:
 	cl_image_format[] supportedImageFormats(cl_mem_flags flags, cl_mem_object_type type) const
 	{
 		cl_uint numFormats;
-		cl_int res = clGetSupportedImageFormats(_object, flags, type, 0, null, &numFormats);
+		cl_errcode res = clGetSupportedImageFormats(_object, flags, type, 0, null, &numFormats);
 
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",		""]

@@ -54,13 +54,13 @@ enum
 	CL_PLATFORM_NOT_FOUND_KHR		= -1001,
 }
 
-cl_int clIcdGetPlatformIDsKHR(
+cl_errcode clIcdGetPlatformIDsKHR(
 	cl_uint				num_entries,
 	cl_platform_id* 	platforms,
 	cl_uint*			num_platforms
 );
 
-typedef cl_int function(cl_uint num_entries,
+typedef cl_errcode function(cl_uint num_entries,
 								  cl_platform_id* platforms,
 								  cl_uint* num_platforms) clIcdGetPlatformIDsKHR_fn;
 
@@ -87,7 +87,7 @@ version(CL_APPLE)
 	 */
 	version = cl_APPLE_SetMemObjectDestructor;
 	
-	cl_int clSetMemObjectDestructorAPPLE(cl_mem memobj,
+	cl_errcode clSetMemObjectDestructorAPPLE(cl_mem memobj,
 	                                     void function(cl_mem memobj, void* user_data) pfn_notify, // TODO: extern(C)?
 	                                     void* user_data);  
 	
@@ -154,23 +154,23 @@ version(CL_EXT)
 		 ***********************************/
 		version = cl_ext_device_fission;
 	
-		cl_int clReleaseDeviceEXT(cl_device_id device); 
+		cl_errcode clReleaseDeviceEXT(cl_device_id device); 
 	
-		typedef extern(System) cl_int function(cl_device_id device) clReleaseDeviceEXT_fn;
+		typedef extern(System) cl_errcode function(cl_device_id device) clReleaseDeviceEXT_fn;
 	
-		cl_int clRetainDeviceEXT( cl_device_id device); 
+		cl_errcode clRetainDeviceEXT( cl_device_id device); 
 	
-		typedef extern(System) cl_int function(cl_device_id device) clRetainDeviceEXT_fn;
+		typedef extern(System) cl_errcode function(cl_device_id device) clRetainDeviceEXT_fn;
 	
 		typedef cl_ulong cl_device_partition_property_ext;
 		
-		cl_int clCreateSubDevicesEXT(cl_device_id in_device,
+		cl_errcode clCreateSubDevicesEXT(cl_device_id in_device,
 									 const(cl_device_partition_property_ext)* properties,
 									 cl_uint num_entries,
 									 cl_device_id* out_devices,
 									 cl_uint* num_devices);
 	
-		typedef extern(System) cl_int function(cl_device_id in_device,
+		typedef extern(System) cl_errcode function(cl_device_id in_device,
 											   const(cl_device_partition_property_ext)* properties,
 											   cl_uint num_entries,
 											   cl_device_id* out_devices,

@@ -38,7 +38,7 @@ public:
 	 */
 	void setDestructorCallback(mem_notify_fn fpNotify, void* userData = null)
 	{
-		cl_int res = clSetMemObjectDestructorCallback(this.cptr, fpNotify, userData);
+		cl_errcode res = clSetMemObjectDestructorCallback(this.cptr, fpNotify, userData);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_MEM_OBJECT",	""],
@@ -58,7 +58,7 @@ public:
 	 */
 	void getGLObjectInfo(out cl_gl_object_type glObjectType, out cl_GLuint glObjectName)
 	{
-		cl_int res = clGetGLObjectInfo(_object, &glObjectType, &glObjectName);
+		cl_errcode res = clGetGLObjectInfo(_object, &glObjectType, &glObjectName);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_MEM_OBJECT",	""],

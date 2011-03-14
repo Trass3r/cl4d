@@ -48,7 +48,7 @@ public:
 	{
 		// TODO: perform argument checks? is it necessary or just leave it to OpenCL?
 
-		cl_int res;
+		cl_errcode res;
 		_object = clCreateBuffer(context.cptr, flags, datasize, hostptr, &res);
 		
 		mixin(exceptionHandling(
@@ -75,7 +75,7 @@ public:
 	{
 		cl_buffer_region reg = {origin, size};
 
-		cl_int res;
+		cl_errcode res;
 		auto ret = new CLBuffer(clCreateSubBuffer(this.cptr, flags, CL_BUFFER_CREATE_TYPE_REGION, &reg, &res));
 
 		// TODO: handle flags separately? see CL_INVALID_VALUE message
@@ -128,7 +128,7 @@ public:
 	 */
 	this(CLContext context, cl_mem_flags flags, cl_GLuint bufobj)
 	{
-		cl_int res;
+		cl_errcode res;
 		_object = clCreateFromGLBuffer(context.cptr, flags, bufobj, &res);
 		
 		mixin(exceptionHandling(
@@ -167,7 +167,7 @@ public:
 	 */
 	this(CLContext context, cl_mem_flags flags, cl_GLuint renderbuffer)
 	{
-		cl_int res;
+		cl_errcode res;
 		_object = clCreateFromGLRenderbuffer(context.cptr, flags, renderbuffer, &res);
 		
 		mixin(exceptionHandling(

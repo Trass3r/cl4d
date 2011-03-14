@@ -45,7 +45,7 @@ cl_mem clCreateFromGLBuffer(
 	cl_context		context,
 	cl_mem_flags	flags,
 	cl_GLuint		bufobj,
-	int*			errcode_ret
+	cl_errcode*		errcode_ret
 );
 
 cl_mem clCreateFromGLTexture2D(
@@ -54,7 +54,7 @@ cl_mem clCreateFromGLTexture2D(
 	cl_GLenum		target,
 	cl_GLint		miplevel,
 	cl_GLuint		texture,
-	cl_int*			errcode_ret
+	cl_errcode*		errcode_ret
 );
 
 cl_mem clCreateFromGLTexture3D(
@@ -63,23 +63,23 @@ cl_mem clCreateFromGLTexture3D(
 	cl_GLenum		target,
 	cl_GLint		miplevel,
 	cl_GLuint		texture,
-	cl_int*			errcode_ret
+	cl_errcode*			errcode_ret
 );
 
 cl_mem clCreateFromGLRenderbuffer(
 	cl_context		context,
 	cl_mem_flags	flags,
 	cl_GLuint		renderbuffer,
-	cl_int*			errcode_ret
+	cl_errcode*			errcode_ret
 );
 
-cl_int clGetGLObjectInfo(
+cl_errcode clGetGLObjectInfo(
 	cl_mem				memobj,
 	cl_gl_object_type*	gl_object_type,
 	cl_GLuint*			gl_object_name
 );
 
-cl_int clGetGLTextureInfo(
+cl_errcode clGetGLTextureInfo(
 	cl_mem				memobj,
 	cl_gl_texture_info	param_name,
 	size_t				param_value_size,
@@ -87,7 +87,7 @@ cl_int clGetGLTextureInfo(
 	size_t*				param_value_size_ret
 );
 
-cl_int clEnqueueAcquireGLObjects(
+cl_errcode clEnqueueAcquireGLObjects(
 	cl_command_queue	queue,
 	cl_uint				num_objects,
 	const(cl_mem)*		mem_objects,
@@ -96,7 +96,7 @@ cl_int clEnqueueAcquireGLObjects(
 	cl_event*			event
 );
 
-cl_int clEnqueueReleaseGLObjects(
+cl_errcode clEnqueueReleaseGLObjects(
 	cl_command_queue	queue,
 	cl_uint				num_objects,
 	const(cl_mem)*		mem_objects,
@@ -129,7 +129,7 @@ enum
 	CL_CGL_SHAREGROUP_KHR					= 0x200C,
 }
 
-cl_int clGetGLContextInfoKHR(
+cl_errcode clGetGLContextInfoKHR(
 	const(cl_context_properties)*	properties,
 	cl_gl_context_info				param_name,
 	size_t							param_value_size,
@@ -137,7 +137,7 @@ cl_int clGetGLContextInfoKHR(
 	size_t*							param_value_size_ret
 );
 
-typedef extern(System) cl_int function(
+typedef extern(System) cl_errcode function(
 		const(cl_context_properties)*	properties,
 		cl_gl_context_info				param_name,
 		size_t							param_value_size,

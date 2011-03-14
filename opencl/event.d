@@ -35,7 +35,7 @@ public:
 	 */
 	void wait()
 	{
-		cl_int res = clWaitForEvents(_objects.length, _objects.ptr);
+		cl_errcode res = clWaitForEvents(_objects.length, _objects.ptr);
 
 		mixin(exceptionHandling(
 			["CL_INVALID_VALUE",		"event _objects is null"],
@@ -66,7 +66,7 @@ public:
 	 */
 	void wait() const
 	{
-		cl_int res = clWaitForEvents(1, &_object);
+		cl_errcode res = clWaitForEvents(1, &_object);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_VALUE",		""],
@@ -93,7 +93,7 @@ public:
 	version(CL_VERSION_1_1)
 	void setCallback(cl_command_execution_status command_exec_callback_type, evt_notify_fn pfn_notify, void* userData = null)
 	{
-		cl_int res = clSetEventCallback(_object, command_exec_callback_type, pfn_notify, userData);
+		cl_errcode res = clSetEventCallback(_object, command_exec_callback_type, pfn_notify, userData);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_EVENT",	""],
@@ -134,7 +134,7 @@ public:
 			
 			// error values are negative in this case
 			if (res < 0)
-				throw new CLException(res, "error occured while retrieving event execution status");
+				throw new CLException(cast(cl_errcode) res, "error occured while retrieving event execution status");
 			
 			return res;
 		}
@@ -234,7 +234,7 @@ public:
 	//! creates a user event object
 	this(CLContext context)
 	{
-		cl_int res;
+		cl_errcode res;
 		_object = clCreateUserEvent(context.cptr, &res);
 		
 		mixin(exceptionHandling(
@@ -256,7 +256,7 @@ public:
 	 */
 	@property void status(cl_command_execution_status executionStatus)
 	{
-		cl_int res = clSetUserEventStatus(_object, executionStatus);
+		cl_errcode res = clSetUserEventStatus(_object, executionStatus);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_EVENT",		"this is not a valid user event object"],

@@ -87,7 +87,7 @@ struct cl_buffer_region
 
 /* ************************************************************************** */
 
-enum
+enum cl_errcode : cl_int
 {
 	// Error Codes
 	CL_SUCCESS                                  = 0,
@@ -142,6 +142,7 @@ enum
 	CL_INVALID_GLOBAL_WORK_SIZE                 = -63,
 	CL_INVALID_PROPERTY							= -64
 }
+mixin(bringToCurrentScope!cl_errcode());
 
 enum cl_bool : cl_uint
 {
@@ -512,14 +513,14 @@ enum : cl_profiling_info
 
 // Platform API
 //!
-cl_int clGetPlatformIDs(
+cl_errcode clGetPlatformIDs(
 	cl_uint          num_entries,
 	cl_platform_id*  platforms,
 	cl_uint*         num_platforms
 );
 
 //!
-cl_int clGetPlatformInfo(
+cl_errcode clGetPlatformInfo(
 	cl_platform_id    platform,
 	cl_platform_info  param_name,
 	size_t            param_value_size, 
@@ -529,7 +530,7 @@ cl_int clGetPlatformInfo(
 
 // Device APIs
 //!
-cl_int clGetDeviceIDs(
+cl_errcode clGetDeviceIDs(
 	cl_platform_id    platform,
 	cl_device_type    device_type, 
 	cl_uint           num_entries, 
@@ -538,7 +539,7 @@ cl_int clGetDeviceIDs(
 );
 
 //!
-cl_int clGetDeviceInfo(
+cl_errcode clGetDeviceInfo(
 	cl_device_id     device,
 	cl_device_info   param_name, 
 	size_t           param_value_size, 
@@ -567,7 +568,7 @@ cl_context clCreateContext(
 	const(cl_device_id)*             devices,
 	cl_logging_fn                    pfn_notify,
 	void*                            user_data,
-	cl_int*                          errcode_ret
+	cl_errcode*                      errcode_ret
 );
 
 //!
@@ -576,21 +577,21 @@ cl_context clCreateContextFromType(
 	cl_device_type                   device_type,
 	cl_logging_fn                    pfn_notify,
 	void*                            user_data,
-	cl_int*                          errcode_ret
+	cl_errcode*                      errcode_ret
 );
 
 //!
-cl_int clRetainContext(
+cl_errcode clRetainContext(
 	cl_context  context
 );
 
 //!
-cl_int clReleaseContext(
+cl_errcode clReleaseContext(
 	cl_context  context
 );
 
 //!
-cl_int clGetContextInfo(
+cl_errcode clGetContextInfo(
 	cl_context          context, 
 	cl_context_info     param_name, 
 	size_t              param_value_size, 
@@ -604,21 +605,21 @@ cl_command_queue clCreateCommandQueue(
 	cl_context                      context, 
 	cl_device_id                    device, 
 	cl_command_queue_properties     properties,
-	cl_int*                         errcode_ret
+	cl_errcode*                     errcode_ret
 );
 
 //!
-cl_int clRetainCommandQueue(
+cl_errcode clRetainCommandQueue(
 	cl_command_queue  command_queue
 );
 
 //!
-cl_int clReleaseCommandQueue(
+cl_errcode clReleaseCommandQueue(
 	cl_command_queue  command_queue
 );
 
 //!
-cl_int clGetCommandQueueInfo(
+cl_errcode clGetCommandQueueInfo(
 	cl_command_queue       command_queue,
 	cl_command_queue_info  param_name,
 	size_t                 param_value_size,
@@ -636,7 +637,7 @@ cl_int clGetCommandQueueInfo(
  *  Software developers previously relying on this API are instructed to set the command queue
  *  properties when creating the queue, instead.
  */
-deprecated cl_int clSetCommandQueueProperty(
+deprecated cl_errcode clSetCommandQueueProperty(
 	cl_command_queue               command_queue,
 	cl_command_queue_properties    properties, 
 	cl_bool                        enable,
@@ -649,8 +650,8 @@ cl_mem clCreateBuffer(
 	cl_context    context,
 	cl_mem_flags  flags,
 	size_t        size,
-	void *        host_ptr,
-	cl_int *      errcode_ret
+	void*         host_ptr,
+	cl_errcode*   errcode_ret
 );
 
 version(CL_VERSION_1_1)
@@ -660,7 +661,7 @@ cl_mem clCreateSubBuffer(
 	cl_mem_flags			flags,
 	cl_buffer_create_type	buffer_create_type,
 	const(void)*			buffer_create_info,
-	cl_int*					errcode_ret);
+	cl_errcode*				errcode_ret);
 
 //!
 cl_mem clCreateImage2D(
@@ -671,7 +672,7 @@ cl_mem clCreateImage2D(
 	size_t                   image_height,
 	size_t                   image_row_pitch, 
 	void*                    host_ptr,
-	cl_int*                  errcode_ret
+	cl_errcode*              errcode_ret
 );
 
 //!
@@ -685,21 +686,21 @@ cl_mem clCreateImage3D(
 	size_t                   image_row_pitch, 
 	size_t                   image_slice_pitch, 
 	void*                    host_ptr,
-	cl_int*                  errcode_ret
+	cl_errcode*              errcode_ret
 );
 
 //!
-cl_int clRetainMemObject(
+cl_errcode clRetainMemObject(
 	cl_mem  memobj
 );
 
 //!
-cl_int clReleaseMemObject(
+cl_errcode clReleaseMemObject(
 	cl_mem  memobj
 );
 
 //!
-cl_int clGetSupportedImageFormats(
+cl_errcode clGetSupportedImageFormats(
 	cl_context            context,
 	cl_mem_flags          flags,
 	cl_mem_object_type    image_type,
@@ -709,7 +710,7 @@ cl_int clGetSupportedImageFormats(
 );
 
 //!
-cl_int clGetMemObjectInfo(
+cl_errcode clGetMemObjectInfo(
 	cl_mem            memobj,
 	cl_mem_info       param_name, 
 	size_t            param_value_size,
@@ -718,7 +719,7 @@ cl_int clGetMemObjectInfo(
 );
 
 //!
-cl_int clGetImageInfo(
+cl_errcode clGetImageInfo(
 	cl_mem            image,
 	cl_image_info     param_name, 
 	size_t            param_value_size,
@@ -733,7 +734,7 @@ alias extern(System) void function(
 
 version(CL_VERSION_1_1)
 //!
-cl_int clSetMemObjectDestructorCallback(
+cl_errcode clSetMemObjectDestructorCallback(
 	cl_mem	memobj,
 	mem_notify_fn pfn_notify,
 	void*	user_data);  
@@ -745,21 +746,21 @@ cl_sampler clCreateSampler(
 	cl_bool              normalized_coords, 
 	cl_addressing_mode   addressing_mode, 
 	cl_filter_mode       filter_mode,
-	cl_int*              errcode_ret
+	cl_errcode*          errcode_ret
 );
 
 //!
-cl_int clRetainSampler(
+cl_errcode clRetainSampler(
 	cl_sampler  sampler
 );
 
 //!
-cl_int clReleaseSampler(
+cl_errcode clReleaseSampler(
 	cl_sampler  sampler
 );
 
 //!
-cl_int clGetSamplerInfo(
+cl_errcode clGetSamplerInfo(
 	cl_sampler          sampler,
 	cl_sampler_info     param_name,
 	size_t              param_value_size,
@@ -774,7 +775,7 @@ cl_program clCreateProgramWithSource(
 	cl_uint            count,
 	const(char*)*      strings,
 	const(size_t)*     lengths,
-	cl_int*            errcode_ret
+	cl_errcode*        errcode_ret
 );
 
 //!
@@ -783,18 +784,18 @@ cl_program clCreateProgramWithBinary(
 	cl_uint                num_devices,
 	const(cl_device_id)*   device_list,
 	const(size_t)*         lengths,
-	const(ubyte*)*          binaries,
+	const(ubyte*)*         binaries,
 	cl_int*                binary_status,
-	cl_int*                errcode_ret
+	cl_errcode*            errcode_ret
 );
 
 //!
-cl_int clRetainProgram(
+cl_errcode clRetainProgram(
 	cl_program  program
 );
 
 //!
-cl_int clReleaseProgram(
+cl_errcode clReleaseProgram(
 	cl_program  program
 );
 
@@ -805,7 +806,7 @@ typedef extern(System) void function(
 ) prg_notify_fn;
 
 //!
-cl_int clBuildProgram(
+cl_errcode clBuildProgram(
 	cl_program				program,
 	cl_uint					num_devices,
 	const(cl_device_id)*	device_list,
@@ -815,10 +816,10 @@ cl_int clBuildProgram(
 );
 
 //!
-cl_int clUnloadCompiler();
+cl_errcode clUnloadCompiler();
 
 //!
-cl_int clGetProgramInfo(
+cl_errcode clGetProgramInfo(
 	cl_program          program,
 	cl_program_info     param_name,
 	size_t              param_value_size,
@@ -827,7 +828,7 @@ cl_int clGetProgramInfo(
 );
 
 //!
-cl_int clGetProgramBuildInfo(
+cl_errcode clGetProgramBuildInfo(
 	cl_program             program,
 	cl_device_id           device,
 	cl_program_build_info  param_name,
@@ -841,11 +842,11 @@ cl_int clGetProgramBuildInfo(
 cl_kernel clCreateKernel(
 	cl_program       program,
 	const(char)*     kernel_name,
-	cl_int*          errcode_ret
+	cl_errcode*      errcode_ret
 );
 
 //!
-cl_int clCreateKernelsInProgram(
+cl_errcode clCreateKernelsInProgram(
 	cl_program      program,
 	cl_uint         num_kernels,
 	cl_kernel*      kernels,
@@ -853,17 +854,17 @@ cl_int clCreateKernelsInProgram(
 );
 
 //!
-cl_int clRetainKernel(
+cl_errcode clRetainKernel(
 	cl_kernel     kernel
 );
 
 //!
-cl_int clReleaseKernel(
+cl_errcode clReleaseKernel(
 	cl_kernel    kernel
 );
 
 //!
-cl_int clSetKernelArg(
+cl_errcode clSetKernelArg(
 	cl_kernel     kernel,
 	cl_uint       arg_indx,
 	size_t        arg_size,
@@ -871,7 +872,7 @@ cl_int clSetKernelArg(
 );
 
 //!
-cl_int clGetKernelInfo(
+cl_errcode clGetKernelInfo(
 	cl_kernel        kernel,
 	cl_kernel_info   param_name,
 	size_t           param_value_size,
@@ -880,7 +881,7 @@ cl_int clGetKernelInfo(
 );
 
 //!
-cl_int clGetKernelWorkGroupInfo(
+cl_errcode clGetKernelWorkGroupInfo(
 	cl_kernel                   kernel,
 	cl_device_id                device,
 	cl_kernel_work_group_info   param_name,
@@ -891,13 +892,13 @@ cl_int clGetKernelWorkGroupInfo(
 
 // Event Object APIs
 //!
-cl_int clWaitForEvents(
+cl_errcode clWaitForEvents(
 	cl_uint              num_events,
 	const(cl_event)*     event_list
 );
 
 //!
-cl_int clGetEventInfo(
+cl_errcode clGetEventInfo(
 	cl_event          event,
 	cl_event_info     param_name,
 	size_t            param_value_size,
@@ -909,21 +910,21 @@ version(CL_VERSION_1_1)
 //!
 cl_event clCreateUserEvent(
 	cl_context	context,
-	cl_int*		errcode_ret);
+	cl_errcode*	errcode_ret);
 
 //!
-cl_int clRetainEvent(
+cl_errcode clRetainEvent(
 	cl_event  event
 );
 
 //!
-cl_int clReleaseEvent(
+cl_errcode clReleaseEvent(
 	cl_event  event
 );
 
 version(CL_VERSION_1_1)
 //!
-cl_int clSetUserEventStatus(
+cl_errcode clSetUserEventStatus(
 	cl_event	event,
 	cl_command_execution_status execution_status);
 
@@ -944,14 +945,14 @@ typedef extern(System) void function(
 
 //!
 version(CL_VERSION_1_1)
-cl_int clSetEventCallback( cl_event	event,
+cl_errcode clSetEventCallback( cl_event	event,
                     cl_int			command_exec_callback_type,
                     evt_notify_fn	pfn_notify,
                     void*			user_data);
 
 // Profiling APIs
 //!
-cl_int clGetEventProfilingInfo(
+cl_errcode clGetEventProfilingInfo(
 	cl_event             event,
 	cl_profiling_info    param_name,
 	size_t               param_value_size,
@@ -961,18 +962,18 @@ cl_int clGetEventProfilingInfo(
 
 // Flush and Finish APIs
 //!
-cl_int clFlush(
+cl_errcode clFlush(
 	cl_command_queue  command_queue
 );
 
 //!
-cl_int clFinish(
+cl_errcode clFinish(
 	cl_command_queue  command_queue
 );
 
 // Enqueued Commands APIs
 //!
-cl_int clEnqueueReadBuffer(
+cl_errcode clEnqueueReadBuffer(
 	cl_command_queue     command_queue,
 	cl_mem               buffer,
 	cl_bool              blocking_read,
@@ -986,7 +987,7 @@ cl_int clEnqueueReadBuffer(
 
 version(CL_VERSION_1_1)
 //!
-cl_int clEnqueueReadBufferRect(
+cl_errcode clEnqueueReadBufferRect(
 	cl_command_queue	command_queue,
 	cl_mem				buffer,
 	cl_bool				blocking_read,
@@ -1003,7 +1004,7 @@ cl_int clEnqueueReadBufferRect(
 	cl_event*			event);
 
 //!
-cl_int clEnqueueWriteBuffer(
+cl_errcode clEnqueueWriteBuffer(
 	cl_command_queue	command_queue, 
 	cl_mem				buffer, 
 	cl_bool             blocking_write, 
@@ -1017,7 +1018,7 @@ cl_int clEnqueueWriteBuffer(
 
 version(CL_VERSION_1_1)
 //!
-cl_int clEnqueueWriteBufferRect(
+cl_errcode clEnqueueWriteBufferRect(
 	cl_command_queue	command_queue,
 	cl_mem				buffer,
 	cl_bool				blocking_write,
@@ -1034,7 +1035,7 @@ cl_int clEnqueueWriteBufferRect(
 	cl_event *			event);
 
 //!
-cl_int clEnqueueCopyBuffer(
+cl_errcode clEnqueueCopyBuffer(
 	cl_command_queue     command_queue, 
 	cl_mem               src_buffer,
 	cl_mem               dst_buffer, 
@@ -1048,7 +1049,7 @@ cl_int clEnqueueCopyBuffer(
 
 version(CL_VERSION_1_1)
 //!
-cl_int clEnqueueCopyBufferRect(
+cl_errcode clEnqueueCopyBufferRect(
 		cl_command_queue	command_queue,
 		cl_mem				src_buffer,
 		cl_mem				dst_buffer,
@@ -1064,7 +1065,7 @@ cl_int clEnqueueCopyBufferRect(
 		cl_event*			event);
 
 //!
-cl_int clEnqueueReadImage(
+cl_errcode clEnqueueReadImage(
 	cl_command_queue      command_queue,
 	cl_mem                image,
 	cl_bool               blocking_read, 
@@ -1079,7 +1080,7 @@ cl_int clEnqueueReadImage(
 );
 
 //!
-cl_int clEnqueueWriteImage(
+cl_errcode clEnqueueWriteImage(
 	cl_command_queue     command_queue,
 	cl_mem               image,
 	cl_bool              blocking_write,
@@ -1094,7 +1095,7 @@ cl_int clEnqueueWriteImage(
 );
 
 //!
-cl_int clEnqueueCopyImage(
+cl_errcode clEnqueueCopyImage(
 	cl_command_queue      command_queue,
 	cl_mem                src_image,
 	cl_mem                dst_image, 
@@ -1107,7 +1108,7 @@ cl_int clEnqueueCopyImage(
 );
 
 //!
-cl_int clEnqueueCopyImageToBuffer(
+cl_errcode clEnqueueCopyImageToBuffer(
 	cl_command_queue  command_queue,
 	cl_mem            src_image,
 	cl_mem            dst_buffer, 
@@ -1120,7 +1121,7 @@ cl_int clEnqueueCopyImageToBuffer(
 );
 
 //!
-cl_int clEnqueueCopyBufferToImage(
+cl_errcode clEnqueueCopyBufferToImage(
 	cl_command_queue  command_queue,
 	cl_mem            src_buffer,
 	cl_mem            dst_image, 
@@ -1143,7 +1144,7 @@ void* clEnqueueMapBuffer(
 	cl_uint           num_events_in_wait_list,
 	const(cl_event)*  event_wait_list,
 	cl_event*         event,
-	cl_int*           errcode_ret
+	cl_errcode*       errcode_ret
 );
 
 //!
@@ -1159,11 +1160,11 @@ void* clEnqueueMapImage(
 	cl_uint            num_events_in_wait_list,
 	const(cl_event)*   event_wait_list,
 	cl_event*          event,
-	cl_int*            errcode_ret
+	cl_errcode*        errcode_ret
 );
 
 //!
-cl_int clEnqueueUnmapMemObject(
+cl_errcode clEnqueueUnmapMemObject(
 	cl_command_queue  command_queue,
 	cl_mem            memobj,
 	void*             mapped_ptr,
@@ -1173,7 +1174,7 @@ cl_int clEnqueueUnmapMemObject(
 );
 
 //!
-cl_int clEnqueueNDRangeKernel(
+cl_errcode clEnqueueNDRangeKernel(
 	cl_command_queue  command_queue,
 	cl_kernel         kernel,
 	cl_uint           work_dim,
@@ -1186,7 +1187,7 @@ cl_int clEnqueueNDRangeKernel(
 );
 
 //!
-cl_int clEnqueueTask(
+cl_errcode clEnqueueTask(
 	cl_command_queue   command_queue,
 	cl_kernel          kernel,
 	cl_uint            num_events_in_wait_list,
@@ -1195,7 +1196,7 @@ cl_int clEnqueueTask(
 );
 
 //!
-cl_int clEnqueueNativeKernel(
+cl_errcode clEnqueueNativeKernel(
 	cl_command_queue   command_queue,
 	void function(
 		void*
@@ -1211,20 +1212,20 @@ cl_int clEnqueueNativeKernel(
 );
 
 //!
-cl_int clEnqueueMarker(
+cl_errcode clEnqueueMarker(
 	cl_command_queue     command_queue,
 	cl_event*            event
 );
 
 //!
-cl_int clEnqueueWaitForEvents(
+cl_errcode clEnqueueWaitForEvents(
 	cl_command_queue  command_queue,
 	cl_uint           num_events,
 	const(cl_event)*  event_list
 );
 
 //!
-cl_int clEnqueueBarrier(
+cl_errcode clEnqueueBarrier(
 	cl_command_queue  command_queue
 );
 

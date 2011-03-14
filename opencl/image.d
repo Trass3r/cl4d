@@ -120,7 +120,7 @@ public:
 	 */
 	this(CLContext context, cl_mem_flags flags, const cl_image_format format, size_t width, size_t height, size_t rowPitch, void* hostPtr = null)
 	{
-		cl_int res;
+		cl_errcode res;
 		_object = clCreateImage2D(context.cptr, flags, &format, width, height, rowPitch, hostPtr, &res);
 		
 		mixin(exceptionHandling(
@@ -153,7 +153,7 @@ public:
 	 */
 	this(const CLContext context, cl_mem_flags flags, cl_GLenum target, cl_GLint  miplevel, cl_GLuint texobj)
 	{
-		cl_int res;
+		cl_errcode res;
 		_object = clCreateFromGLTexture2D(context.cptr, flags, target, miplevel, texobj, &res);
 
 		mixin(exceptionHandling(
@@ -185,7 +185,7 @@ public:
 	 */
 	this(CLContext context, cl_mem_flags flags, const cl_image_format format, size_t width, size_t height, size_t depth, size_t rowPitch, size_t slicePitch, void* hostPtr = null)
 	{
-		cl_int res;
+		cl_errcode res;
 		_object = clCreateImage3D(context.cptr, flags, &format, width, height, depth, rowPitch, slicePitch, hostPtr, &res);
 		
 		mixin(exceptionHandling(
@@ -218,7 +218,7 @@ public:
 	 */
 	this(const CLContext context, cl_mem_flags flags, cl_GLenum target, cl_GLint  miplevel, cl_GLuint texobj)
 	{
-		cl_int res;
+		cl_errcode res;
 		_object = clCreateFromGLTexture3D(context.cptr, flags, target, miplevel, texobj, &res);
 
 		mixin(exceptionHandling(

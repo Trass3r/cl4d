@@ -41,4 +41,4 @@ enum CL_COMMAND_GL_FENCE_SYNC_OBJECT_KHR = 0x200D;
 
 cl_event clCreateEventFromGLsyncKHR(cl_context context,
 									cl_GLsync cl_GLsync,
-									cl_int* errcode_ret);
+									cl_errcode* errcode_ret);

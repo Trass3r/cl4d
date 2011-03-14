@@ -62,7 +62,7 @@ mixin(bringToCurrentScope!cl_d3d10_device_set_khr);
 
 /******************************************************************************/
 
-typedef extern(System) cl_int function(
+typedef extern(System) cl_errcode function(
 	cl_platform_id				platform,
 	cl_d3d10_device_source_khr	d3d_device_source,
 	void*						d3d_object,
@@ -76,7 +76,7 @@ typedef extern(System) cl_mem function(
 	cl_context		context,
 	cl_mem_flags	flags,
 	void*			resource, // ID3D10Buffer*
-	cl_int*			errcode_ret
+	cl_errcode*		errcode_ret
 ) clCreateFromD3D10BufferKHR_fn;
 
 typedef extern(System) cl_mem function(
@@ -84,7 +84,7 @@ typedef extern(System) cl_mem function(
 	cl_mem_flags		flags,
 	void*				resource, // ID3D10Texture2D*
 	UINT				subresource,
-	cl_int*				errcode_ret
+	cl_errcode*			errcode_ret
 ) clCreateFromD3D10Texture2DKHR_fn;
 
 typedef extern(System) cl_mem function(
@@ -92,10 +92,10 @@ typedef extern(System) cl_mem function(
 	cl_mem_flags		flags,
 	void*				resource, // ID3D10Texture3D*
 	UINT				subresource,
-	cl_int*				errcode_ret
+	cl_errcode*			errcode_ret
 ) clCreateFromD3D10Texture3DKHR_fn;
 
-typedef extern(System) cl_int function(
+typedef extern(System) cl_errcode function(
 	cl_command_queue	command_queue,
 	cl_uint				num_objects,
 	const(cl_mem)*		mem_objects,
@@ -104,7 +104,7 @@ typedef extern(System) cl_int function(
 	cl_event*			event
 ) clEnqueueAcquireD3D10ObjectsKHR_fn;
 
-typedef extern(System) cl_int function(
+typedef extern(System) cl_errcode function(
 	cl_command_queue	command_queue,
 	cl_uint				num_objects,
 	cl_mem*				mem_objects,

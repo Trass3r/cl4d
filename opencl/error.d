@@ -15,17 +15,17 @@ import opencl.c.cl;
 class CLException : Exception
 {
 protected:
-	cl_int _errcode;
+	cl_errcode _errcode;
 	
 public:
-	this(cl_int errcode, string msg = "", CLException next = null)
+	this(cl_errcode errcode, string msg = "", CLException next = null)
 	{
 		_errcode = errcode;
 		
 		super(msg, next);
 	}
 
-	this(cl_int errcode, string msg, string file, size_t line, CLException next = null)
+	this(cl_errcode errcode, string msg, string file, size_t line, CLException next = null)
 	{
 		_errcode = errcode;
 		
@@ -35,41 +35,41 @@ public:
 	// TODO: overload toString to contain errcode
 
 	/// errcode getter
-	@property cl_int errcode() {return _errcode;}
+	@property cl_errcode errcode() {return _errcode;}
 }
 
 /// an unrecognized OpenCL exception
-class CLUnrecognizedException : CLException {this(cl_int errcode, string file = "", size_t line = 0) {super(errcode, "unrecognized OpenCL exception occured", file, line);}}
+class CLUnrecognizedException : CLException {this(cl_errcode errcode, string file = "", size_t line = 0) {super(errcode, "unrecognized OpenCL exception occured", file, line);}}
 
 /// platform exceptions base class
-class CLPlatformException : CLException {this(cl_int errcode, string msg = "", string file = "", size_t line = 0) {super(errcode, msg, file, line);}}
+class CLPlatformException : CLException {this(cl_errcode errcode, string msg = "", string file = "", size_t line = 0) {super(errcode, msg, file, line);}}
 
 /// device exceptions base class
-class CLDeviceException : CLException {this(cl_int errcode, string msg = "", string file = "", size_t line = 0) {super(errcode, msg, file, line);}}
+class CLDeviceException : CLException {this(cl_errcode errcode, string msg = "", string file = "", size_t line = 0) {super(errcode, msg, file, line);}}
 
 /// context exceptions base class
-class CLContextException : CLException {this(cl_int errcode, string msg = "", string file = "", size_t line = 0) {super(errcode, msg, file, line);}}
+class CLContextException : CLException {this(cl_errcode errcode, string msg = "", string file = "", size_t line = 0) {super(errcode, msg, file, line);}}
 
 /// event exceptions base class
-class CLEventException : CLException {this(cl_int errcode, string msg = "", string file = "", size_t line = 0) {super(errcode, msg, file, line);}}
+class CLEventException : CLException {this(cl_errcode errcode, string msg = "", string file = "", size_t line = 0) {super(errcode, msg, file, line);}}
 
 /// program exceptions base class
-class CLProgramException : CLException {this(cl_int errcode, string msg = "", string file = "", size_t line = 0) {super(errcode, msg, file, line);}}
+class CLProgramException : CLException {this(cl_errcode errcode, string msg = "", string file = "", size_t line = 0) {super(errcode, msg, file, line);}}
 
 /// buffer exceptions base class
-class CLBufferException : CLException {this(cl_int errcode, string msg = "", string file = "", size_t line = 0) {super(errcode, msg, file, line);}}
+class CLBufferException : CLException {this(cl_errcode errcode, string msg = "", string file = "", size_t line = 0) {super(errcode, msg, file, line);}}
 
 /// kernel exceptions base class
-class CLKernelException : CLException {this(cl_int errcode, string msg = "", string file = "", size_t line = 0) {super(errcode, msg, file, line);}}
+class CLKernelException : CLException {this(cl_errcode errcode, string msg = "", string file = "", size_t line = 0) {super(errcode, msg, file, line);}}
 
 /// command queue exceptions base class
-class CLCommandQueueException : CLException {this(cl_int errcode, string msg = "", string file = "", size_t line = 0) {super(errcode, msg, file, line);}}
+class CLCommandQueueException : CLException {this(cl_errcode errcode, string msg = "", string file = "", size_t line = 0) {super(errcode, msg, file, line);}}
 
 /**
  *	this function generates exception handling code that is used all over the place when calling OpenCL functions
  *	thus it is easy to change global behavior, e.g. removing exception handling completely in release mode
  *
- *	NOTE that this function expects the return value of the preceding OpenCL function call to be in cl_int res;
+ *	NOTE that this function expects the return value of the preceding OpenCL function call to be in cl_errcode res;
  */
 package string exceptionHandling(E...)(E es)
 {

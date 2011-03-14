@@ -87,7 +87,7 @@ public:
 	 */
 	this(CLProgram program, string kernelName)
 	{
-		cl_int res;
+		cl_errcode res;
 
 		_object = clCreateKernel(program.cptr, toStringz(kernelName), &res);
 		
@@ -156,7 +156,7 @@ public:
 		// clSetKernelArg is safe to call from any host thread, and is safe to call re-entrantly so long as concurrent calls operate on different cl_kernel objects
 		// the behavior of the cl_kernel object is undefined if clSetKernelArg is called from multiple host threads on the same cl_kernel object at the same time
 		// TODO: thus, if multiple CLKernel objects wrap the same cl_kernel one, this still makes problems
-		cl_int res = void;
+		cl_errcode res = void;
 		synchronized(this) res = clSetKernelArg(_object, idx, size, value);
 		
 		mixin(exceptionHandling(

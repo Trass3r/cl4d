@@ -58,7 +58,7 @@ public:
 	package CLDevices getDevices(cl_device_type deviceType)
 	{
 		cl_uint numDevices;
-		cl_int res;
+		cl_errcode res;
 		
 		// get number of devices
 		res = clGetDeviceIDs(_object, deviceType, 0, null, &numDevices);
@@ -96,7 +96,7 @@ public:
 	static CLPlatforms getPlatforms()
 	{
 		cl_uint numPlatforms;
-		cl_int res;
+		cl_errcode res;
 		
 		// get number of platforms
 		res = clGetPlatformIDs(0, null, &numPlatforms);

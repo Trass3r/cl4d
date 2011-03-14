@@ -60,7 +60,7 @@ mixin(bringToCurrentScope!cl_d3d11_device_set_nv);
 
 /******************************************************************************/
 
-typedef extern(System) cl_int function(
+typedef extern(System) cl_errcode function(
 	cl_platform_id				platform,
 	cl_d3d11_device_source_nv	d3d_device_source,
 	void*						d3d_object,
@@ -73,23 +73,23 @@ typedef extern(System) cl_mem function(
 	cl_context		context,
 	cl_mem_flags	flags,
 	ID3D11Buffer*	resource,
-	cl_int*			errcode_ret) clCreateFromD3D11BufferNV_fn;
+	cl_errcode*		errcode_ret) clCreateFromD3D11BufferNV_fn;
 
 typedef extern(System) cl_mem function(
 	cl_context			context,
 	cl_mem_flags		flags,
 	ID3D11Texture2D*	resource,
 	uint				subresource,
-	cl_int*				errcode_ret) clCreateFromD3D11Texture2DNV_fn;
+	cl_errcode*			errcode_ret) clCreateFromD3D11Texture2DNV_fn;
 
 typedef extern(System) cl_mem function(
 	cl_context			context,
 	cl_mem_flags		flags,
 	ID3D11Texture3D*	resource,
 	uint				subresource,
-	cl_int*				errcode_ret) clCreateFromD3D11Texture3DNV_fn;
+	cl_errcode*			errcode_ret) clCreateFromD3D11Texture3DNV_fn;
 
-typedef extern(System) cl_int function(
+typedef extern(System) cl_errcode function(
 	cl_command_queue	command_queue,
 	cl_uint				num_objects,
 	const(cl_mem)*		mem_objects,
@@ -97,7 +97,7 @@ typedef extern(System) cl_int function(
 	const(cl_event)*	event_wait_list,
 	cl_event*			event) clEnqueueAcquireD3D11ObjectsNV_fn;
 
-typedef extern(System) cl_int function(
+typedef extern(System) cl_errcode function(
 	cl_command_queue	command_queue,
 	cl_uint				num_objects,
 	cl_mem*				mem_objects,

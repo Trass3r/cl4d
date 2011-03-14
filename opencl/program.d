@@ -35,7 +35,7 @@ public:
 	 */
 	this(CLContext context, string sourceCode)
 	{
-		cl_int res;
+		cl_errcode res;
 		size_t* lengths = cast(size_t*) [sourceCode.length];
 		char** ptrs = cast(char**) [sourceCode.ptr];
 		_object = clCreateProgramWithSource(context.cptr, 1, ptrs, lengths, &res);
@@ -52,7 +52,7 @@ public:
 	 *
 	this(CLContext context, ubyte[][] binaries, CLDevice[] devices = null)
 	{
-		cl_int res, binary_status;
+		cl_errcode res, binary_status;
 		super(clCreateProgramWithBinary(context.cptr, 0, devices, binaries.length, ));
 		
 	}//*/
@@ -65,7 +65,7 @@ public:
 	CLProgram build(string options = "", CLDevices devices = null)
 	{
 		// TODO: handle this whole (if devices is null) crap better
-		cl_int res;
+		cl_errcode res;
 		cl_device_id[] cldevices;
 		if (devices !is null)
 			cldevices = devices.getObjArray();
@@ -127,7 +127,7 @@ public:
 	 */
 	auto createKernels()
 	{
-		cl_int res;
+		cl_errcode res;
 		cl_uint numKernels;
 		
 		res = clCreateKernelsInProgram(this.cptr, 0, null, &numKernels);
@@ -159,7 +159,7 @@ public:
 	 */
 	static void unloadCompiler()
 	{
-		cl_int res;
+		cl_errcode res;
 		res = clUnloadCompiler();
 		if(res != CL_SUCCESS)
 			throw new CLException(res, "failed unloading compiler, this shouldn't happen in OpenCL 1.0");

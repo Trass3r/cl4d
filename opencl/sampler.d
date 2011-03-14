@@ -37,7 +37,7 @@ public:
 	 */
 	this(CLContext context, cl_bool normalizedCoords, cl_addressing_mode addressingMode, cl_filter_mode filterMode)
 	{
-		cl_int res;
+		cl_errcode res;
 		_object = clCreateSampler (context.cptr, normalizedCoords, addressingMode, filterMode, &res);
 		
 		mixin(exceptionHandling(
