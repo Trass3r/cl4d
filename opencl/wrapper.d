@@ -59,6 +59,11 @@ private import std.stdio;
 	 *	    increment = increase the object's reference count, necessary e.g. in CLCollection
 	 */
 	this(T obj, bool increment = false)
+	in
+	{
+		assert(obj !is null, "the " ~ T.stringof ~ " object to be wrapped is null!");
+	}
+	body
 	{
 		_object = obj;
 
@@ -335,7 +340,12 @@ protected:
 
 public:
 	//! takes a list of cl4d CLObjects
-	this(Wrapper[] clObjects, bool increment = false)
+	this(Wrapper[] clObjects, bool increment = true)
+	in
+	{
+		assert(clObjects !is null);
+	}
+	body
 	{
 		T[] tmp = new T[clObjects.length];
 		foreach(i, obj; clObjects)
@@ -346,6 +356,11 @@ public:
 
 	//! takes a list of OpenCL C objects returned by some OpenCL functions like GetPlatformIDs
 	this(T[] objects, bool increment = false)
+	in
+	{
+		assert(objects !is null);
+	}
+	body
 	{
 		_objects = objects.dup;
 		
