@@ -20,7 +20,7 @@ import opencl.wrapper;
 alias CLObjectCollection!(cl_device_id) CLDevices;
 
 /// device class
-class CLDevice
+class CLDevice : CLObject
 {
 	mixin(CLWrapper("cl_device_id", "clGetDeviceInfo"));
 

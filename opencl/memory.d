@@ -21,7 +21,7 @@ alias CLObjectCollection!cl_mem CLMemories;
 /**
  *	Memory objects are reserved regions of global device memory that can serve as containers for your data
  */
-package class CLMemory
+package class CLMemory : CLObject
 {
 	mixin(CLWrapper("cl_mem", "clGetMemObjectInfo"));
 

@@ -53,7 +53,7 @@ public:
  *
  *	API calls that enqueue commands to a command-queue create a new event object that is returned in the event argument
  */
-class CLEvent
+class CLEvent : CLObject
 {
 	mixin(CLWrapper("cl_event", "clGetEventInfo"));
 
