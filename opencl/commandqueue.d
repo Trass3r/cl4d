@@ -144,11 +144,46 @@ public:
 		return new CLEvent(event);
 	}
 
+	/**
+	 *	enqueues a command to execute a native C/C++ function not compiled using the OpenCL compiler
+	 *
+	 *	Note that a native user function can only be executed on a command-queue created on a device that has CL_EXEC_NATIVE_KERNEL capability
+	 *
+	 *	Params:
+	 *	    func = pointer to a host-callable user function
+	 *	    args = pointer to the args list that func should be called with
+	 *	    cb_args = size in bytes of the args list that args points to
+	 *	    memObjects = 
+	 *	    argsMemLoc = 
+	 *	    waitlist = 
+	 *	Returns:
+	 */
 	CLEvent enqueueNativeKernel(void function(void*) func, void* args, size_t cb_args, CLMemories memObjects, const void** argsMemLoc, CLEvents waitlist = null)
+	in
 	{
-		// TODO:
-		assert(0);
+		assert(func !is null);
 	}
+	body
+	{
+		assert(0, "implement me");
+/*
+		cl_event event;
+		cl_int res = clEnqueueNativeKernel(this.cptr, func, args, cb_args, waitlist is null ? 0 : waitlist.length, waitlist is null ? null : waitlist.ptr, &event);
+
+		mixin(exceptionHandling(
+			["CL_INVALID_COMMAND_QUEUE",		""],
+			["CL_INVALID_CONTEXT",				"context associated with command queue and events in waitlist are not the same"],
+			["CL_INVALID_VALUE",				""],
+			["CL_INVALID_OPERATION",			"the device associated with command queue cannot execute the native kernel"],
+			["CL_INVALID_MEM_OBJECT",			"one or more memory objects specified in mem_list are not valid or are not buffer objects"],
+			["CL_OUT_OF_RESOURCES",				""],
+			["CL_MEM_OBJECT_ALLOCATION_FAILURE","couldn't allocate memory for data store associated with buffer objects specified as arguments to kernel"],
+			["CL_INVALID_EVENT_WAIT_LIST",		"event objects in waitlist are not valid events"],
+			["CL_OUT_OF_HOST_MEMORY",			""]
+		));
+		
+		return new CLEvent(event);
+*/	}
 
 	/**
 	 *	enqueues a command to execute a kernel on the device associated with this queue
