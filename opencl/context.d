@@ -31,7 +31,7 @@ public:
 	 *	creates an OpenCL context using the given devices
 	 *
 	 *	Params:
-	 *		props = additional properties, note that you don't need to specify the platform in props nor append a 0
+	 *		props = optional properties, note that you don't need to specify the platform in props nor append a 0
 	 */
 	this(CLDevices devices, cl_context_properties[] props = null)
 	{
@@ -41,9 +41,7 @@ public:
 
 		// TODO: user notification function
 
-		if (props !is null) assert(props[$-1] != 0);
-
-		cl_context_properties[] cps = props ~ [CL_CONTEXT_PLATFORM, cast(cl_context_properties) (devices[0].platform.cptr), 0];
+		cl_context_properties[] cps = props ~ [CL_CONTEXT_PLATFORM, cast(cl_context_properties) (devices[0].platform.cptr)] ~ props ~ 0;
 		_object = clCreateContext(cps.ptr, deviceIDs.length, deviceIDs.ptr, null, null, &res);
 
 		mixin(exceptionHandling(
@@ -57,16 +55,17 @@ public:
 	}
 	
 	/**
-	 *	create a context using all available devices of a specific type
+	 *	create a context using all available devices of a specific type on a given platform
 	 *
 	 *	Params:
-	 *		props = additional properties, note that you don't need to append a 0
+	 *		platform = specify the platform to use
+	 *		props = optional properties, note that you don't need to append a 0
 	 */
-	this(cl_device_type type = CL_DEVICE_TYPE_ALL, cl_context_properties[] props = null)
+	this(CLPlatform platform, cl_device_type type = CL_DEVICE_TYPE_ALL, cl_context_properties[] props = null)
 	{
 		cl_errcode res;
 
-		cl_context_properties[] cps = props ~ 0; // TODO: make ICD-compatible
+		cl_context_properties[] cps = [CL_CONTEXT_PLATFORM, cast(cl_context_properties) platform.cptr] ~ props ~ 0;
 		_object = clCreateContextFromType(cps.ptr, type, null, null, &res);
 		
 		mixin(exceptionHandling(
@@ -122,7 +121,8 @@ public:
 		//! devices in context
 		CLDevices devices()
 		{
-			return new CLDevices(getArrayInfo!cl_device_id(CL_CONTEXT_DEVICES));
+			auto tmp = getArrayInfo!cl_device_id(CL_CONTEXT_DEVICES);
+			return new CLDevices(tmp);
 		}
 		
 		//! properties argument specified in the constructor, otherwise null or [0]
