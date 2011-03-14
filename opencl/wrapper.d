@@ -37,7 +37,7 @@ abstract class CLObject
 }
 
 /**
- *	this provides basic functionality that is mixed into all CLObjects,
+ *	this function is used to mixin low level CL C object handling into all CL classes
  *	namely info retrieval and reference counting methods
  *
  *	It should be a template mixin, but unfortunately those can't add constructors to classes
@@ -136,7 +136,7 @@ public:
 	 *	The reference count returned should be considered immediately stale. It is unsuitable for general use in 
 	 *	applications. This feature is provided for identifying memory leaks
 	 */
-	final @property cl_uint referenceCount() const
+	final @property cl_uint referenceCount()
 	{
 		static if (T.stringof[$-3..$] != "_id")
 			mixin("return getInfo!cl_uint(CL_" ~ (T.stringof == "cl_command_queue" ? "QUEUE" : toupper(T.stringof[3..$])) ~ "_REFERENCE_COUNT);");
@@ -259,7 +259,7 @@ protected:
 		auto buffer = new U[needed/U.sizeof];
 
 		// get actual data
-		res = infoFunction(_object, infoname, buffer.length, cast(void*)buffer.ptr, null);
+		res = infoFunction(_object, infoname, buffer.sizeof, cast(void*)buffer.ptr, null);
 		
 		// error checking
 		if (res != CL_SUCCESS)
@@ -294,7 +294,7 @@ protected:
 		auto buffer = new U[needed/U.sizeof];
 
 		// get actual data
-		res = altFunction(_object, device, infoname, buffer.length, cast(void*)buffer.ptr, null);
+		res = altFunction(_object, device, infoname, buffer.sizeof, cast(void*)buffer.ptr, null);
 		
 		// error checking
 		if (res != CL_SUCCESS)
