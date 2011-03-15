@@ -134,7 +134,7 @@ public:
 	 *	The reference count returned should be considered immediately stale. It is unsuitable for general use in 
 	 *	applications. This feature is provided for identifying memory leaks
 	 */
-	final @property cl_uint referenceCount() // TODO: make const
+	final @property cl_uint referenceCount() const
 	{
 		static if (T.stringof[$-3..$] != "_id")
 			mixin("return getInfo!cl_uint(CL_" ~ (T.stringof == "cl_command_queue" ? "QUEUE" : toupper(T.stringof[3..$])) ~ "_REFERENCE_COUNT);");
@@ -158,7 +158,7 @@ protected:
 	 *		queried information
 	 */
 	// TODO: make infoname type-safe, not cl_uint (can vary for certain _object, see cl_mem)
-	final U getInfo(U, alias infoFunction = }~classInfoFunction~q{)(cl_uint infoname)
+	final U getInfo(U, alias infoFunction = }~classInfoFunction~q{)(cl_uint infoname) const
 	{
 		assert(_object !is null);
 		cl_errcode res;
@@ -195,7 +195,7 @@ protected:
 	 *	See_Also:
 	 *		getInfo
 	 */
-	final U getInfo2(U, alias altFunction)( cl_device_id device, cl_uint infoname)
+	final U getInfo2(U, alias altFunction)( cl_device_id device, cl_uint infoname) const
 	{
 		assert(_object !is null);
 		cl_errcode res;
@@ -237,7 +237,7 @@ protected:
 	 */
 	// helper function for all OpenCL Get*Info functions
 	// used for all array return types
-	final U[] getArrayInfo(U, alias infoFunction = }~classInfoFunction~q{)(cl_uint infoname)
+	final U[] getArrayInfo(U, alias infoFunction = }~classInfoFunction~q{)(cl_uint infoname) const
 	{
 		assert(_object !is null);
 		size_t needed;
@@ -272,7 +272,7 @@ protected:
 	 *	See_Also:
 	 *		getArrayInfo
 	 */
-	final U[] getArrayInfo2(U, alias altFunction)(cl_device_id device, cl_uint infoname)
+	final U[] getArrayInfo2(U, alias altFunction)(cl_device_id device, cl_uint infoname) const
 	{
 		assert(_object !is null);
 		size_t needed;
@@ -307,7 +307,7 @@ protected:
 	 *	See_Also:
 	 *		getArrayInfo
 	 */
-	final string getStringInfo(alias infoFunction = }~classInfoFunction~q{)(cl_uint infoname)
+	final string getStringInfo(alias infoFunction = }~classInfoFunction~q{)(cl_uint infoname) const
 	{
 		return cast(string) getArrayInfo!(ichar, infoFunction)(infoname);
 	}
