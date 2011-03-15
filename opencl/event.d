@@ -35,7 +35,7 @@ public:
 	 */
 	void wait()
 	{
-		cl_errcode res = clWaitForEvents(_objects.length, _objects.ptr);
+		cl_errcode res = clWaitForEvents(cast(cl_uint) _objects.length, _objects.ptr);
 
 		mixin(exceptionHandling(
 			["CL_INVALID_VALUE",		"event _objects is null"],

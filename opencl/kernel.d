@@ -112,7 +112,7 @@ public:
 	}
 	body
 	{
-		foreach(idx, arg; args)
+		foreach(uint idx, arg; args)
 			setArg(idx, arg);
 	}
 

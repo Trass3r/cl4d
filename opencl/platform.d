@@ -72,7 +72,7 @@ public:
 		// get device IDs
 		auto deviceIDs = new cl_device_id[numDevices];
 
-		res = clGetDeviceIDs(_object, deviceType, deviceIDs.length, deviceIDs.ptr, null);
+		res = clGetDeviceIDs(_object, deviceType, cast(cl_uint) deviceIDs.length, deviceIDs.ptr, null);
 		if(res != CL_SUCCESS)
 			throw new CLException(res);
 		
@@ -105,7 +105,7 @@ public:
 			
 		// get platform IDs
 		auto platformIDs = new cl_platform_id[numPlatforms];
-		res = clGetPlatformIDs(platformIDs.length, platformIDs.ptr, null);
+		res = clGetPlatformIDs(cast(cl_uint) platformIDs.length, platformIDs.ptr, null);
 		if(res != CL_SUCCESS)
 			throw new CLInvalidValueException();
 		

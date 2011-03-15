@@ -73,7 +73,7 @@ public:
 		// If pfn_notify isn't NULL, clBuildProgram does not need to wait for the build to complete and can return immediately
 		// If pfn_notify is NULL, clBuildProgram does not return until the build has completed
 		// TODO: rather use callback?
-		res = clBuildProgram(_object, devices is null ? 0 : cldevices.length, devices is null ? null : cldevices.ptr, toStringz(options), null, null);
+		res = clBuildProgram(_object, devices is null ? 0 : cast(cl_uint) cldevices.length, devices is null ? null : cldevices.ptr, toStringz(options), null, null);
 		
 		// handle build failures specifically
 		if (res == CL_BUILD_PROGRAM_FAILURE)
@@ -138,7 +138,7 @@ public:
 		));
 		
 		auto kernels = new cl_kernel[numKernels];
-		res = clCreateKernelsInProgram(this.cptr, kernels.length, kernels.ptr, null);
+		res = clCreateKernelsInProgram(this.cptr, cast(cl_uint) kernels.length, kernels.ptr, null);
 
 		mixin(exceptionHandling(
 			["CL_INVALID_VALUE",				"kernels is not NULL and num_kernels is less than the number of kernels in program"],
