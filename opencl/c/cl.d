@@ -26,14 +26,7 @@ private string bringToCurrentScope(alias EnumType)()
     return res;
 }
 
-version(CL_VERSION_1_1)
-{
-	extern(System):
-}
-else
-{
-	extern(C):
-}
+extern(System):
 
 //! these MUST be typedefs
 typedef const(void*)
