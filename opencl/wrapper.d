@@ -257,7 +257,7 @@ protected:
 		auto buffer = new U[needed/U.sizeof];
 
 		// get actual data
-		res = infoFunction(_object, infoname, buffer.sizeof, cast(void*)buffer.ptr, null);
+		res = infoFunction(_object, infoname, needed, cast(void*)buffer.ptr, null);
 		
 		// error checking
 		if (res != CL_SUCCESS)
@@ -292,7 +292,7 @@ protected:
 		auto buffer = new U[needed/U.sizeof];
 
 		// get actual data
-		res = altFunction(_object, device, infoname, buffer.sizeof, cast(void*)buffer.ptr, null);
+		res = altFunction(_object, device, infoname, needed, cast(void*)buffer.ptr, null);
 		
 		// error checking
 		if (res != CL_SUCCESS)
