@@ -261,18 +261,30 @@ public:
 		 */
 		ubyte[][] binaries()
 		{
-			// TODO: make sure binaries are available?
+			// retrieve sizes of binary data for each device associated with program
 			size_t[] sizes = getArrayInfo!(size_t)(CL_PROGRAM_BINARY_SIZES);
-			
-			ubyte*[] ptrs = getArrayInfo!(ubyte*)(CL_PROGRAM_BINARIES);
-			
-			ubyte[][] res = new ubyte[][ptrs.length];
-			for (uint i=0; i<ptrs.length; i++)
+
+			// we can't use getArrayInfo for the following
+			// since we need to preallocate the buffers for the binaries
+			ubyte[][]	buffer;
+			ubyte*[]	ptrs;
+			ptrs.length = sizes.length;
+			buffer.length = sizes.length;
+			foreach (i; 0 .. sizes.length)
 			{
-				res[i] = ptrs[i][0 .. sizes[i]];
+				buffer[i].length = sizes[i];
+				// if no binary has been compiled yet, ptr should still be null
+				assert(sizes[i] || !buffer[i].ptr, "this shouldn't happen");
+
+				ptrs[i] = buffer[i].ptr;
 			}
-			
-			return res;
+
+			auto res = clGetProgramInfo(_object, CL_PROGRAM_BINARIES, ptrs.length * (ubyte*).sizeof, ptrs.ptr, null);
+
+			if (res != CL_SUCCESS)
+				throw new CLException(res, "couldn't obtain program binaries");
+
+			return buffer;
 		}
 	} // of @property
 }
