@@ -10,8 +10,6 @@
  */
 module main;
 
-//import common;
-
 import opencl.all;
 
 import std.stdio;
@@ -59,8 +57,8 @@ void main(string[] args)
 		
 		// create input vectors
 		immutable VECTOR_SIZE = 100;
-		int[VECTOR_SIZE] va = void; foreach(i,e; va) va[i] = i;
-		int[VECTOR_SIZE] vb = void; foreach(i,e; vb) vb[i] = vb.length - i;
+		int[VECTOR_SIZE] va = void; foreach(int i,e; va) va[i] = i;
+		int[VECTOR_SIZE] vb = void; foreach(int i,e; vb) vb[i] = cast(int) vb.length - i;
 		int[VECTOR_SIZE] vc;
 	
 		// Create CL buffers
