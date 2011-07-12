@@ -158,7 +158,7 @@ protected:
 	 *		queried information
 	 */
 	// TODO: make infoname type-safe, not cl_uint (can vary for certain _object, see cl_mem)
-	final U getInfo(U, alias infoFunction = }~classInfoFunction~q{)(cl_uint infoname) const
+	final U getInfo(U, alias infoFunction = classInfoFunction)(cl_uint infoname) const
 	{
 		assert(_object !is null);
 		cl_errcode res;
@@ -237,7 +237,7 @@ protected:
 	 */
 	// helper function for all OpenCL Get*Info functions
 	// used for all array return types
-	final U[] getArrayInfo(U, alias infoFunction = }~classInfoFunction~q{)(cl_uint infoname) const
+	final U[] getArrayInfo(U, alias infoFunction = classInfoFunction)(cl_uint infoname) const
 	{
 		assert(_object !is null);
 		size_t needed;
@@ -307,12 +307,12 @@ protected:
 	 *	See_Also:
 	 *		getArrayInfo
 	 */
-	final string getStringInfo(alias infoFunction = }~classInfoFunction~q{)(cl_uint infoname) const
+	final string getStringInfo(alias infoFunction = classInfoFunction)(cl_uint infoname) const
 	{
 		return cast(string) getArrayInfo!(ichar, infoFunction)(infoname);
 	}
 
-};//.replace("classInfoFunction", classInfoFunction); // return q{...}.replace(...)
+}.replace("classInfoFunction", classInfoFunction); // return q{...}.replace(...)
 } // of CLWrapper function
 
 /**
