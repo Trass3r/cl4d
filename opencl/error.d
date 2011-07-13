@@ -108,7 +108,7 @@ private import std.string;
 // converts an OpenCL error identifier (e.g. "CL_INVALID_VALUE") into a camelcase name for the corresponding exception class
 package string toCamelCase(char[] s)
 {
-	tolowerInPlace(s);
+	toLowerInPlace(s);
 	int i=0, j=0;
 	while(i < s.length - 1)
 	{

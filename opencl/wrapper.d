@@ -51,7 +51,7 @@ protected:
 package:
 	this() {}
 
-private import std.stdio;
+debug private import std.stdio;
 	/**
 	 *	create a wrapper around a CL Object
 	 *
@@ -137,7 +137,10 @@ public:
 	final @property cl_uint referenceCount() const
 	{
 		static if (T.stringof[$-3..$] != "_id")
-			mixin("return getInfo!cl_uint(CL_" ~ (T.stringof == "cl_command_queue" ? "QUEUE" : toupper(T.stringof[3..$])) ~ "_REFERENCE_COUNT);");
+		{
+			// HACK: not even toUpper works in CTFE anymore as of 2.054 *sigh*
+			mixin("return getInfo!cl_uint(CL_" ~ (T.stringof == "cl_command_queue" ? "QUEUE" : (){char[] tmp = T.stringof[3..$].dup; toUpperInPlace(tmp); return tmp;}()) ~ "_REFERENCE_COUNT);");
+		}
 		else
 			return 0;
 	}
