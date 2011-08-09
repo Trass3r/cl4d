@@ -547,7 +547,7 @@ cl_errcode clGetDeviceInfo(
  *	private_info and cb represent a pointer to binary data that is returned by the OpenCL
 	implementation that can be used to log additional information helpful in debugging the error
  */
-typedef extern(System) void function(
+alias extern(System) void function(
 	const(char)*	errinfo,
 	const(void)*	private_info,
 	size_t			cb,
