@@ -73,7 +73,7 @@ alias CLObjectCollection!(cl_kernel) CLKernels;
  *	for one or more devices associated with program.  No changes to the program executable are
  *	allowed while there are kernel objects associated with a program object.
  */
-class CLKernel : CLObject
+final class CLKernel : CLObject
 {
 	mixin(CLWrapper("cl_kernel", "clGetKernelInfo"));
 
@@ -265,7 +265,7 @@ public:
 }
 
 
-class CLKernelFunctor
+final class CLKernelFunctor
 {
 private:
 	CLKernel		_kernel;

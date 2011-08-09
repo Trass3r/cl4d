@@ -22,7 +22,7 @@ import opencl.wrapper;
  * Contexts are used by the OpenCL runtime for managing objects such as command-queues, memory,
  * program and kernel objects and for executing kernels on one or more devices specified in the context.
  */
-class CLContext : CLObject
+final class CLContext : CLObject
 {
 	mixin(CLWrapper("cl_context", "clGetContextInfo"));
 

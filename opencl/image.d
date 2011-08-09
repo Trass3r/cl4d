@@ -139,7 +139,7 @@ public:
 }
 
 //! 2D image for GL interop.
-class CLImage2DGL : CLImage2D
+final class CLImage2DGL : CLImage2D
 {
 public:
 	/**
@@ -204,7 +204,7 @@ public:
 }
 
 //! 3D image for GL interop.
-class CLImage3DGL : CLImage3D
+final class CLImage3DGL : CLImage3D
 {
 public:
 	/**

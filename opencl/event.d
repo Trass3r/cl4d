@@ -17,7 +17,7 @@ import opencl.program;
 import opencl.wrapper;
 
 //! Event collection
-class CLEvents : CLObjectCollection!(cl_event)
+final class CLEvents : CLObjectCollection!(cl_event)
 {
 public:
 
@@ -220,7 +220,7 @@ version(CL_VERSION_1_1)
  *	using the status property before any OpenCL APIs that release OpenCL objects except for
  *	event objects are called; otherwise the behavior is undefined.
  */
-class CLUserEvent : CLEvent
+final class CLUserEvent : CLEvent
 {
 public:
 	~this()

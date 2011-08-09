@@ -138,7 +138,7 @@ private string mixinExceptionClasses(E...)(E es)
 		
 		
 		res ~= `/// 
-class CL` ~ toCamelCase(e.name[2..$].dup) ~ `Exception : ` ~ e.baseclass ~ ` {this(string msg = "", string file = "", size_t line = 0) {super(` ~ e.name ~ `, ` ~ ((e.msg != "") ? `"` ~ e.msg ~ `" ~ ` : "") ~ `msg, file, line);}}
+final class CL` ~ toCamelCase(e.name[2..$].dup) ~ `Exception : ` ~ e.baseclass ~ ` {this(string msg = "", string file = "", size_t line = 0) {super(` ~ e.name ~ `, ` ~ ((e.msg != "") ? `"` ~ e.msg ~ `" ~ ` : "") ~ `msg, file, line);}}
 `;
 
 	}

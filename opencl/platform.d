@@ -19,7 +19,7 @@ import opencl.wrapper;
 alias CLObjectCollection!(cl_platform_id) CLPlatforms;
 
 //! Platform class
-class CLPlatform : CLObject
+final class CLPlatform : CLObject
 {
 	mixin(CLWrapper("cl_platform_id", "clGetPlatformInfo"));
 

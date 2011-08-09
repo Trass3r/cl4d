@@ -113,7 +113,7 @@ public:
 }
 
 //! Memory buffer interface for GL interop.
-class CLBufferGL : CLBuffer
+final class CLBufferGL : CLBuffer
 {
 public:
 	/**
@@ -150,7 +150,7 @@ public:
  *	calls such as glRenderbufferStorage) while there exists a corresponding CL image object,
  *	subsequent use of the CL image object will result in undefined behavior
  */
-class CLBufferRenderGL : CLBuffer
+final class CLBufferRenderGL : CLBuffer
 {
 public:
 	/**

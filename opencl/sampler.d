@@ -22,7 +22,7 @@ import opencl.wrapper;
  *	The sampler arguments to the image read function can be sampler objects created using OpenCL functions
  *	and passed as argument values to the kernel or can be samplers declared inside a kernel.
  */
-class CLSampler : CLObject
+final class CLSampler : CLObject
 {
 	mixin(CLWrapper("cl_sampler", "clGetSamplerInfo"));
 

@@ -23,7 +23,7 @@ import opencl.error;
  * functions and constant data that can be used by __kernel functions. The program executable
  * can be generated online or offline by the OpenCL compiler for the appropriate target device(s).
  */
-class CLProgram : CLObject
+final class CLProgram : CLObject
 {
 	mixin(CLWrapper("cl_program", "clGetProgramInfo"));
 
