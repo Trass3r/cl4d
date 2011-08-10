@@ -38,6 +38,10 @@ public:
 	@property cl_errcode errcode() {return _errcode;}
 }
 
+version(NO_CL_EXCEPTIONS) {} else
+version(BASIC_CL_EXCEPTIONS) {} else
+{
+
 /// an unrecognized OpenCL exception
 class CLUnrecognizedException : CLException {this(cl_errcode errcode, string file = "", size_t line = 0) {super(errcode, "unrecognized OpenCL exception occured", file, line);}}
 
@@ -65,6 +69,8 @@ class CLKernelException : CLException {this(cl_errcode errcode, string msg = "",
 /// command queue exceptions base class
 class CLCommandQueueException : CLException {this(cl_errcode errcode, string msg = "", string file = "", size_t line = 0) {super(errcode, msg, file, line);}}
 
+} // of version(!NO_CL_EXCEPTIONS)
+
 /**
  *	this function generates exception handling code that is used all over the place when calling OpenCL functions
  *	thus it is easy to change global behavior, e.g. removing exception handling completely in release mode
@@ -73,7 +79,13 @@ class CLCommandQueueException : CLException {this(cl_errcode errcode, string msg
  */
 package string exceptionHandling(E...)(E es)
 {
-	string res = `switch(res)
+	version(NO_CL_EXCEPTIONS)
+		return "";
+	else version(BASIC_CL_EXCEPTIONS)
+		return `if (res != CL_SUCCESS) throw new CLException(res, "OpenCL API call failed!", __FILE__, __LINE__);`;
+	else
+	{
+	string res = `switch (res)
 {
 	case CL_SUCCESS:
 		break;
@@ -90,6 +102,7 @@ package string exceptionHandling(E...)(E es)
 		throw new CLUnrecognizedException(res, __FILE__, __LINE__);
 }`;
 	return res;
+	}
 }
 
 // ======================================================
@@ -126,6 +139,10 @@ package string toCamelCase(char[] s)
 	
 	return cast(string) s[0 .. j];
 }
+
+version(NO_CL_EXCEPTIONS) {} else
+version(BASIC_CL_EXCEPTIONS) {} else
+{
 
 private string mixinExceptionClasses(E...)(E es)
 {
@@ -200,3 +217,5 @@ mixin(mixinExceptionClasses(
 		ECD("CL_INVALID_MIP_LEVEL",			"", "CLBufferException"),
 		ECD("CL_INVALID_GL_OBJECT",			"", "CLBufferException")
 ));
+
+} // of version(!NO_CL_EXCEPTIONS)
