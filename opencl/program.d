@@ -78,7 +78,12 @@ public:
 		// handle build failures specifically
 		if (res == CL_BUILD_PROGRAM_FAILURE)
 		{
-			throw new CLBuildProgramFailureException(buildLogs());
+			version(NO_CL_EXCEPTIONS)
+				throw new Exception("error compiling OpenCL program: " ~ buildLogs());
+			else version(BASIC_CL_EXCEPTIONS)
+				throw new CLException(res, "error compiling OpenCL program: " ~ buildLogs());
+			else
+				throw new CLBuildProgramFailureException(buildLogs());
 		}
 
 		mixin(exceptionHandling(
