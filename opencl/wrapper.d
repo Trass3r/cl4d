@@ -104,7 +104,7 @@ public:
 		// platform and device will have an empty retain() so it can be safely used in this()
 		static if (T.stringof[$-3..$] != "_id")
 		{
-			mixin("cl_errcode res = clRetain" ~ toCamelCase(T.stringof[2..$].dup) ~ (T.stringof == "cl_mem" ? "Object" : "") ~ "(_object);");
+			mixin("cl_errcode res = clRetain" ~ toCamelCase(T.stringof[2..$]) ~ (T.stringof == "cl_mem" ? "Object" : "") ~ "(_object);");
 			mixin(exceptionHandling(
 				["CL_OUT_OF_RESOURCES",		""],
 				["CL_OUT_OF_HOST_MEMORY",	""]
@@ -120,7 +120,7 @@ public:
 	{
 		static if (T.stringof[$-3..$] != "_id")
 		{
-			mixin("cl_errcode res = clRelease" ~ toCamelCase(T.stringof[2..$].dup) ~ (T.stringof == "cl_mem" ? "Object" : "") ~ "(_object);");
+			mixin("cl_errcode res = clRelease" ~ toCamelCase(T.stringof[2..$]) ~ (T.stringof == "cl_mem" ? "Object" : "") ~ "(_object);");
 			mixin(exceptionHandling(
 				["CL_OUT_OF_RESOURCES",		""],
 				["CL_OUT_OF_HOST_MEMORY",	""]
@@ -374,7 +374,7 @@ public:
 			// TODO: is there a better way than replicating the retain/release code from above?
 			static if (T.stringof[$-3..$] != "_id")
 			{
-				mixin("cl_errcode res = clRetain" ~ toCamelCase(T.stringof[2..$].dup) ~ (T.stringof == "cl_mem" ? "Object" : "") ~ "(objects[i]);");
+				mixin("cl_errcode res = clRetain" ~ toCamelCase(T.stringof[2..$]) ~ (T.stringof == "cl_mem" ? "Object" : "") ~ "(objects[i]);");
 				mixin(exceptionHandling(
 					["CL_OUT_OF_RESOURCES",		""],
 					["CL_OUT_OF_HOST_MEMORY",	""]
@@ -391,7 +391,7 @@ public:
 			// release all held objects
 			static if (T.stringof[$-3..$] != "_id")
 			{
-				mixin("cl_errcode res = clRelease" ~ toCamelCase(T.stringof[2..$].dup) ~ (T.stringof == "cl_mem" ? "Object" : "") ~ "(_objects[i]);");
+				mixin("cl_errcode res = clRelease" ~ toCamelCase(T.stringof[2..$]) ~ (T.stringof == "cl_mem" ? "Object" : "") ~ "(_objects[i]);");
 				mixin(exceptionHandling(
 					["CL_OUT_OF_RESOURCES",		""],
 					["CL_OUT_OF_HOST_MEMORY",	""]
