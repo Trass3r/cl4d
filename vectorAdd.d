@@ -1,14 +1,5 @@
-/**
- *	cl4d - object-oriented wrapper for the OpenCL C API
- *	written in the D programming language
- *
- *	Copyright:
- *		(C) 2009-2011 Andreas Hollandt
- *
- *	License:
- *		see LICENSE.txt
- */
-module main;
+
+module vectorAdd;
 
 import opencl.all;
 
@@ -82,7 +73,8 @@ void main(string[] args)
 		execEvent.wait();
 
 		// Read buffer vc into a local list
-//		queue.enqueueReadBuffer(bufferC, CL_TRUE, 0, vc.sizeof, vc.ptr);
+		// TODO: figure out why this call is needed even though CL_MEM_USE_HOST_PTR is used
+		queue.enqueueReadBuffer(bufferC, CL_TRUE, 0, vc.sizeof, vc.ptr);
 	
 		foreach(i,e; vc)
 			writef("%d + %d = %d\n", va[i], vb[i], vc[i]);
