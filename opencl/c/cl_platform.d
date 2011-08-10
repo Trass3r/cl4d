@@ -9,7 +9,7 @@
  *		see LICENSE.txt
  */
 
-// based on $Revision: 11803 $ on $Date: 2010-06-25 10:02:12 -0700 (Fri, 25 Jun 2010) $
+// based on $Revision: 14829 $ on $Date: 2011-05-26 08:22:50 -0700 (Thu, 26 May 2011) $
 
 module opencl.c.cl_platform;
 

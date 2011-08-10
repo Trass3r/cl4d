@@ -9,7 +9,7 @@
  *		see LICENSE.txt
  */
 
-// based on $Revision: 11708 $ on $Date: 2010-06-13 23:36:24 -0700 (Sun, 13 Jun 2010) $
+// based on $Revision: 14826 $ on $Date: 2011-05-26 07:40:43 -0700 (Thu, 26 May 2011) $
 
 /**
  *	cl_gl_ext.h contains vendor (non-KHR) OpenCL extensions which have OpenGL dependencies.
