@@ -67,21 +67,20 @@ debug private import std.stdio;
 		release();
 	}
 
-	// return the internal OpenCL C object
-	// should only be used inside here so reference counting works
-	final package @property T cptr() const
-	{
-		return _object;
-	}
-	
-/+
 	//! ensure that _object isn't null
 	invariant()
 	{
 		assert(_object !is null);
 	}
-+/
-public:
+
+package:
+	// return the internal OpenCL C object
+	// should only be used inside here so reference counting works
+	@property T cptr() const
+	{
+		return _object;
+	}
+
 	//! increments the object reference count
 	void retain()
 	{
@@ -244,7 +243,7 @@ protected:
 		size_t needed;
 		cl_errcode res;
 
-		// get number of needed memory
+		// get amount of needed memory
 		res = infoFunction(_object, infoname, 0, null, &needed);
 
 		// error checking
@@ -279,7 +278,7 @@ protected:
 		size_t needed;
 		cl_errcode res;
 
-		// get number of needed memory
+		// get amount of needed memory
 		res = altFunction(_object, device, infoname, 0, null, &needed);
 
 		// error checking
