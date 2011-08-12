@@ -209,11 +209,8 @@ mixin(genCLVectorTypes());
  * This should correctly set up the line, (column) and file information for your source
  * string so you can do source level debugging.
  */
-string CL_PROGRAM_STRING_DEBUG_INFO()
-{
-	return `"#line " ~ __LINE__.stringof ~ " \"" ~ __FILE__ ~ "\" \n\n"`;
-}
- 
+enum CL_PROGRAM_STRING_DEBUG_INFO = `"#line " ~ __LINE__.stringof ~ " \"" ~ __FILE__ ~ "\" \n\n"`;
+
 
 /**************************************************
                     unittests
