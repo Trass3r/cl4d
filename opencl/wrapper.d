@@ -36,17 +36,16 @@ struct CLObject
 {
 }
 
+enum myDummy {f}
+
 /**
- *	this function is used to mixin low level CL C object handling into all CL classes
+ *	this template provides low level OpenCL C object handling into all CL classes
  *	namely info retrieval and reference counting methods
- *
- *	It should be a template mixin, but unfortunately those can't add constructors to classes
- */ 
-package string CLWrapper(string T, string classInfoFunction)
+ */
+package mixin template CLWrapper(T, alias classInfoFunction)
 {
-	return "private:\nalias " ~ T ~ " T;\n" ~ q{
-private	T _object = null;
-package alias T CType; // remember the C type
+	private	T _object = null;
+	package alias T CType; // remember the C type
 
 public:
 	// don't need a constructor if nothing special
@@ -148,8 +147,14 @@ protected:
 	 *		queried information
 	 */
 	// TODO: make infoname type-safe, not cl_uint (can vary for certain _object, see cl_mem)
-	final U getInfo(U, alias infoFunction = classInfoFunction)(cl_uint infoname) const
-	{
+	U getInfo(U, alias infoFunction2 = myDummy)(cl_uint infoname) const
+ 	{
+		// HACK: workaround for bug 6312
+		static if (is (infoFunction2 == function)) // infoFunction is valid
+			alias infoFunction2 infoFunction;
+		else
+			alias classInfoFunction infoFunction;
+
 		assert(_object !is null);
 		cl_errcode res;
 		
@@ -227,8 +232,14 @@ protected:
 	 */
 	// helper function for all OpenCL Get*Info functions
 	// used for all array return types
-	final U[] getArrayInfo(U, alias infoFunction = classInfoFunction)(cl_uint infoname) const
-	{
+	U[] getArrayInfo(U, alias infoFunction2 = myDummy)(cl_uint infoname) const
+ 	{
+		// HACK: workaround for bug 6312
+		static if (is (infoFunction2 == function)) // infoFunction is valid
+			alias infoFunction2 infoFunction;
+		else
+			alias classInfoFunction infoFunction;
+
 		assert(_object !is null);
 		size_t needed;
 		cl_errcode res;
@@ -297,13 +308,18 @@ protected:
 	 *	See_Also:
 	 *		getArrayInfo
 	 */
-	final string getStringInfo(alias infoFunction = classInfoFunction)(cl_uint infoname) const
-	{
+	string getStringInfo(alias infoFunction2 = myDummy)(cl_uint infoname) const
+ 	{
+		// HACK: workaround for bug 6312
+		static if (is (infoFunction2 == function)) // infoFunction is valid
+			alias infoFunction2 infoFunction;
+		else
+			alias classInfoFunction infoFunction;
+
 		return cast(string) getArrayInfo!(ichar, infoFunction)(infoname);
 	}
+} // of CLWrapper template
 
-}.replace("classInfoFunction", classInfoFunction); // return q{...}.replace(...)
-} // of CLWrapper function
 
 /**
  *	a collection of OpenCL objects returned by some methods

@@ -21,7 +21,7 @@ alias CLObjectCollection!CLPlatform CLPlatforms;
 //! Platform class
 struct CLPlatform
 {
-	mixin(CLWrapper("cl_platform_id", "clGetPlatformInfo"));
+	mixin CLWrapper!(cl_platform_id, clGetPlatformInfo);
 
 public:
 	/// get the platform name

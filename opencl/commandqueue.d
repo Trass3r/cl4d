@@ -25,7 +25,7 @@ import opencl.wrapper;
 //!
 struct CLCommandQueue
 {
-	mixin(CLWrapper("cl_command_queue", "clGetCommandQueueInfo"));
+	mixin CLWrapper!(cl_command_queue, clGetCommandQueueInfo);
 
 public:
 	/**

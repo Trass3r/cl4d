@@ -23,7 +23,7 @@ alias CLObjectCollection!CLMemory CLMemories;
  */
 package struct CLMemory
 {
-	mixin(CLWrapper("cl_mem", "clGetMemObjectInfo"));
+	mixin CLWrapper!(cl_mem, clGetMemObjectInfo);
 
 public:
 	version(CL_VERSION_1_1)

@@ -56,7 +56,7 @@ struct CLEvents
  */
 struct CLEvent
 {
-	mixin(CLWrapper("cl_event", "clGetEventInfo"));
+	mixin CLWrapper!(cl_event, clGetEventInfo);
 
 public:
 	/**
