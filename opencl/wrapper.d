@@ -31,8 +31,8 @@ package
 	alias const(char)[] cstring; //!
 }
 
-//! all CL Classes inherit from this one to enable is(T : CLObject)
-abstract class CLObject
+//! all CL Objects "inherit" from this one to enable is(T : CLObject)
+struct CLObject
 {
 }
 
@@ -45,39 +45,26 @@ abstract class CLObject
 package string CLWrapper(string T, string classInfoFunction)
 {
 	return "private:\nalias " ~ T ~ " T;\n" ~ q{
-protected:
-	T _object = null;
+private	T _object = null;
+package alias T CType; // remember the C type
 
-package:
-	this() {}
+public:
+	// don't need a constructor if nothing special
+//	this(T obj) { _object = obj; }
 
 debug private import std.stdio;
-	/**
-	 *	create a wrapper around a CL Object
-	 *
-	 *	Params:
-	 *	    increment = increase the object's reference count, necessary e.g. in CLCollection
-	 */
-	this(T obj, bool increment = false)
-	in
-	{
-		assert(obj !is null, "the " ~ T.stringof ~ " object to be wrapped is null!");
-	}
-	body
-	{
-		_object = obj;
 
+	this(this)
+	{
 		// increment reference count
-		if (increment)
-			retain();
-		
-		debug writefln("wrapped a %s object instance. Reference count is now: %d", T.stringof, referenceCount);
+		retain();
+		debug writef("copied a %s object instance. Reference count is now: %d\n", T.stringof, referenceCount);
 	}
 
 	//! release the object
 	~this()
 	{
-		debug writefln("%s object destroyed. Reference count before destruction: %d", typeid(typeof(this)), referenceCount);
+		debug writef("%s object destroyed. Reference count before destruction: %d\n", typeid(typeof(this)), referenceCount);
 		release();
 	}
 
@@ -97,7 +84,7 @@ debug private import std.stdio;
 +/
 public:
 	//! increments the object reference count
-	final void retain()
+	void retain()
 	{
 		// NOTE: cl_platform_id and cl_device_id don't have reference counting
 		// T.stringof is compared instead of T itself so it also works with T being an alias
@@ -116,7 +103,7 @@ public:
 	 *	decrements the context reference count
 	 *	The object is deleted once the number of instances that are retained to it become zero
 	 */
-	final void release()
+	void release()
 	{
 		static if (T.stringof[$-3..$] != "_id")
 		{
@@ -134,7 +121,7 @@ public:
 	 *	The reference count returned should be considered immediately stale. It is unsuitable for general use in 
 	 *	applications. This feature is provided for identifying memory leaks
 	 */
-	final @property cl_uint referenceCount() const
+	public @property cl_uint referenceCount() const
 	{
 		static if (T.stringof[$-3..$] != "_id")
 		{
@@ -198,7 +185,7 @@ protected:
 	 *	See_Also:
 	 *		getInfo
 	 */
-	final U getInfo2(U, alias altFunction)( cl_device_id device, cl_uint infoname) const
+	U getInfo2(U, alias altFunction)( cl_device_id device, cl_uint infoname) const
 	{
 		assert(_object !is null);
 		cl_errcode res;
@@ -275,7 +262,7 @@ protected:
 	 *	See_Also:
 	 *		getArrayInfo
 	 */
-	final U[] getArrayInfo2(U, alias altFunction)(cl_device_id device, cl_uint infoname) const
+	U[] getArrayInfo2(U, alias altFunction)(cl_device_id device, cl_uint infoname) const
 	{
 		assert(_object !is null);
 		size_t needed;
@@ -323,85 +310,69 @@ protected:
  *	Params:
  *		T = an OpenCL C object like cl_kernel
  */
-class CLObjectCollection(T)
+package struct CLObjectCollection(T)
+// TODO: if (is(T : CLObject))
 {
-protected:
+//private:
 	T[] _objects;
 
-	static if(is(T == cl_platform_id))
-		alias CLPlatform Wrapper;
-	else static if(is(T == cl_device_id))
-		alias CLDevice Wrapper;
-	else static if(is(T == cl_kernel))
-		alias CLKernel Wrapper;
-	else static if(is(T == cl_event))
-		alias CLEvent Wrapper;
-	else static if(is(T == cl_mem))
-		alias CLMemory Wrapper;
+	static if(is(T == CLPlatform))
+		alias cl_platform_id CType;
+	else static if(is(T == CLDevice))
+		alias cl_device_id CType;
+	else static if(is(T == CLKernel))
+		alias cl_kernel CType;
+	else static if(is(T : CLEvent))
+		alias cl_event CType;
+	else static if(is(T : CLMemory))
+		alias cl_mem CType;
 	else
 		static assert(0, "object type not supported by CLObjectCollection");
 
 public:
+	// TODO: enable once it compiles (to fix usages of objarray etc.)
+	alias _objects this;
+
 	//! takes a list of cl4d CLObjects
-	this(Wrapper[] clObjects, bool increment = true)
+	this(T[] objects...)
 	in
 	{
 		assert(clObjects !is null);
 	}
 	body
 	{
-		T[] tmp = new T[clObjects.length];
-		foreach(i, obj; clObjects)
-			tmp[i] = obj.cptr;
-
-		this(tmp, increment);
+		// they were already copy-constructed (due to variadic?!)
+		_objects = objects;
 	}
 
 	//! takes a list of OpenCL C objects returned by some OpenCL functions like GetPlatformIDs
-	this(T[] objects, bool increment = false)
+	// TODO: so these are already allocated and don't need to be dup'ed?!
+	// TODO: change CType to T.Ctype and remove the static if crap above, once that is sorted out
+	this(CType[] objects)//, bool transferOwnership = true)
 	in
 	{
 		assert(objects !is null);
 	}
 	body
 	{
-		_objects = objects.dup;
-		
-		if (increment)
-		for(uint i=0; i<objects.length; i++)
-		{
-			// increment the reference counter so the objects won't be destroyed
-			// TODO: is there a better way than replicating the retain/release code from above?
-			static if (T.stringof[$-3..$] != "_id")
-			{
-				mixin("cl_errcode res = clRetain" ~ toCamelCase(T.stringof[2..$]) ~ (T.stringof == "cl_mem" ? "Object" : "") ~ "(objects[i]);");
-				mixin(exceptionHandling(
-					["CL_OUT_OF_RESOURCES",		""],
-					["CL_OUT_OF_HOST_MEMORY",	""]
-				));
-			}
-		}
+		// TODO: just .dup if retain() calls are needed
+		_objects = objects;
 	}
-	
+
+	this(this)
+	{
+		_objects = _objects.dup; // calls postblits :)
+	}
+/* TODO reenable when bug 6473 is fixed
 	//! release all objects
 	~this()
 	{
-		for(uint i=0; i<_objects.length; i++)
-		{
-			// release all held objects
-			static if (T.stringof[$-3..$] != "_id")
-			{
-				mixin("cl_errcode res = clRelease" ~ toCamelCase(T.stringof[2..$]) ~ (T.stringof == "cl_mem" ? "Object" : "") ~ "(_objects[i]);");
-				mixin(exceptionHandling(
-					["CL_OUT_OF_RESOURCES",		""],
-					["CL_OUT_OF_HOST_MEMORY",	""]
-				));
-			}
-		}
-	}
-
+		foreach (object; _objects)
+			object.release();
+	}*/
+/*
 	/// used to internally get the underlying object pointers
-	package T[] getObjArray()
+	package T[] cptrArray()
 	{
 		return _objects;
 	}
@@ -427,18 +398,18 @@ public:
 	body
 	{
 		// increment reference count
-		return new Wrapper(_objects[i], true);
+		return Wrapper(_objects[i], true);
 	}
-
+*/
+	// TODO: delete this once bug 2781 is fixed
 	/// for foreach to work
-	int opApply(scope int delegate(ref Wrapper) dg)
+	int opApply(scope int delegate(ref T) dg)
 	{
 		int result = 0;
 		
 		for(uint i=0; i<_objects.length; i++)
 		{
-			Wrapper w = new Wrapper(_objects[i], true);
-			result = dg(w);
+			result = dg(_objects[i]);
 			if(result)
 				break;
 		}

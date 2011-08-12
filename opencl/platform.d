@@ -16,10 +16,10 @@ import opencl.error;
 import opencl.wrapper;
 
 //! Platform collection
-alias CLObjectCollection!(cl_platform_id) CLPlatforms;
+alias CLObjectCollection!CLPlatform CLPlatforms;
 
 //! Platform class
-final class CLPlatform : CLObject
+struct CLPlatform
 {
 	mixin(CLWrapper("cl_platform_id", "clGetPlatformInfo"));
 
@@ -77,7 +77,7 @@ public:
 			throw new CLException(res);
 		
 		// create CLDevice array
-		return new CLDevices(deviceIDs);
+		return CLDevices(deviceIDs);
 	}
 	
 	/// returns a list of all devices

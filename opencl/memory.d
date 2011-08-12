@@ -16,12 +16,12 @@ import opencl.context;
 import opencl.error;
 import opencl.wrapper;
 
-alias CLObjectCollection!cl_mem CLMemories;
+alias CLObjectCollection!CLMemory CLMemories;
 
 /**
  *	Memory objects are reserved regions of global device memory that can serve as containers for your data
  */
-package class CLMemory : CLObject
+package struct CLMemory
 {
 	mixin(CLWrapper("cl_mem", "clGetMemObjectInfo"));
 
@@ -80,7 +80,7 @@ public:
 	//! context specified when memory object was created
 	CLContext context()
 	{
-		return new CLContext(getInfo!cl_context(CL_MEM_CONTEXT));
+		return CLContext(getInfo!cl_context(CL_MEM_CONTEXT));
 	}
 
 	//! Map count

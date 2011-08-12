@@ -21,18 +21,10 @@ import opencl.wrapper;
  *	buffer objects are generic memory objects for containing any type of data
  */
 // TODO: make CLBuffer know its type?
-class CLBuffer : CLMemory
+struct CLBuffer
 {
-package:
-	this() {}
-
-	//!
-	this(cl_mem buffer, bool increment = false)
-	{
-		super(buffer, increment);
-	}
-	
-public:
+	package CLMemory sup;
+	alias sup this;
 
 	/**
 	 *	create a buffer object from hostbuf
@@ -76,7 +68,7 @@ public:
 		cl_buffer_region reg = {origin, size};
 
 		cl_errcode res;
-		auto ret = new CLBuffer(clCreateSubBuffer(this.cptr, flags, CL_BUFFER_CREATE_TYPE_REGION, &reg, &res));
+		auto ret = CLBuffer(clCreateSubBuffer(this.cptr, flags, CL_BUFFER_CREATE_TYPE_REGION, &reg, &res));
 
 		// TODO: handle flags separately? see CL_INVALID_VALUE message
 		mixin(exceptionHandling(
@@ -107,15 +99,17 @@ public:
 		if (sub is null)
 			return null;
 		else
-			return new CLBuffer(sub);
+			return CLBuffer(sub);
 	}
 }
 }
 
 //! Memory buffer interface for GL interop.
-final class CLBufferGL : CLBuffer
+struct CLBufferGL
 {
-public:
+	package CLBuffer sup;
+	alias sup this;
+
 	/**
 	 *	creates an OpenCL buffer object from an OpenGL buffer object
 	 *
@@ -150,9 +144,11 @@ public:
  *	calls such as glRenderbufferStorage) while there exists a corresponding CL image object,
  *	subsequent use of the CL image object will result in undefined behavior
  */
-final class CLBufferRenderGL : CLBuffer
+struct CLBufferRenderGL
 {
-public:
+	package CLBuffer sup;
+	alias sup this;
+
 	/**
 	 *	creates an OpenCL 2D image object from an OpenGL renderbuffer object
 	 *

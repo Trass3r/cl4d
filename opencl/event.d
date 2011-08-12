@@ -17,15 +17,16 @@ import opencl.program;
 import opencl.wrapper;
 
 //! Event collection
-final class CLEvents : CLObjectCollection!(cl_event)
+struct CLEvents
 {
-public:
+	package CLObjectCollection!CLEvent sup;
+	alias sup this;
 
-	//!
+/*	//! TODO
 	this(cl_event[] objects)
 	{
 		super(objects);
-	}
+	}*/
 
 	/**
 	 *	waits on the host thread for commands identified by events in this list to complete.
@@ -53,7 +54,7 @@ public:
  *
  *	API calls that enqueue commands to a command-queue create a new event object that is returned in the event argument
  */
-class CLEvent : CLObject
+struct CLEvent
 {
 	mixin(CLWrapper("cl_event", "clGetEventInfo"));
 
@@ -220,9 +221,11 @@ version(CL_VERSION_1_1)
  *	using the status property before any OpenCL APIs that release OpenCL objects except for
  *	event objects are called; otherwise the behavior is undefined.
  */
-final class CLUserEvent : CLEvent
+struct CLUserEvent
 {
-public:
+	package CLEvent sup;
+	alias sup this;
+
 	~this()
 	{
 		// if the last reference is released and status isn't CL_COMPLETE or an error

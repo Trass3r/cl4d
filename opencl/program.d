@@ -23,7 +23,7 @@ import opencl.error;
  * functions and constant data that can be used by __kernel functions. The program executable
  * can be generated online or offline by the OpenCL compiler for the appropriate target device(s).
  */
-final class CLProgram : CLObject
+struct CLProgram
 {
 	mixin(CLWrapper("cl_program", "clGetProgramInfo"));
 
@@ -62,18 +62,14 @@ public:
 	 * devices or a specific device(s) in the OpenCL context associated with program. OpenCL allows
 	 * program executables to be built using the source or the binary.
 	 */
-	CLProgram build(string options = "", CLDevices devices = null)
+	CLProgram build(string options = "", CLDevices devices = CLDevices())
 	{
-		// TODO: handle this whole (if devices is null) crap better
 		cl_errcode res;
-		cl_device_id[] cldevices;
-		if (devices !is null)
-			cldevices = devices.getObjArray();
 		
 		// If pfn_notify isn't NULL, clBuildProgram does not need to wait for the build to complete and can return immediately
 		// If pfn_notify is NULL, clBuildProgram does not return until the build has completed
 		// TODO: rather use callback?
-		res = clBuildProgram(_object, devices is null ? 0 : cast(cl_uint) cldevices.length, devices is null ? null : cldevices.ptr, toStringz(options), null, null);
+		res = clBuildProgram(_object, cast(cl_uint) devices.length, devices.ptr, toStringz(options), null, null);
 		
 		// handle build failures specifically
 		if (res == CL_BUILD_PROGRAM_FAILURE)
@@ -108,7 +104,7 @@ public:
 	 */
 	CLKernel createKernel(string kernelName)
 	{
-		return new CLKernel(this, kernelName);
+		return CLKernel(this, kernelName);
 	}
 	
 	/**
@@ -151,7 +147,7 @@ public:
 			["CL_OUT_OF_RESOURCES",				""]
 		));
 
-		return new CLKernels(kernels);
+		return CLKernels(kernels);
 	}
 
 	/**
@@ -208,7 +204,7 @@ public:
 		//! the context specified when the program object was created
 		CLContext context()
 		{
-			return new CLContext(getInfo!cl_context(CL_PROGRAM_CONTEXT));
+			return CLContext(getInfo!cl_context(CL_PROGRAM_CONTEXT));
 		}
 
 		//! number of devices associated with program
@@ -225,7 +221,7 @@ public:
 		auto devices()
 		{
 			cl_device_id[] ids = getArrayInfo!(cl_device_id)(CL_PROGRAM_DEVICES);
-			return new CLDevices(ids);
+			return CLDevices(ids);
 		}
 
 		/**

@@ -24,17 +24,11 @@ import opencl.wrapper;
  *	The elements of an image object are selected from a list of predefined image formats.
  *	The minimum number of elements in a memory object is one
  */
-class CLImage : CLMemory
+struct CLImage
 {
-package:
-	this() {}
+	CLMemory sup;
+	alias sup this;
 
-	this(cl_mem object)
-	{
-		super(object);
-	}
-
-public:
 	@property
 	{
 		//!image format descriptor specified when image was created
@@ -106,10 +100,10 @@ public:
 }
 
 //! 2D Image
-class CLImage2D : CLImage
+struct CLImage2D
 {
-public:
-	this() {}
+	package CLImage sup;
+	alias sup this;
 
 	/**
 	 *	Params:
@@ -139,9 +133,11 @@ public:
 }
 
 //! 2D image for GL interop.
-final class CLImage2DGL : CLImage2D
+struct CLImage2DGL
 {
-public:
+	package CLImage2D sup;
+	alias sup this;
+
 	/**
 	 *	creates an OpenCL 2D image object from an OpenGL 2D texture object, or a single face of an OpenGL cubemap texture object
 	 *
@@ -170,10 +166,10 @@ public:
 }
 
 //! 3D Image
-class CLImage3D : CLImage
+struct CLImage3D
 {
-public:
-	this() {}
+	package CLImage sup;
+	alias sup this;
 
 	/**
 	 *	Params:
@@ -204,9 +200,11 @@ public:
 }
 
 //! 3D image for GL interop.
-final class CLImage3DGL : CLImage3D
+struct CLImage3DGL
 {
-public:
+	package CLImage3D sup;
+	alias sup this;
+
 	/**
 	 *	creates an OpenCL 3D image object from an OpenGL 3D texture object
 	 *

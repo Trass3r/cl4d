@@ -65,7 +65,7 @@ struct NDRange
 __gshared immutable NullRange = NDRange();
 
 //! collection of several devices
-alias CLObjectCollection!(cl_kernel) CLKernels;
+alias CLObjectCollection!CLKernel CLKernels;
 
 /**
  *	Kernel objects can only be created once you have a program object with a valid program source
@@ -73,7 +73,7 @@ alias CLObjectCollection!(cl_kernel) CLKernels;
  *	for one or more devices associated with program.  No changes to the program executable are
  *	allowed while there are kernel objects associated with a program object.
  */
-final class CLKernel : CLObject
+struct CLKernel
 {
 	mixin(CLWrapper("cl_kernel", "clGetKernelInfo"));
 
@@ -198,13 +198,13 @@ public:
 		/// Return the context associated with kernel
 		CLContext context()
 		{
-			return new CLContext(getInfo!(cl_context)(CL_KERNEL_CONTEXT));
+			return CLContext(getInfo!(cl_context)(CL_KERNEL_CONTEXT));
 		}
 		
 		//! Return the program object associated with kernel
 		CLProgram program()
 		{
-			return new CLProgram(getInfo!(cl_program)(CL_KERNEL_PROGRAM));
+			return CLProgram(getInfo!(cl_program)(CL_KERNEL_PROGRAM));
 		}
 	} // of @property
 

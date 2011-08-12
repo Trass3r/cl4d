@@ -22,7 +22,7 @@ import opencl.wrapper;
  * Contexts are used by the OpenCL runtime for managing objects such as command-queues, memory,
  * program and kernel objects and for executing kernels on one or more devices specified in the context.
  */
-final class CLContext : CLObject
+struct CLContext
 {
 	mixin(CLWrapper("cl_context", "clGetContextInfo"));
 
@@ -79,7 +79,7 @@ public:
 	
 	CLProgram createProgram(string sourceCode)
 	{
-		return new CLProgram(this, sourceCode);
+		return CLProgram(this, sourceCode);
 	}
 	
 	/**
@@ -122,7 +122,7 @@ public:
 		CLDevices devices()
 		{
 			auto tmp = getArrayInfo!cl_device_id(CL_CONTEXT_DEVICES);
-			return new CLDevices(tmp);
+			return CLDevices(tmp);
 		}
 		
 		//! properties argument specified in the constructor, otherwise null or [0]
