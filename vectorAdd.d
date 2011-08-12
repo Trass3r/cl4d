@@ -9,7 +9,7 @@ void main(string[] args)
 {
 	try
 	{
-		auto platforms = CLPlatform.getPlatforms();
+		auto platforms = CLHost.getPlatforms();
 		if (platforms.length < 1)
 		{
 			writeln("No platforms available.");
@@ -26,7 +26,7 @@ void main(string[] args)
 			return;
 		}
 
-		foreach(device; devices)
+		foreach(CLDevice device; devices)
 			writefln("%s\n\t%s\n\t%s\n\t%s\n\t%s", device.name, device.vendor, device.driverVersion, device.clVersion, device.profile, device.extensions);
 		
 		auto context = CLContext(devices);
