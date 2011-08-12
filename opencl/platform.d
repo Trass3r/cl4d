@@ -91,28 +91,4 @@ public:
 	
 	/// returns a list of all accelerator devices
 	CLDevices accelDevices() {return getDevices(CL_DEVICE_TYPE_ACCELERATOR);}
-	
-	/// get an array of all available platforms
-	static CLPlatforms getPlatforms()
-	{
-		cl_uint numPlatforms;
-		cl_errcode res;
-		
-		// get number of platforms
-		res = clGetPlatformIDs(0, null, &numPlatforms);
-
-		version(NO_CL_EXCEPTIONS) {} else
-		if(res != CL_SUCCESS)
-			throw new CLException(res, "couldn't retrieve number of platforms", __FILE__, __LINE__);
-
-		// get platform IDs
-		auto platformIDs = new cl_platform_id[numPlatforms];
-		res = clGetPlatformIDs(cast(cl_uint) platformIDs.length, platformIDs.ptr, null);
-
-		version(NO_CL_EXCEPTIONS) {} else
-		if(res != CL_SUCCESS)
-			throw new CLException(res, "couldn't get platform list", __FILE__, __LINE__);
-		
-		return new CLPlatforms(platformIDs);
-	}
 }

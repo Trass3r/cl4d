@@ -18,6 +18,7 @@ public import
 	opencl.device,
 	opencl.error,
 	opencl.event,
+	opencl.host,
 	opencl.image,
 	opencl.kernel,
 	opencl.platform,

@@ -153,23 +153,7 @@ public:
 
 		return new CLKernels(kernels);
 	}
-	
-	/**
-	 * allows the implementation to release the resources allocated by the OpenCL compiler.  This is a
-	 * hint from the application and does not guarantee that the compiler will not be used in the future
-	 * or that the compiler will actually be unloaded by the implementation.  Calls to clBuildProgram
-	 * after clUnloadCompiler will reload the compiler, if necessary, to build the appropriate program executable.
-	 * 
-	 * TODO: should this stay in this class?
-	 */
-	static void unloadCompiler()
-	{
-		cl_errcode res;
-		res = clUnloadCompiler();
-		if(res != CL_SUCCESS)
-			throw new CLException(res, "failed unloading compiler, this shouldn't happen in OpenCL 1.0");
-	}
-	
+
 	/**
 	 *	Returns the build status of program for the specific device.
 	 *
