@@ -29,6 +29,11 @@ struct CLImage
 	CLMemory sup;
 	alias sup this;
 
+	this(cl_mem obj)
+	{
+		sup = CLMemory(obj);
+	}
+
 	@property
 	{
 		//!image format descriptor specified when image was created
@@ -105,6 +110,11 @@ struct CLImage2D
 	CLImage sup;
 	alias sup this;
 
+	this(cl_mem obj)
+	{
+		sup = CLImage(obj);
+	}
+
 	/**
 	 *	Params:
 	 *		flags	= used to specify allocation and usage info for the image object
@@ -114,8 +124,9 @@ struct CLImage2D
 	 */
 	this(CLContext context, cl_mem_flags flags, const cl_image_format format, size_t width, size_t height, size_t rowPitch, void* hostPtr = null)
 	{
+		// call "base constructor"
 		cl_errcode res;
-		this._object = clCreateImage2D(context.cptr, flags, &format, width, height, rowPitch, hostPtr, &res);
+		sup = CLImage(clCreateImage2D(context.cptr, flags, &format, width, height, rowPitch, hostPtr, &res));
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",					""],
@@ -149,8 +160,9 @@ struct CLImage2DGL
 	 */
 	this(const CLContext context, cl_mem_flags flags, cl_GLenum target, cl_GLint  miplevel, cl_GLuint texobj)
 	{
+		// call "base constructor"
 		cl_errcode res;
-		this._object = clCreateFromGLTexture2D(context.cptr, flags, target, miplevel, texobj, &res);
+		sup = CLImage2D(clCreateFromGLTexture2D(context.cptr, flags, target, miplevel, texobj, &res));
 
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",		"context is not a valid context or was not created from a GL context"],
@@ -171,6 +183,11 @@ struct CLImage3D
 	CLImage sup;
 	alias sup this;
 
+	this(cl_mem obj)
+	{
+		sup = CLImage(obj);
+	}
+
 	/**
 	 *	Params:
 	 *		flags		= used to specify allocation and usage info for the image object
@@ -181,8 +198,9 @@ struct CLImage3D
 	 */
 	this(CLContext context, cl_mem_flags flags, const cl_image_format format, size_t width, size_t height, size_t depth, size_t rowPitch, size_t slicePitch, void* hostPtr = null)
 	{
+		// call "base constructor"
 		cl_errcode res;
-		this._object = clCreateImage3D(context.cptr, flags, &format, width, height, depth, rowPitch, slicePitch, hostPtr, &res);
+		sup = CLImage(clCreateImage3D(context.cptr, flags, &format, width, height, depth, rowPitch, slicePitch, hostPtr, &res));
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",					""],
@@ -217,7 +235,7 @@ struct CLImage3DGL
 	this(const CLContext context, cl_mem_flags flags, cl_GLenum target, cl_GLint  miplevel, cl_GLuint texobj)
 	{
 		cl_errcode res;
-		this._object = clCreateFromGLTexture3D(context.cptr, flags, target, miplevel, texobj, &res);
+		sup = CLImage3D(clCreateFromGLTexture3D(context.cptr, flags, target, miplevel, texobj, &res));
 
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",		"context is not a valid context or was not created from a GL context"],

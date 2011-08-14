@@ -72,6 +72,9 @@ debug private import std.stdio;
 	//! release the object
 	~this()
 	{
+		if (_object is null)
+			return;
+
 		debug writef("releasing %s %X. Reference count before: %d\n", T.stringof, cast(void*) _object, referenceCount);
 		release();
 	}

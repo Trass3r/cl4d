@@ -38,7 +38,7 @@ public:
 		cl_errcode res;
 		size_t* lengths = cast(size_t*) [sourceCode.length];
 		char** ptrs = cast(char**) [sourceCode.ptr];
-		this._object = clCreateProgramWithSource(context.cptr, 1, ptrs, lengths, &res);
+		this(clCreateProgramWithSource(context.cptr, 1, ptrs, lengths, &res));
 
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",		""],

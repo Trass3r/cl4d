@@ -237,8 +237,9 @@ struct CLUserEvent
 	//! creates a user event object
 	this(CLContext context)
 	{
+		// call "base constructor"
 		cl_errcode res;
-		this._object = clCreateUserEvent(context.cptr, &res);
+		sup = CLEvent(clCreateUserEvent(context.cptr, &res));
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",	""],

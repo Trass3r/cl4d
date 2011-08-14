@@ -28,7 +28,7 @@ struct CLBuffer
 
 	this(cl_mem obj)
 	{
-		this._object = obj;
+		sup = CLMemory(obj);
 	}
 
 	/**
@@ -43,10 +43,9 @@ struct CLBuffer
 	 */
 	this(CLContext context, cl_mem_flags flags, size_t datasize, void* hostptr = null)
 	{
-		// TODO: perform argument checks? is it necessary or just leave it to OpenCL?
-
+		// call "base constructor"
 		cl_errcode res;
-		this._object = clCreateBuffer(context.cptr, flags, datasize, hostptr, &res);
+		this(clCreateBuffer(context.cptr, flags, datasize, hostptr, &res));
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",				""],
@@ -125,7 +124,7 @@ struct CLBufferGL
 	this(CLContext context, cl_mem_flags flags, cl_GLuint bufobj)
 	{
 		cl_errcode res;
-		this._object = clCreateFromGLBuffer(context.cptr, flags, bufobj, &res);
+		sup = CLBuffer(clCreateFromGLBuffer(context.cptr, flags, bufobj, &res));
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",		"context is not a valid context or was not created from a GL context"],
@@ -166,7 +165,7 @@ struct CLBufferRenderGL
 	this(CLContext context, cl_mem_flags flags, cl_GLuint renderbuffer)
 	{
 		cl_errcode res;
-		this._object = clCreateFromGLRenderbuffer(context.cptr, flags, renderbuffer, &res);
+		sup = CLBuffer(clCreateFromGLRenderbuffer(context.cptr, flags, renderbuffer, &res));
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",					"context is not a valid context or was not created from a GL context"],

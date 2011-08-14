@@ -89,7 +89,7 @@ public:
 	{
 		cl_errcode res;
 
-		this._object = clCreateKernel(program.cptr, toStringz(kernelName), &res);
+		this(clCreateKernel(program.cptr, toStringz(kernelName), &res));
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_PROGRAM",				"program is not a valid program object"],
