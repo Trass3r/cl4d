@@ -37,12 +37,10 @@ public:
 	{
 		cl_errcode res;
 		
-		auto deviceIDs = devices.getObjArray();
-
 		// TODO: user notification function
 
 		cl_context_properties[] cps = props ~ [CL_CONTEXT_PLATFORM, cast(cl_context_properties) (devices[0].platform.cptr)] ~ props ~ 0;
-		this._object = clCreateContext(cps.ptr, cast(cl_uint) deviceIDs.length, deviceIDs.ptr, null, null, &res);
+		this._object = clCreateContext(cps.ptr, cast(cl_uint) devices.length, devices.ptr, null, null, &res);
 
 		mixin(exceptionHandling(
 			["CL_INVALID_PLATFORM",		"no valid platform could be selected for context creation"],

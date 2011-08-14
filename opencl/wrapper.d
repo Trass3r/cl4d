@@ -52,7 +52,7 @@ package string CLWrapper(string T, string classInfoFunction)
 
 public:
 	// don't need a constructor if nothing special
-//	this(T obj) { _object = obj; }
+	this(T obj) { _object = obj; }
 
 debug private import std.stdio;
 
@@ -338,7 +338,7 @@ public:
 	this(T[] objects...)
 	in
 	{
-		assert(clObjects !is null);
+		assert(objects !is null);
 	}
 	body
 	{
@@ -357,7 +357,7 @@ public:
 	body
 	{
 		// TODO: just .dup if retain() calls are needed
-		_objects = objects;
+		_objects = cast(T[]) objects;
 	}
 
 	this(this)
@@ -371,12 +371,6 @@ public:
 		foreach (object; _objects)
 			object.release();
 	}*/
-/*
-	/// used to internally get the underlying object pointers
-	package T[] cptrArray()
-	{
-		return _objects;
-	}
 
 	//!
 	package @property const(T)* ptr() const
@@ -391,17 +385,12 @@ public:
 	}
 
 	/// returns a new instance wrapping object i
-	Wrapper opIndex(size_t i) const
-	in
-	{
-		assert(i < _objects.length, "index out of bounds");
-	}
-	body
+	T opIndex(size_t i) const
 	{
 		// increment reference count
 		return Wrapper(this._objects[i], true);
 	}
-*/
+
 	// TODO: delete this once bug 2781 is fixed
 	/// for foreach to work
 	int opApply(scope int delegate(ref T) dg)

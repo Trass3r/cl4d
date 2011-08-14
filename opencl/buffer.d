@@ -26,6 +26,11 @@ struct CLBuffer
 	package CLMemory sup;
 	alias sup this;
 
+	this(cl_mem obj)
+	{
+		_object = obj;
+	}
+
 	/**
 	 *	create a buffer object from hostbuf
 	 *
