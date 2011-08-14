@@ -101,10 +101,7 @@ struct CLBuffer
 	CLBuffer superBuffer()
 	{
 		cl_mem sub = this.getInfo!cl_mem(CL_MEM_ASSOCIATED_MEMOBJECT);
-		if (sub is null)
-			return null;
-		else
-			return CLBuffer(sub);
+		return CLBuffer(sub);
 	}
 }
 }
