@@ -240,7 +240,7 @@ private void initialize()
 			float x = positions[3*i]+0.7;
 			float y = positions[3*i+1];
 			float r = native_sqrt(x*x+y*y);
-			float t = tempo[0]; 
+			float t = tempo[0];
 			float valor = native_exp(- r * 2.5f)*native_sin(40*r-4*t);
 
 			x -= 1.4;
@@ -250,7 +250,7 @@ private void initialize()
 			// adjust the Z component of the vertices
 			positions[3*i+2] = valor;
 			// manipulate the R component of the colors
-			colors[4*i] = clamp(valor,0,1); 
+			colors[4*i] = clamp(valor,0.0f,1.0f);
 		}
 	};
 
