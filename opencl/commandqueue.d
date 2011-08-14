@@ -98,11 +98,6 @@ public:
 	 * 	Each event in waitlist must be a valid event object returned by a previous call to an enqueue* method
 	 */
 	void enqueueWaitForEvents(CLEvents waitlist)
-	in
-	{
-		assert(waitlist !is null);
-	}
-	body
 	{
 		cl_errcode res = clEnqueueWaitForEvents(this._object, cast(cl_uint) waitlist.length, waitlist.ptr);
 		

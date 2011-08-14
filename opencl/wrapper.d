@@ -331,8 +331,8 @@ package struct CLObjectCollection(T)
 		static assert(0, "object type not supported by CLObjectCollection");
 
 public:
-	// TODO: enable once it compiles (to fix usages of objarray etc.)
-	alias _objects this;
+	// TODO: re-enable once bug 6492 is fixed
+	//alias _objects this;
 
 	//! takes a list of cl4d CLObjects
 	this(T[] objects...)
@@ -373,9 +373,9 @@ public:
 	}*/
 
 	//!
-	package @property const(T)* ptr() const
+	package @property auto ptr() const
 	{
-		return _objects.ptr;
+		return cast(const(CType)*) _objects.ptr;
 	}
 
 	//! get number of Objects
@@ -388,7 +388,7 @@ public:
 	T opIndex(size_t i) const
 	{
 		// increment reference count
-		return Wrapper(this._objects[i], true);
+		return this._objects[i];
 	}
 
 	// TODO: delete this once bug 2781 is fixed
