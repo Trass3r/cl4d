@@ -44,7 +44,9 @@ enum myDummy {f}
  */
 package mixin template CLWrapper(T, alias classInfoFunction)
 {
-	private	T _object = null;
+	package T _object = null;
+	//public alias _object this; // TODO any merit?
+	//alias CLObject this;
 	package alias T CType; // remember the C type
 
 public:
