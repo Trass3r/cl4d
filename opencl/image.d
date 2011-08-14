@@ -102,7 +102,7 @@ struct CLImage
 //! 2D Image
 struct CLImage2D
 {
-	package CLImage sup;
+	CLImage sup;
 	alias sup this;
 
 	/**
@@ -135,7 +135,7 @@ struct CLImage2D
 //! 2D image for GL interop.
 struct CLImage2DGL
 {
-	package CLImage2D sup;
+	CLImage2D sup;
 	alias sup this;
 
 	/**
@@ -168,7 +168,7 @@ struct CLImage2DGL
 //! 3D Image
 struct CLImage3D
 {
-	package CLImage sup;
+	CLImage sup;
 	alias sup this;
 
 	/**
@@ -202,7 +202,7 @@ struct CLImage3D
 //! 3D image for GL interop.
 struct CLImage3DGL
 {
-	package CLImage3D sup;
+	CLImage3D sup;
 	alias sup this;
 
 	/**

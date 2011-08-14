@@ -19,7 +19,7 @@ import opencl.wrapper;
 //! Event collection
 struct CLEvents
 {
-	package CLObjectCollection!CLEvent sup;
+	CLObjectCollection!CLEvent sup;
 	alias sup this;
 
 /*	//! TODO
@@ -223,7 +223,7 @@ version(CL_VERSION_1_1)
  */
 struct CLUserEvent
 {
-	package CLEvent sup;
+	CLEvent sup;
 	alias sup this;
 
 	~this()

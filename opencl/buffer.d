@@ -23,7 +23,7 @@ import opencl.wrapper;
 // TODO: make CLBuffer know its type?
 struct CLBuffer
 {
-	package CLMemory sup;
+	CLMemory sup;
 	alias sup this;
 
 	this(cl_mem obj)
@@ -109,7 +109,7 @@ struct CLBuffer
 //! Memory buffer interface for GL interop.
 struct CLBufferGL
 {
-	package CLBuffer sup;
+	CLBuffer sup;
 	alias sup this;
 
 	/**
@@ -148,7 +148,7 @@ struct CLBufferGL
  */
 struct CLBufferRenderGL
 {
-	package CLBuffer sup;
+	CLBuffer sup;
 	alias sup this;
 
 	/**
