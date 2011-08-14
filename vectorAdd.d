@@ -9,7 +9,7 @@ void main(string[] args)
 {
 	try
 	{
-		auto platforms = CLPlatform.getPlatforms();
+		auto platforms = CLHost.getPlatforms();
 		if (platforms.length < 1)
 		{
 			writeln("No platforms available.");
@@ -26,13 +26,13 @@ void main(string[] args)
 			return;
 		}
 
-		foreach(device; devices)
+		foreach(CLDevice device; devices)
 			writefln("%s\n\t%s\n\t%s\n\t%s\n\t%s", device.name, device.vendor, device.driverVersion, device.clVersion, device.profile, device.extensions);
 		
-		auto context = new CLContext(devices);
+		auto context = CLContext(devices);
 		
 		// Create a command queue and use the first device
-		auto queue = new CLCommandQueue(context, devices[0]);
+		auto queue = CLCommandQueue(context, devices[0]);
 		auto program = context.createProgram( mixin(CL_PROGRAM_STRING_DEBUG_INFO) ~ q{
 				__kernel void sum(	__global const int* a,
 									__global const int* b,
@@ -44,7 +44,7 @@ void main(string[] args)
 		program.build("-w -Werror");
 		writeln(program.buildLog(devices[0]));
 		
-		auto kernel = new CLKernel(program, "sum");
+		auto kernel = CLKernel(program, "sum");
 		
 		// create input vectors
 		immutable VECTOR_SIZE = 100;
@@ -53,9 +53,9 @@ void main(string[] args)
 		int[VECTOR_SIZE] vc;
 	
 		// Create CL buffers
-		auto bufferA = new CLBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, va.sizeof, va.ptr);
-		auto bufferB = new CLBuffer(context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, vb.sizeof, vb.ptr);
-		auto bufferC = new CLBuffer(context, CL_MEM_WRITE_ONLY | CL_MEM_USE_HOST_PTR, vc.sizeof, vc.ptr);
+		auto bufferA = CLBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, va.sizeof, va.ptr);
+		auto bufferB = CLBuffer(context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, vb.sizeof, vb.ptr);
+		auto bufferC = CLBuffer(context, CL_MEM_WRITE_ONLY | CL_MEM_USE_HOST_PTR, vc.sizeof, vc.ptr);
 	
 		// Copy lists A and B to the memory buffers
 	//	queue.enqueueWriteBuffer(bufferA, CL_TRUE, 0, va.sizeof, va.ptr);

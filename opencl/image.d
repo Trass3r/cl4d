@@ -24,24 +24,23 @@ import opencl.wrapper;
  *	The elements of an image object are selected from a list of predefined image formats.
  *	The minimum number of elements in a memory object is one
  */
-class CLImage : CLMemory
+struct CLImage
 {
-package:
-	this() {}
+	CLMemory sup;
+	alias sup this;
 
-	this(cl_mem object)
+	this(cl_mem obj)
 	{
-		super(object);
+		sup = CLMemory(obj);
 	}
 
-public:
 	@property
 	{
 		//!image format descriptor specified when image was created
 		// TODO: test if getInfo works here, cl_image_format is a struct
 		auto format()
 		{
-			return getInfo!(cl_image_format, clGetImageInfo)(CL_IMAGE_FORMAT);
+			return this.getInfo!(cl_image_format, clGetImageInfo)(CL_IMAGE_FORMAT);
 		}
 		
 		/**
@@ -50,13 +49,13 @@ public:
 		 */
 		size_t elementSize()
 		{
-			return getInfo!(size_t, clGetImageInfo)(CL_IMAGE_ELEMENT_SIZE);
+			return this.getInfo!(size_t, clGetImageInfo)(CL_IMAGE_ELEMENT_SIZE);
 		}
 		
 		//! size in bytes of a row of elements of the image object given by image
 		size_t rowPitch()
 		{
-			return getInfo!(size_t, clGetImageInfo)(CL_IMAGE_ROW_PITCH);
+			return this.getInfo!(size_t, clGetImageInfo)(CL_IMAGE_ROW_PITCH);
 		}
 
 		/**
@@ -66,19 +65,19 @@ public:
 		 */
 		size_t slicePitch()
 		{
-			return getInfo!(size_t, clGetImageInfo)(CL_IMAGE_SLICE_PITCH);
+			return this.getInfo!(size_t, clGetImageInfo)(CL_IMAGE_SLICE_PITCH);
 		}
 
 		//! width in pixels
 		size_t width()
 		{
-			return getInfo!(size_t, clGetImageInfo)(CL_IMAGE_WIDTH);
+			return this.getInfo!(size_t, clGetImageInfo)(CL_IMAGE_WIDTH);
 		}
 
 		//! height in pixels 
 		size_t height()
 		{
-			return getInfo!(size_t, clGetImageInfo)(CL_IMAGE_HEIGHT);
+			return this.getInfo!(size_t, clGetImageInfo)(CL_IMAGE_HEIGHT);
 		}
 
 		/**
@@ -88,28 +87,33 @@ public:
 		 */
 		size_t depth()
 		{
-			return getInfo!(size_t, clGetImageInfo)(CL_IMAGE_DEPTH);
+			return this.getInfo!(size_t, clGetImageInfo)(CL_IMAGE_DEPTH);
 		}
 
 		//! The target argument specified in CLImage2DGL, CLImage3DGL constructors
 		cl_GLenum textureTarget()
 		{
-			return getInfo!(cl_GLenum, clGetGLTextureInfo)(CL_GL_TEXTURE_TARGET);
+			return this.getInfo!(cl_GLenum, clGetGLTextureInfo)(CL_GL_TEXTURE_TARGET);
 		}
 
 		//! The miplevel argument specified in CLImage2DGL, CLImage3DGL constructors
 		cl_GLint mipmapLevel()
 		{
-			return getInfo!(cl_GLint, clGetGLTextureInfo)(CL_GL_MIPMAP_LEVEL);
+			return this.getInfo!(cl_GLint, clGetGLTextureInfo)(CL_GL_MIPMAP_LEVEL);
 		}
 	} // of @property
 }
 
 //! 2D Image
-class CLImage2D : CLImage
+struct CLImage2D
 {
-public:
-	this() {}
+	CLImage sup;
+	alias sup this;
+
+	this(cl_mem obj)
+	{
+		sup = CLImage(obj);
+	}
 
 	/**
 	 *	Params:
@@ -120,8 +124,9 @@ public:
 	 */
 	this(CLContext context, cl_mem_flags flags, const cl_image_format format, size_t width, size_t height, size_t rowPitch, void* hostPtr = null)
 	{
+		// call "base constructor"
 		cl_errcode res;
-		_object = clCreateImage2D(context.cptr, flags, &format, width, height, rowPitch, hostPtr, &res);
+		sup = CLImage(clCreateImage2D(context.cptr, flags, &format, width, height, rowPitch, hostPtr, &res));
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",					""],
@@ -139,9 +144,11 @@ public:
 }
 
 //! 2D image for GL interop.
-final class CLImage2DGL : CLImage2D
+struct CLImage2DGL
 {
-public:
+	CLImage2D sup;
+	alias sup this;
+
 	/**
 	 *	creates an OpenCL 2D image object from an OpenGL 2D texture object, or a single face of an OpenGL cubemap texture object
 	 *
@@ -153,8 +160,9 @@ public:
 	 */
 	this(const CLContext context, cl_mem_flags flags, cl_GLenum target, cl_GLint  miplevel, cl_GLuint texobj)
 	{
+		// call "base constructor"
 		cl_errcode res;
-		_object = clCreateFromGLTexture2D(context.cptr, flags, target, miplevel, texobj, &res);
+		sup = CLImage2D(clCreateFromGLTexture2D(context.cptr, flags, target, miplevel, texobj, &res));
 
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",		"context is not a valid context or was not created from a GL context"],
@@ -170,10 +178,15 @@ public:
 }
 
 //! 3D Image
-class CLImage3D : CLImage
+struct CLImage3D
 {
-public:
-	this() {}
+	CLImage sup;
+	alias sup this;
+
+	this(cl_mem obj)
+	{
+		sup = CLImage(obj);
+	}
 
 	/**
 	 *	Params:
@@ -185,8 +198,9 @@ public:
 	 */
 	this(CLContext context, cl_mem_flags flags, const cl_image_format format, size_t width, size_t height, size_t depth, size_t rowPitch, size_t slicePitch, void* hostPtr = null)
 	{
+		// call "base constructor"
 		cl_errcode res;
-		_object = clCreateImage3D(context.cptr, flags, &format, width, height, depth, rowPitch, slicePitch, hostPtr, &res);
+		sup = CLImage(clCreateImage3D(context.cptr, flags, &format, width, height, depth, rowPitch, slicePitch, hostPtr, &res));
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",					""],
@@ -204,9 +218,11 @@ public:
 }
 
 //! 3D image for GL interop.
-final class CLImage3DGL : CLImage3D
+struct CLImage3DGL
 {
-public:
+	CLImage3D sup;
+	alias sup this;
+
 	/**
 	 *	creates an OpenCL 3D image object from an OpenGL 3D texture object
 	 *
@@ -219,7 +235,7 @@ public:
 	this(const CLContext context, cl_mem_flags flags, cl_GLenum target, cl_GLint  miplevel, cl_GLuint texobj)
 	{
 		cl_errcode res;
-		_object = clCreateFromGLTexture3D(context.cptr, flags, target, miplevel, texobj, &res);
+		sup = CLImage3D(clCreateFromGLTexture3D(context.cptr, flags, target, miplevel, texobj, &res));
 
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",		"context is not a valid context or was not created from a GL context"],

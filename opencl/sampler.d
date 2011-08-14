@@ -22,7 +22,7 @@ import opencl.wrapper;
  *	The sampler arguments to the image read function can be sampler objects created using OpenCL functions
  *	and passed as argument values to the kernel or can be samplers declared inside a kernel.
  */
-final class CLSampler : CLObject
+struct CLSampler
 {
 	mixin(CLWrapper("cl_sampler", "clGetSamplerInfo"));
 
@@ -38,7 +38,7 @@ public:
 	this(CLContext context, cl_bool normalizedCoords, cl_addressing_mode addressingMode, cl_filter_mode filterMode)
 	{
 		cl_errcode res;
-		_object = clCreateSampler (context.cptr, normalizedCoords, addressingMode, filterMode, &res);
+		this(clCreateSampler(context.cptr, normalizedCoords, addressingMode, filterMode, &res));
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",		""],
@@ -54,7 +54,7 @@ public:
 		//! the context specified when the sampler was created
 		CLContext context()
 		{
-			return new CLContext(getInfo!cl_context(CL_SAMPLER_CONTEXT));
+			return CLContext(getInfo!cl_context(CL_SAMPLER_CONTEXT));
 		}
 
 		//!

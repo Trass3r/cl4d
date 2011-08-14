@@ -65,7 +65,7 @@ struct NDRange
 __gshared immutable NullRange = NDRange();
 
 //! collection of several devices
-alias CLObjectCollection!(cl_kernel) CLKernels;
+alias CLObjectCollection!CLKernel CLKernels;
 
 /**
  *	Kernel objects can only be created once you have a program object with a valid program source
@@ -73,7 +73,7 @@ alias CLObjectCollection!(cl_kernel) CLKernels;
  *	for one or more devices associated with program.  No changes to the program executable are
  *	allowed while there are kernel objects associated with a program object.
  */
-final class CLKernel : CLObject
+struct CLKernel
 {
 	mixin(CLWrapper("cl_kernel", "clGetKernelInfo"));
 
@@ -89,7 +89,7 @@ public:
 	{
 		cl_errcode res;
 
-		_object = clCreateKernel(program.cptr, toStringz(kernelName), &res);
+		this(clCreateKernel(program.cptr, toStringz(kernelName), &res));
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_PROGRAM",				"program is not a valid program object"],
@@ -161,7 +161,7 @@ public:
 		// TODO: thus, if multiple CLKernel objects wrap the same cl_kernel one, this still makes problems
 		cl_errcode res;
 		// TODO:
-		/* synchronized(this) */ res = clSetKernelArg(_object, idx, size, value);
+		/* synchronized(this) */ res = clSetKernelArg(this._object, idx, size, value);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_KERNEL",		""],
@@ -192,19 +192,19 @@ public:
 		/// Return the number of arguments to kernel
 		cl_uint numArgs()
 		{
-			return getInfo!(cl_uint)(CL_KERNEL_NUM_ARGS);
+			return this.getInfo!(cl_uint)(CL_KERNEL_NUM_ARGS);
 		}
 		
 		/// Return the context associated with kernel
 		CLContext context()
 		{
-			return new CLContext(getInfo!(cl_context)(CL_KERNEL_CONTEXT));
+			return CLContext(this.getInfo!(cl_context)(CL_KERNEL_CONTEXT));
 		}
 		
 		//! Return the program object associated with kernel
 		CLProgram program()
 		{
-			return new CLProgram(getInfo!(cl_program)(CL_KERNEL_PROGRAM));
+			return CLProgram(this.getInfo!(cl_program)(CL_KERNEL_PROGRAM));
 		}
 	} // of @property
 

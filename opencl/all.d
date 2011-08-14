@@ -12,7 +12,6 @@ module opencl.all;
 
 public import
 	opencl.c.opencl,
-	opencl.buffer,
 	opencl.commandqueue,
 	opencl.context,
 	opencl.device,
@@ -20,7 +19,9 @@ public import
 	opencl.event,
 	opencl.host,
 	opencl.image,
+	opencl.buffer,
 	opencl.kernel,
+	opencl.memory,
 	opencl.platform,
 	opencl.program,
 	opencl.sampler;

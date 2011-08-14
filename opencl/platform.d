@@ -16,10 +16,10 @@ import opencl.error;
 import opencl.wrapper;
 
 //! Platform collection
-alias CLObjectCollection!(cl_platform_id) CLPlatforms;
+alias CLObjectCollection!CLPlatform CLPlatforms;
 
 //! Platform class
-final class CLPlatform : CLObject
+struct CLPlatform
 {
 	mixin(CLWrapper("cl_platform_id", "clGetPlatformInfo"));
 
@@ -61,7 +61,7 @@ public:
 		cl_errcode res;
 		
 		// get number of devices
-		res = clGetDeviceIDs(_object, deviceType, 0, null, &numDevices);
+		res = clGetDeviceIDs(this._object, deviceType, 0, null, &numDevices);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_PLATFORM",		""],
@@ -72,12 +72,12 @@ public:
 		// get device IDs
 		auto deviceIDs = new cl_device_id[numDevices];
 
-		res = clGetDeviceIDs(_object, deviceType, cast(cl_uint) deviceIDs.length, deviceIDs.ptr, null);
+		res = clGetDeviceIDs(this._object, deviceType, cast(cl_uint) deviceIDs.length, deviceIDs.ptr, null);
 		if(res != CL_SUCCESS)
 			throw new CLException(res);
 		
 		// create CLDevice array
-		return new CLDevices(deviceIDs);
+		return CLDevices(deviceIDs);
 	}
 	
 	/// returns a list of all devices

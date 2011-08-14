@@ -17,15 +17,16 @@ import opencl.program;
 import opencl.wrapper;
 
 //! Event collection
-final class CLEvents : CLObjectCollection!(cl_event)
+struct CLEvents
 {
-public:
+	CLObjectCollection!CLEvent sup;
+	alias sup this;
 
-	//!
+/*	//! TODO
 	this(cl_event[] objects)
 	{
 		super(objects);
-	}
+	}*/
 
 	/**
 	 *	waits on the host thread for commands identified by events in this list to complete.
@@ -35,7 +36,7 @@ public:
 	 */
 	void wait()
 	{
-		cl_errcode res = clWaitForEvents(cast(cl_uint) _objects.length, _objects.ptr);
+		cl_errcode res = clWaitForEvents(cast(cl_uint) this.length, this.ptr);
 
 		mixin(exceptionHandling(
 			["CL_INVALID_VALUE",		"event _objects is null"],
@@ -53,7 +54,7 @@ public:
  *
  *	API calls that enqueue commands to a command-queue create a new event object that is returned in the event argument
  */
-class CLEvent : CLObject
+struct CLEvent
 {
 	mixin(CLWrapper("cl_event", "clGetEventInfo"));
 
@@ -93,7 +94,7 @@ public:
 	version(CL_VERSION_1_1)
 	void setCallback(cl_command_execution_status command_exec_callback_type, evt_notify_fn pfn_notify, void* userData = null)
 	{
-		cl_errcode res = clSetEventCallback(_object, command_exec_callback_type, pfn_notify, userData);
+		cl_errcode res = clSetEventCallback(this._object, command_exec_callback_type, pfn_notify, userData);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_EVENT",	""],
@@ -127,15 +128,14 @@ public:
 			return getInfo!cl_command_type(CL_EVENT_COMMAND_TYPE);
 		}
 
-		//! the execution status of the command identified by event
+		//! the execution status of the command identified by this event
+		//! negative values are errors, probably of type cl_errcode
 		auto status()
 		{
 			auto res = getInfo!cl_command_execution_status(CL_EVENT_COMMAND_EXECUTION_STATUS);
-			
-			// error values are negative in this case
-			if (res < 0)
-				throw new CLException(cast(cl_errcode) res, "error occured while retrieving event execution status");
-			
+
+			// TODO: should this throw an exception?
+
 			return res;
 		}
 
@@ -144,7 +144,7 @@ public:
 		{
 			cl_ulong timer;
 			try
-				timer = getInfo!(cl_ulong, clGetEventProfilingInfo)(CL_PROFILING_COMMAND_QUEUED);
+				timer = this.getInfo!(cl_ulong, clGetEventProfilingInfo)(CL_PROFILING_COMMAND_QUEUED);
 			catch(CLException e)
 			{
 				// handle special case that CL_QUEUE_PROFILING_ENABLE is not available or event is not CL_COMPLETE or it is a user event
@@ -161,7 +161,7 @@ public:
 		{
 			cl_ulong timer;
 			try
-				timer = getInfo!(cl_ulong, clGetEventProfilingInfo)(CL_PROFILING_COMMAND_SUBMIT);
+				timer = this.getInfo!(cl_ulong, clGetEventProfilingInfo)(CL_PROFILING_COMMAND_SUBMIT);
 			catch(CLException e)
 			{
 				// handle special case that CL_QUEUE_PROFILING_ENABLE is not available or event is not CL_COMPLETE or it is a user event
@@ -178,7 +178,7 @@ public:
 		{
 			cl_ulong timer;
 			try
-				timer = getInfo!(cl_ulong, clGetEventProfilingInfo)(CL_PROFILING_COMMAND_START);
+				timer = this.getInfo!(cl_ulong, clGetEventProfilingInfo)(CL_PROFILING_COMMAND_START);
 			catch(CLException e)
 			{
 				// handle special case that CL_QUEUE_PROFILING_ENABLE is not available or event is not CL_COMPLETE or it is a user event
@@ -195,7 +195,7 @@ public:
 		{
 			cl_ulong timer;
 			try
-				timer = getInfo!(cl_ulong, clGetEventProfilingInfo)(CL_PROFILING_COMMAND_END);
+				timer = this.getInfo!(cl_ulong, clGetEventProfilingInfo)(CL_PROFILING_COMMAND_END);
 			catch(CLException e)
 			{
 				// handle special case that CL_QUEUE_PROFILING_ENABLE is not available or event is not CL_COMPLETE or it is a user event
@@ -220,22 +220,28 @@ version(CL_VERSION_1_1)
  *	using the status property before any OpenCL APIs that release OpenCL objects except for
  *	event objects are called; otherwise the behavior is undefined.
  */
-final class CLUserEvent : CLEvent
+struct CLUserEvent
 {
-public:
+	CLEvent sup;
+	alias sup this;
+
 	~this()
 	{
-		// if the last reference is released and status isn't CL_COMPLETE or an error
+		// if the last reference is released and status isn't CL_COMPLETE or an error code
 		// this event might block enqueue commands or other events waiting for it
-		if(referenceCount == 1)
-			assert(0, "user event will be destroyed that hasn't been set to CL_COMPLETE or an error");
+		// TODO: remove 'sup.' once bug 2889 is fixed
+		if(this.referenceCount == 1 && cast(cl_int)sup.status <= cast(cl_int)CL_COMPLETE)
+			throw new Exception("user event will be destroyed that hasn't been set to CL_COMPLETE or an error");
+
+		// done. release is called by sup's destructor
 	}
 
 	//! creates a user event object
 	this(CLContext context)
 	{
+		// call "base constructor"
 		cl_errcode res;
-		_object = clCreateUserEvent(context.cptr, &res);
+		sup = CLEvent(clCreateUserEvent(context.cptr, &res));
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",	""],
@@ -256,7 +262,7 @@ public:
 	 */
 	@property void status(cl_command_execution_status executionStatus)
 	{
-		cl_errcode res = clSetUserEventStatus(_object, executionStatus);
+		cl_errcode res = clSetUserEventStatus(this._object, executionStatus);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_EVENT",		"this is not a valid user event object"],

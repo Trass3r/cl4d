@@ -17,10 +17,10 @@ import opencl.platform;
 import opencl.wrapper;
 
 /// collection of several devices
-alias CLObjectCollection!(cl_device_id) CLDevices;
+alias CLObjectCollection!CLDevice CLDevices;
 
 /// device class
-final class CLDevice : CLObject
+struct CLDevice
 {
 	mixin(CLWrapper("cl_device_id", "clGetDeviceInfo"));
 
@@ -357,7 +357,7 @@ public:
 	/// get the associated platform
 	CLPlatform platform()
 	{
-		return new CLPlatform(getInfo!cl_platform_id(CL_DEVICE_PLATFORM));
+		return CLPlatform(getInfo!cl_platform_id(CL_DEVICE_PLATFORM));
 	}
 	
 	/// get device name

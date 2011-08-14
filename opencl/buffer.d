@@ -21,18 +21,15 @@ import opencl.wrapper;
  *	buffer objects are generic memory objects for containing any type of data
  */
 // TODO: make CLBuffer know its type?
-class CLBuffer : CLMemory
+struct CLBuffer
 {
-package:
-	this() {}
+	CLMemory sup;
+	alias sup this;
 
-	//!
-	this(cl_mem buffer, bool increment = false)
+	this(cl_mem obj)
 	{
-		super(buffer, increment);
+		sup = CLMemory(obj);
 	}
-	
-public:
 
 	/**
 	 *	create a buffer object from hostbuf
@@ -46,10 +43,9 @@ public:
 	 */
 	this(CLContext context, cl_mem_flags flags, size_t datasize, void* hostptr = null)
 	{
-		// TODO: perform argument checks? is it necessary or just leave it to OpenCL?
-
+		// call "base constructor"
 		cl_errcode res;
-		_object = clCreateBuffer(context.cptr, flags, datasize, hostptr, &res);
+		this(clCreateBuffer(context.cptr, flags, datasize, hostptr, &res));
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",				""],
@@ -76,7 +72,7 @@ public:
 		cl_buffer_region reg = {origin, size};
 
 		cl_errcode res;
-		auto ret = new CLBuffer(clCreateSubBuffer(this.cptr, flags, CL_BUFFER_CREATE_TYPE_REGION, &reg, &res));
+		cl_mem ret = clCreateSubBuffer(this.cptr, flags, CL_BUFFER_CREATE_TYPE_REGION, &reg, &res);
 
 		// TODO: handle flags separately? see CL_INVALID_VALUE message
 		mixin(exceptionHandling(
@@ -89,7 +85,7 @@ public:
 			["CL_OUT_OF_HOST_MEMORY",			""]
 		));
 		
-		return ret;
+		return CLBuffer(ret);
 	}
 	
 @property
@@ -97,25 +93,24 @@ public:
 	//! offset of a sub-buffer object, 0 otherwise
 	size_t offset()
 	{
-		return getInfo!size_t(CL_MEM_OFFSET);
+		return this.getInfo!size_t(CL_MEM_OFFSET);
 	}
 	
 	//! the the memory object specified as buffer argument to createSubBuffer, null otherwise
 	CLBuffer superBuffer()
 	{
-		cl_mem sub = getInfo!cl_mem(CL_MEM_ASSOCIATED_MEMOBJECT);
-		if (sub is null)
-			return null;
-		else
-			return new CLBuffer(sub);
+		cl_mem sub = this.getInfo!cl_mem(CL_MEM_ASSOCIATED_MEMOBJECT);
+		return CLBuffer(sub);
 	}
 }
 }
 
 //! Memory buffer interface for GL interop.
-final class CLBufferGL : CLBuffer
+struct CLBufferGL
 {
-public:
+	CLBuffer sup;
+	alias sup this;
+
 	/**
 	 *	creates an OpenCL buffer object from an OpenGL buffer object
 	 *
@@ -129,7 +124,7 @@ public:
 	this(CLContext context, cl_mem_flags flags, cl_GLuint bufobj)
 	{
 		cl_errcode res;
-		_object = clCreateFromGLBuffer(context.cptr, flags, bufobj, &res);
+		sup = CLBuffer(clCreateFromGLBuffer(context.cptr, flags, bufobj, &res));
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",		"context is not a valid context or was not created from a GL context"],
@@ -137,7 +132,6 @@ public:
 			["CL_INVALID_GL_OBJECT",	"bufobj is not a GL buffer object or is a GL buffer object but does not have an existing data store"],
 			["CL_OUT_OF_RESOURCES",		""],
 			["CL_OUT_OF_HOST_MEMORY",	""]
-			
 		));
 	}
 }
@@ -150,9 +144,11 @@ public:
  *	calls such as glRenderbufferStorage) while there exists a corresponding CL image object,
  *	subsequent use of the CL image object will result in undefined behavior
  */
-final class CLBufferRenderGL : CLBuffer
+struct CLBufferRenderGL
 {
-public:
+	CLBuffer sup;
+	alias sup this;
+
 	/**
 	 *	creates an OpenCL 2D image object from an OpenGL renderbuffer object
 	 *
@@ -168,7 +164,7 @@ public:
 	this(CLContext context, cl_mem_flags flags, cl_GLuint renderbuffer)
 	{
 		cl_errcode res;
-		_object = clCreateFromGLRenderbuffer(context.cptr, flags, renderbuffer, &res);
+		sup = CLBuffer(clCreateFromGLRenderbuffer(context.cptr, flags, renderbuffer, &res));
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",					"context is not a valid context or was not created from a GL context"],

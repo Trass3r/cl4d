@@ -22,7 +22,7 @@ import opencl.wrapper;
  * Contexts are used by the OpenCL runtime for managing objects such as command-queues, memory,
  * program and kernel objects and for executing kernels on one or more devices specified in the context.
  */
-final class CLContext : CLObject
+struct CLContext
 {
 	mixin(CLWrapper("cl_context", "clGetContextInfo"));
 
@@ -37,12 +37,10 @@ public:
 	{
 		cl_errcode res;
 		
-		auto deviceIDs = devices.getObjArray();
-
 		// TODO: user notification function
 
 		cl_context_properties[] cps = props ~ [CL_CONTEXT_PLATFORM, cast(cl_context_properties) (devices[0].platform.cptr)] ~ props ~ 0;
-		_object = clCreateContext(cps.ptr, cast(cl_uint) deviceIDs.length, deviceIDs.ptr, null, null, &res);
+		this(clCreateContext(cps.ptr, cast(cl_uint) devices.length, devices.ptr, null, null, &res));
 
 		mixin(exceptionHandling(
 			["CL_INVALID_PLATFORM",		"no valid platform could be selected for context creation"],
@@ -66,7 +64,7 @@ public:
 		cl_errcode res;
 
 		cl_context_properties[] cps = [CL_CONTEXT_PLATFORM, cast(cl_context_properties) platform.cptr] ~ props ~ 0;
-		_object = clCreateContextFromType(cps.ptr, type, null, null, &res);
+		this(clCreateContextFromType(cps.ptr, type, null, null, &res));
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_PLATFORM",		"no platform could be selected"],
@@ -79,7 +77,7 @@ public:
 	
 	CLProgram createProgram(string sourceCode)
 	{
-		return new CLProgram(this, sourceCode);
+		return CLProgram(this, sourceCode);
 	}
 	
 	/**
@@ -88,7 +86,7 @@ public:
 	cl_image_format[] supportedImageFormats(cl_mem_flags flags, cl_mem_object_type type) const
 	{
 		cl_uint numFormats;
-		cl_errcode res = clGetSupportedImageFormats(_object, flags, type, 0, null, &numFormats);
+		cl_errcode res = clGetSupportedImageFormats(this._object, flags, type, 0, null, &numFormats);
 
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",		""]
@@ -99,7 +97,7 @@ public:
 
 		auto formats = new cl_image_format[numFormats];
 
-		res = clGetSupportedImageFormats(_object, flags, type, numFormats, formats.ptr, null);
+		res = clGetSupportedImageFormats(this._object, flags, type, numFormats, formats.ptr, null);
 
 		mixin(exceptionHandling(
 			["CL_INVALID_VALUE",		""],
@@ -122,7 +120,7 @@ public:
 		CLDevices devices()
 		{
 			auto tmp = getArrayInfo!cl_device_id(CL_CONTEXT_DEVICES);
-			return new CLDevices(tmp);
+			return CLDevices(tmp);
 		}
 		
 		//! properties argument specified in the constructor, otherwise null or [0]
