@@ -128,15 +128,14 @@ public:
 			return getInfo!cl_command_type(CL_EVENT_COMMAND_TYPE);
 		}
 
-		//! the execution status of the command identified by event
+		//! the execution status of the command identified by this event
+		//! negative values are errors, probably of type cl_errcode
 		auto status()
 		{
 			auto res = getInfo!cl_command_execution_status(CL_EVENT_COMMAND_EXECUTION_STATUS);
-			
-			// error values are negative in this case
-			if (res < 0)
-				throw new CLException(cast(cl_errcode) res, "error occured while retrieving event execution status");
-			
+
+			// TODO: should this throw an exception?
+
 			return res;
 		}
 
@@ -228,10 +227,13 @@ struct CLUserEvent
 
 	~this()
 	{
-		// if the last reference is released and status isn't CL_COMPLETE or an error
+		// if the last reference is released and status isn't CL_COMPLETE or an error code
 		// this event might block enqueue commands or other events waiting for it
-		if(this.referenceCount == 1)
-			assert(0, "user event will be destroyed that hasn't been set to CL_COMPLETE or an error");
+		// TODO: remove 'sup.' once bug 2889 is fixed
+		if(this.referenceCount == 1 && cast(cl_int)sup.status <= cast(cl_int)CL_COMPLETE)
+			throw new Exception("user event will be destroyed that hasn't been set to CL_COMPLETE or an error");
+
+		// done. release is called by sup's destructor
 	}
 
 	//! creates a user event object
