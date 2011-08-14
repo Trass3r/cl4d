@@ -6,15 +6,7 @@
  */
 module CLGLInterop;
 
-import opencl.c.cl;
-import opencl.c.cl_gl;
-import opencl.buffer;
-import opencl.commandqueue;
-import opencl.context;
-import opencl.kernel;
-import opencl.memory;
-import opencl.platform;
-import opencl.program;
+import opencl.all;
 
 import derelict.sdl.sdl;
 
@@ -222,17 +214,17 @@ private void initialize()
 		static assert(0, "OS not supported");
 
 	// will be capable of manipulating OpenGL vertex buffer arrays directly
-	context = new CLContext(CLPlatform.getPlatforms()[0], CL_DEVICE_TYPE_GPU, props);
+	context = CLContext(CLHost.getPlatforms()[0], CL_DEVICE_TYPE_GPU, props);
 
 	// recall that we stored vertexes positions in OpenGL buffer bufs[1] and colors in bufs[0]
-	CLGLPositions = new CLBufferGL(context, CL_MEM_READ_WRITE, bufs[1]);
-	CLGLColors = new CLBufferGL(context, CL_MEM_WRITE_ONLY, bufs[0]);
+	CLGLPositions = CLBufferGL(context, CL_MEM_READ_WRITE, bufs[1]);
+	CLGLColors = CLBufferGL(context, CL_MEM_WRITE_ONLY, bufs[0]);
 
 	// bundle them for later GL object acquiring
-	c = new CLMemories([CLGLPositions, CLGLColors]);
+	c = CLMemories([CLGLPositions, CLGLColors]);
 
 	// varTime is a regular buffer to store the simulation time, which we will pass on to the kernel
-	varTempo = new CLBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, Tempo.sizeof, Tempo.ptr);
+	varTempo = CLBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, Tempo.sizeof, Tempo.ptr);
 
 	// the kernel we will use to manipulate the data
 	enum interopTeste = q{
@@ -263,14 +255,14 @@ private void initialize()
 	};
 
 	// create a new OpenCL program
-	CLProgram prog = new CLProgram(context, interopTeste);
+	CLProgram prog = CLProgram(context, interopTeste);
 	prog.build("", context.devices);
 
 	// create the kernel
 	kernelinteropTeste = prog.createKernel("interopTeste");
 	kernelinteropTeste.setArgs(CLGLPositions, CLGLColors, varTempo);
 
-	CQ = new CLCommandQueue(context, context.devices[0]);
+	CQ = CLCommandQueue(context, context.devices[0]);
 }
 
 //! setup viewport (also when resized)
