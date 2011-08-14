@@ -51,22 +51,28 @@ package string CLWrapper(string T, string classInfoFunction)
 	package alias T CType; // remember the C type
 
 public:
-	// don't need a constructor if nothing special
-	this(T obj) { _object = obj; }
+	//! wrap OpenCL C API object
+	//! this doesn't change the reference count
+	this(T obj)
+	{
+		_object = obj;
+		debug writef("wrapped %s %X\n", T.stringof, cast(void*) _object);
+	}
 
 debug private import std.stdio;
 
+	//! copy and increase reference count
 	this(this)
 	{
 		// increment reference count
 		retain();
-		debug writef("copied a %s object instance. Reference count is now: %d\n", T.stringof, referenceCount);
+		debug writef("copied %s %X. Reference count is now: %d\n", T.stringof, cast(void*) _object, referenceCount);
 	}
 
 	//! release the object
 	~this()
 	{
-		debug writef("%s object destroyed. Reference count before destruction: %d\n", typeid(typeof(this)), referenceCount);
+		debug writef("releasing %s %X. Reference count before: %d\n", T.stringof, cast(void*) _object, referenceCount);
 		release();
 	}
 
