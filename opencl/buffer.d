@@ -72,7 +72,7 @@ struct CLBuffer
 		cl_buffer_region reg = {origin, size};
 
 		cl_errcode res;
-		auto ret = CLBuffer(clCreateSubBuffer(this.cptr, flags, CL_BUFFER_CREATE_TYPE_REGION, &reg, &res));
+		cl_mem ret = clCreateSubBuffer(this.cptr, flags, CL_BUFFER_CREATE_TYPE_REGION, &reg, &res);
 
 		// TODO: handle flags separately? see CL_INVALID_VALUE message
 		mixin(exceptionHandling(
@@ -85,7 +85,7 @@ struct CLBuffer
 			["CL_OUT_OF_HOST_MEMORY",			""]
 		));
 		
-		return ret;
+		return CLBuffer(ret);
 	}
 	
 @property
@@ -132,7 +132,6 @@ struct CLBufferGL
 			["CL_INVALID_GL_OBJECT",	"bufobj is not a GL buffer object or is a GL buffer object but does not have an existing data store"],
 			["CL_OUT_OF_RESOURCES",		""],
 			["CL_OUT_OF_HOST_MEMORY",	""]
-			
 		));
 	}
 }
