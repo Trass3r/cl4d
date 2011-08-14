@@ -78,13 +78,13 @@ debug private import std.stdio;
 		debug writef("releasing %s %X. Reference count before: %d\n", T.stringof, cast(void*) _object, referenceCount);
 		release();
 	}
-
+/* TODO: reenable when bug 5039 is fixed
 	//! ensure that _object isn't null
 	invariant()
 	{
-		assert(this._object !is null);
+		assert(this._object !is null, "invariant violated: _object is null");
 	}
-
+*/
 package:
 	// return the internal OpenCL C object
 	// should only be used inside here so reference counting works
@@ -160,7 +160,8 @@ protected:
 	// TODO: make infoname type-safe, not cl_uint (can vary for certain _object, see cl_mem)
 	final U getInfo(U, alias infoFunction = }~classInfoFunction~q{)(cl_uint infoname) const
 	{
-		assert(this._object !is null);
+		// TODO: should be in invariant
+		assert(this._object !is null, "_object is null");
 		cl_errcode res;
 		
 		debug
