@@ -36,7 +36,7 @@ struct CLEvents
 	 */
 	void wait()
 	{
-		cl_errcode res = clWaitForEvents(cast(cl_uint) _objects.length, _objects.ptr);
+		cl_errcode res = clWaitForEvents(cast(cl_uint) this.length, this.ptr);
 
 		mixin(exceptionHandling(
 			["CL_INVALID_VALUE",		"event _objects is null"],
@@ -230,7 +230,7 @@ struct CLUserEvent
 	{
 		// if the last reference is released and status isn't CL_COMPLETE or an error
 		// this event might block enqueue commands or other events waiting for it
-		if(referenceCount == 1)
+		if(this.referenceCount == 1)
 			assert(0, "user event will be destroyed that hasn't been set to CL_COMPLETE or an error");
 	}
 

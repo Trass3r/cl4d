@@ -28,7 +28,7 @@ struct CLBuffer
 
 	this(cl_mem obj)
 	{
-		_object = obj;
+		this._object = obj;
 	}
 
 	/**
@@ -94,13 +94,13 @@ struct CLBuffer
 	//! offset of a sub-buffer object, 0 otherwise
 	size_t offset()
 	{
-		return getInfo!size_t(CL_MEM_OFFSET);
+		return this.getInfo!size_t(CL_MEM_OFFSET);
 	}
 	
 	//! the the memory object specified as buffer argument to createSubBuffer, null otherwise
 	CLBuffer superBuffer()
 	{
-		cl_mem sub = getInfo!cl_mem(CL_MEM_ASSOCIATED_MEMOBJECT);
+		cl_mem sub = this.getInfo!cl_mem(CL_MEM_ASSOCIATED_MEMOBJECT);
 		if (sub is null)
 			return null;
 		else
