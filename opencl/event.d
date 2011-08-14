@@ -94,7 +94,7 @@ public:
 	version(CL_VERSION_1_1)
 	void setCallback(cl_command_execution_status command_exec_callback_type, evt_notify_fn pfn_notify, void* userData = null)
 	{
-		cl_errcode res = clSetEventCallback(_object, command_exec_callback_type, pfn_notify, userData);
+		cl_errcode res = clSetEventCallback(this._object, command_exec_callback_type, pfn_notify, userData);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_EVENT",	""],
@@ -145,7 +145,7 @@ public:
 		{
 			cl_ulong timer;
 			try
-				timer = getInfo!(cl_ulong, clGetEventProfilingInfo)(CL_PROFILING_COMMAND_QUEUED);
+				timer = this.getInfo!(cl_ulong, clGetEventProfilingInfo)(CL_PROFILING_COMMAND_QUEUED);
 			catch(CLException e)
 			{
 				// handle special case that CL_QUEUE_PROFILING_ENABLE is not available or event is not CL_COMPLETE or it is a user event
@@ -162,7 +162,7 @@ public:
 		{
 			cl_ulong timer;
 			try
-				timer = getInfo!(cl_ulong, clGetEventProfilingInfo)(CL_PROFILING_COMMAND_SUBMIT);
+				timer = this.getInfo!(cl_ulong, clGetEventProfilingInfo)(CL_PROFILING_COMMAND_SUBMIT);
 			catch(CLException e)
 			{
 				// handle special case that CL_QUEUE_PROFILING_ENABLE is not available or event is not CL_COMPLETE or it is a user event
@@ -179,7 +179,7 @@ public:
 		{
 			cl_ulong timer;
 			try
-				timer = getInfo!(cl_ulong, clGetEventProfilingInfo)(CL_PROFILING_COMMAND_START);
+				timer = this.getInfo!(cl_ulong, clGetEventProfilingInfo)(CL_PROFILING_COMMAND_START);
 			catch(CLException e)
 			{
 				// handle special case that CL_QUEUE_PROFILING_ENABLE is not available or event is not CL_COMPLETE or it is a user event
@@ -196,7 +196,7 @@ public:
 		{
 			cl_ulong timer;
 			try
-				timer = getInfo!(cl_ulong, clGetEventProfilingInfo)(CL_PROFILING_COMMAND_END);
+				timer = this.getInfo!(cl_ulong, clGetEventProfilingInfo)(CL_PROFILING_COMMAND_END);
 			catch(CLException e)
 			{
 				// handle special case that CL_QUEUE_PROFILING_ENABLE is not available or event is not CL_COMPLETE or it is a user event
@@ -238,7 +238,7 @@ struct CLUserEvent
 	this(CLContext context)
 	{
 		cl_errcode res;
-		_object = clCreateUserEvent(context.cptr, &res);
+		this._object = clCreateUserEvent(context.cptr, &res);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",	""],
@@ -259,7 +259,7 @@ struct CLUserEvent
 	 */
 	@property void status(cl_command_execution_status executionStatus)
 	{
-		cl_errcode res = clSetUserEventStatus(_object, executionStatus);
+		cl_errcode res = clSetUserEventStatus(this._object, executionStatus);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_EVENT",		"this is not a valid user event object"],

@@ -38,7 +38,7 @@ public:
 		cl_errcode res;
 		size_t* lengths = cast(size_t*) [sourceCode.length];
 		char** ptrs = cast(char**) [sourceCode.ptr];
-		_object = clCreateProgramWithSource(context.cptr, 1, ptrs, lengths, &res);
+		this._object = clCreateProgramWithSource(context.cptr, 1, ptrs, lengths, &res);
 
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",		""],
@@ -69,7 +69,7 @@ public:
 		// If pfn_notify isn't NULL, clBuildProgram does not need to wait for the build to complete and can return immediately
 		// If pfn_notify is NULL, clBuildProgram does not return until the build has completed
 		// TODO: rather use callback?
-		res = clBuildProgram(_object, cast(cl_uint) devices.length, devices.ptr, toStringz(options), null, null);
+		res = clBuildProgram(this._object, cast(cl_uint) devices.length, devices.ptr, toStringz(options), null, null);
 		
 		// handle build failures specifically
 		if (res == CL_BUILD_PROGRAM_FAILURE)
@@ -176,6 +176,7 @@ public:
 	{
 		return getArrayInfo2!(ichar, clGetProgramBuildInfo)(device.cptr, CL_PROGRAM_BUILD_OPTIONS);
 	}
+
 	
 	/**
 	 *	Return the build log when clBuildProgram was called for device.
@@ -220,7 +221,7 @@ public:
 		 */
 		auto devices()
 		{
-			cl_device_id[] ids = getArrayInfo!(cl_device_id)(CL_PROGRAM_DEVICES);
+			cl_device_id[] ids = this.getArrayInfo!(cl_device_id)(CL_PROGRAM_DEVICES);
 			return CLDevices(ids);
 		}
 
@@ -247,7 +248,7 @@ public:
 		ubyte[][] binaries()
 		{
 			// retrieve sizes of binary data for each device associated with program
-			size_t[] sizes = getArrayInfo!(size_t)(CL_PROGRAM_BINARY_SIZES);
+			size_t[] sizes = this.getArrayInfo!(size_t)(CL_PROGRAM_BINARY_SIZES);
 
 			// we can't use getArrayInfo for the following
 			// since we need to preallocate the buffers for the binaries
@@ -264,7 +265,7 @@ public:
 				ptrs[i] = buffer[i].ptr;
 			}
 
-			auto res = clGetProgramInfo(_object, CL_PROGRAM_BINARIES, ptrs.length * (ubyte*).sizeof, ptrs.ptr, null);
+			auto res = clGetProgramInfo(this._object, CL_PROGRAM_BINARIES, ptrs.length * (ubyte*).sizeof, ptrs.ptr, null);
 
 			if (res != CL_SUCCESS)
 				throw new CLException(res, "couldn't obtain program binaries");

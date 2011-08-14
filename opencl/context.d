@@ -42,7 +42,7 @@ public:
 		// TODO: user notification function
 
 		cl_context_properties[] cps = props ~ [CL_CONTEXT_PLATFORM, cast(cl_context_properties) (devices[0].platform.cptr)] ~ props ~ 0;
-		_object = clCreateContext(cps.ptr, cast(cl_uint) deviceIDs.length, deviceIDs.ptr, null, null, &res);
+		this._object = clCreateContext(cps.ptr, cast(cl_uint) deviceIDs.length, deviceIDs.ptr, null, null, &res);
 
 		mixin(exceptionHandling(
 			["CL_INVALID_PLATFORM",		"no valid platform could be selected for context creation"],
@@ -66,7 +66,7 @@ public:
 		cl_errcode res;
 
 		cl_context_properties[] cps = [CL_CONTEXT_PLATFORM, cast(cl_context_properties) platform.cptr] ~ props ~ 0;
-		_object = clCreateContextFromType(cps.ptr, type, null, null, &res);
+		this._object = clCreateContextFromType(cps.ptr, type, null, null, &res);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_PLATFORM",		"no platform could be selected"],
@@ -88,7 +88,7 @@ public:
 	cl_image_format[] supportedImageFormats(cl_mem_flags flags, cl_mem_object_type type) const
 	{
 		cl_uint numFormats;
-		cl_errcode res = clGetSupportedImageFormats(_object, flags, type, 0, null, &numFormats);
+		cl_errcode res = clGetSupportedImageFormats(this._object, flags, type, 0, null, &numFormats);
 
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",		""]
@@ -99,7 +99,7 @@ public:
 
 		auto formats = new cl_image_format[numFormats];
 
-		res = clGetSupportedImageFormats(_object, flags, type, numFormats, formats.ptr, null);
+		res = clGetSupportedImageFormats(this._object, flags, type, numFormats, formats.ptr, null);
 
 		mixin(exceptionHandling(
 			["CL_INVALID_VALUE",		""],

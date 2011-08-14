@@ -35,7 +35,7 @@ struct CLImage
 		// TODO: test if getInfo works here, cl_image_format is a struct
 		auto format()
 		{
-			return getInfo!(cl_image_format, clGetImageInfo)(CL_IMAGE_FORMAT);
+			return this.getInfo!(cl_image_format, clGetImageInfo)(CL_IMAGE_FORMAT);
 		}
 		
 		/**
@@ -44,13 +44,13 @@ struct CLImage
 		 */
 		size_t elementSize()
 		{
-			return getInfo!(size_t, clGetImageInfo)(CL_IMAGE_ELEMENT_SIZE);
+			return this.getInfo!(size_t, clGetImageInfo)(CL_IMAGE_ELEMENT_SIZE);
 		}
 		
 		//! size in bytes of a row of elements of the image object given by image
 		size_t rowPitch()
 		{
-			return getInfo!(size_t, clGetImageInfo)(CL_IMAGE_ROW_PITCH);
+			return this.getInfo!(size_t, clGetImageInfo)(CL_IMAGE_ROW_PITCH);
 		}
 
 		/**
@@ -60,19 +60,19 @@ struct CLImage
 		 */
 		size_t slicePitch()
 		{
-			return getInfo!(size_t, clGetImageInfo)(CL_IMAGE_SLICE_PITCH);
+			return this.getInfo!(size_t, clGetImageInfo)(CL_IMAGE_SLICE_PITCH);
 		}
 
 		//! width in pixels
 		size_t width()
 		{
-			return getInfo!(size_t, clGetImageInfo)(CL_IMAGE_WIDTH);
+			return this.getInfo!(size_t, clGetImageInfo)(CL_IMAGE_WIDTH);
 		}
 
 		//! height in pixels 
 		size_t height()
 		{
-			return getInfo!(size_t, clGetImageInfo)(CL_IMAGE_HEIGHT);
+			return this.getInfo!(size_t, clGetImageInfo)(CL_IMAGE_HEIGHT);
 		}
 
 		/**
@@ -82,19 +82,19 @@ struct CLImage
 		 */
 		size_t depth()
 		{
-			return getInfo!(size_t, clGetImageInfo)(CL_IMAGE_DEPTH);
+			return this.getInfo!(size_t, clGetImageInfo)(CL_IMAGE_DEPTH);
 		}
 
 		//! The target argument specified in CLImage2DGL, CLImage3DGL constructors
 		cl_GLenum textureTarget()
 		{
-			return getInfo!(cl_GLenum, clGetGLTextureInfo)(CL_GL_TEXTURE_TARGET);
+			return this.getInfo!(cl_GLenum, clGetGLTextureInfo)(CL_GL_TEXTURE_TARGET);
 		}
 
 		//! The miplevel argument specified in CLImage2DGL, CLImage3DGL constructors
 		cl_GLint mipmapLevel()
 		{
-			return getInfo!(cl_GLint, clGetGLTextureInfo)(CL_GL_MIPMAP_LEVEL);
+			return this.getInfo!(cl_GLint, clGetGLTextureInfo)(CL_GL_MIPMAP_LEVEL);
 		}
 	} // of @property
 }
@@ -115,7 +115,7 @@ struct CLImage2D
 	this(CLContext context, cl_mem_flags flags, const cl_image_format format, size_t width, size_t height, size_t rowPitch, void* hostPtr = null)
 	{
 		cl_errcode res;
-		_object = clCreateImage2D(context.cptr, flags, &format, width, height, rowPitch, hostPtr, &res);
+		this._object = clCreateImage2D(context.cptr, flags, &format, width, height, rowPitch, hostPtr, &res);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",					""],
@@ -150,7 +150,7 @@ struct CLImage2DGL
 	this(const CLContext context, cl_mem_flags flags, cl_GLenum target, cl_GLint  miplevel, cl_GLuint texobj)
 	{
 		cl_errcode res;
-		_object = clCreateFromGLTexture2D(context.cptr, flags, target, miplevel, texobj, &res);
+		this._object = clCreateFromGLTexture2D(context.cptr, flags, target, miplevel, texobj, &res);
 
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",		"context is not a valid context or was not created from a GL context"],
@@ -182,7 +182,7 @@ struct CLImage3D
 	this(CLContext context, cl_mem_flags flags, const cl_image_format format, size_t width, size_t height, size_t depth, size_t rowPitch, size_t slicePitch, void* hostPtr = null)
 	{
 		cl_errcode res;
-		_object = clCreateImage3D(context.cptr, flags, &format, width, height, depth, rowPitch, slicePitch, hostPtr, &res);
+		this._object = clCreateImage3D(context.cptr, flags, &format, width, height, depth, rowPitch, slicePitch, hostPtr, &res);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",					""],
@@ -217,7 +217,7 @@ struct CLImage3DGL
 	this(const CLContext context, cl_mem_flags flags, cl_GLenum target, cl_GLint  miplevel, cl_GLuint texobj)
 	{
 		cl_errcode res;
-		_object = clCreateFromGLTexture3D(context.cptr, flags, target, miplevel, texobj, &res);
+		this._object = clCreateFromGLTexture3D(context.cptr, flags, target, miplevel, texobj, &res);
 
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",		"context is not a valid context or was not created from a GL context"],

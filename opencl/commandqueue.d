@@ -40,7 +40,7 @@ public:
 	this(CLContext context, CLDevice device, bool outOfOrder = false, bool profiling = false)
 	{
 		cl_errcode res;
-		_object = clCreateCommandQueue(context.cptr, device.cptr, (outOfOrder ? CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE : cast(cl_command_queue_properties) 0) | (profiling ? CL_QUEUE_PROFILING_ENABLE : cast(cl_command_queue_properties)0), &res);
+		this._object = clCreateCommandQueue(context.cptr, device.cptr, (outOfOrder ? CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE : cast(cl_command_queue_properties) 0) | (profiling ? CL_QUEUE_PROFILING_ENABLE : cast(cl_command_queue_properties)0), &res);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",			"context is not a valid context"],
@@ -104,7 +104,7 @@ public:
 	}
 	body
 	{
-		cl_errcode res = clEnqueueWaitForEvents(_object, cast(cl_uint) waitlist.length, waitlist.ptr);
+		cl_errcode res = clEnqueueWaitForEvents(this._object, cast(cl_uint) waitlist.length, waitlist.ptr);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_COMMAND_QUEUE",	""],
@@ -124,7 +124,7 @@ public:
 	CLEvent enqueueTask(CLKernel kernel, CLEvents waitlist = CLEvents())
 	{
 		cl_event event;
-		cl_errcode res = clEnqueueTask(_object, kernel.cptr, cast(cl_uint) waitlist.length, waitlist.ptr, &event);
+		cl_errcode res = clEnqueueTask(this._object, kernel.cptr, cast(cl_uint) waitlist.length, waitlist.ptr, &event);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_PROGRAM_EXECUTABLE",	"there is no successfully built program executable available for device associated with queue"],
@@ -223,7 +223,7 @@ public:
 							CLEvents waitlist = CLEvents())
 	{
 		cl_event event;
-		cl_errcode res = clEnqueueNDRangeKernel(_object, kernel.cptr, global.dimensions, offset.ptr, global.ptr, local.ptr, cast(cl_uint) waitlist.length, waitlist.ptr, &event);
+		cl_errcode res = clEnqueueNDRangeKernel(this._object, kernel.cptr, global.dimensions, offset.ptr, global.ptr, local.ptr, cast(cl_uint) waitlist.length, waitlist.ptr, &event);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_COMMAND_QUEUE",	""],
@@ -274,7 +274,7 @@ public:
 	body
 	{
 		cl_event event;
-		cl_errcode res = func (_object, buffer.cptr, blocking, offset, size, ptr,  cast(cl_uint) waitlist.length, waitlist.ptr, &event);
+		cl_errcode res = func (this._object, buffer.cptr, blocking, offset, size, ptr,  cast(cl_uint) waitlist.length, waitlist.ptr, &event);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_COMMAND_QUEUE",						""],
@@ -312,7 +312,7 @@ public:
 		cl_event event;
 		cl_errcode res;
 
-		void* mapPtr = clEnqueueMapBuffer(_object, buffer.cptr, blocking, flags, offset, cb, cast(cl_uint) waitlist.length, waitlist.ptr, &event, &res);
+		void* mapPtr = clEnqueueMapBuffer(this._object, buffer.cptr, blocking, flags, offset, cb, cast(cl_uint) waitlist.length, waitlist.ptr, &event, &res);
 
 		mixin(exceptionHandling(
 			["CL_INVALID_COMMAND_QUEUE",					""],
@@ -359,7 +359,7 @@ public:
 
 		// TODO: can we somehow determine the size in bytes of the returned pointer?
 		// Note that images can have different pixel formats
-		map = clEnqueueMapImage(_object, image.cptr, blocking, flags, origin.ptr, region.ptr, &rowPitch, &slicePitch, cast(cl_uint) waitlist.length, waitlist.ptr, &event, &res);
+		map = clEnqueueMapImage(this._object, image.cptr, blocking, flags, origin.ptr, region.ptr, &rowPitch, &slicePitch, cast(cl_uint) waitlist.length, waitlist.ptr, &event, &res);
 
 		mixin(exceptionHandling(
 			["CL_INVALID_COMMAND_QUEUE",					""],
@@ -394,7 +394,7 @@ public:
 	CLEvent enqueueUnmapMemory(CLMemory mem, void* map, CLEvents waitlist = CLEvents())
 	{
 		cl_event event;
-		cl_errcode res = clEnqueueUnmapMemObject(_object, mem.cptr, map, cast(cl_uint) waitlist.length, waitlist.ptr, &event);
+		cl_errcode res = clEnqueueUnmapMemObject(this._object, mem.cptr, map, cast(cl_uint) waitlist.length, waitlist.ptr, &event);
 
 		mixin(exceptionHandling(
 			["CL_INVALID_COMMAND_QUEUE",					""],
@@ -419,7 +419,7 @@ public:
 	CLEvent enqueueAcquireGLObjects(CLMemories memories, CLEvents waitlist = CLEvents())
 	{
 		cl_event event;
-		cl_errcode res = clEnqueueAcquireGLObjects(_object, cast(cl_uint) memories.length, memories.ptr, cast(cl_uint) waitlist.length, waitlist.ptr, &event);
+		cl_errcode res = clEnqueueAcquireGLObjects(this._object, cast(cl_uint) memories.length, memories.ptr, cast(cl_uint) waitlist.length, waitlist.ptr, &event);
 
 		mixin(exceptionHandling(
 			["CL_INVALID_VALUE",		"memories is an invalid array"],
@@ -444,7 +444,7 @@ public:
 	CLEvent enqueueReleaseGLObjects(CLMemories memories, CLEvents waitlist = CLEvents())
 	{
 		cl_event event;
-		cl_errcode res = clEnqueueReleaseGLObjects(_object, cast(cl_uint) memories.length, memories.ptr, cast(cl_uint) waitlist.length, waitlist.ptr, &event);
+		cl_errcode res = clEnqueueReleaseGLObjects(this._object, cast(cl_uint) memories.length, memories.ptr, cast(cl_uint) waitlist.length, waitlist.ptr, &event);
 
 		mixin(exceptionHandling(
 			["CL_INVALID_VALUE",		"memories is an invalid array"],
@@ -491,7 +491,7 @@ public:
 	body
 	{
 		cl_event event;
-		cl_errcode res = func (_object, image.cptr, blocking, origin.ptr, region.ptr, rowPitch, slicePitch, ptr, cast(cl_uint) waitlist.length, waitlist.ptr, &event);
+		cl_errcode res = func (this._object, image.cptr, blocking, origin.ptr, region.ptr, rowPitch, slicePitch, ptr, cast(cl_uint) waitlist.length, waitlist.ptr, &event);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_COMMAND_QUEUE",						""],
@@ -528,7 +528,7 @@ public:
 	CLEvent enqueueCopyBuffer(CLBuffer srcBuffer, CLBuffer dstBuffer, size_t srcOffset, size_t dstOffset, size_t size, CLEvents waitlist = CLEvents())
 	{
 		cl_event event;
-		cl_errcode res = clEnqueueCopyBuffer(_object, srcBuffer.cptr, dstBuffer.cptr, srcOffset, dstOffset, size,  cast(cl_uint) waitlist.length, waitlist.ptr, &event);
+		cl_errcode res = clEnqueueCopyBuffer(this._object, srcBuffer.cptr, dstBuffer.cptr, srcOffset, dstOffset, size,  cast(cl_uint) waitlist.length, waitlist.ptr, &event);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_COMMAND_QUEUE",		""],
@@ -569,7 +569,7 @@ public:
 	CLEvent enqueueCopyImage(CLImage srcImage, CLImage dstImage, const size_t[3] srcOrigin, const size_t[3] dstOrigin, const size_t[3] region, CLEvents waitlist = CLEvents())
 	{
 		cl_event event;
-		cl_errcode res = clEnqueueCopyImage(_object, srcImage.cptr, dstImage.cptr, srcOrigin.ptr, dstOrigin.ptr, region.ptr, cast(cl_uint) waitlist.length, waitlist.ptr, &event);
+		cl_errcode res = clEnqueueCopyImage(this._object, srcImage.cptr, dstImage.cptr, srcOrigin.ptr, dstOrigin.ptr, region.ptr, cast(cl_uint) waitlist.length, waitlist.ptr, &event);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_COMMAND_QUEUE",			""],
@@ -604,7 +604,7 @@ public:
 	CLEvent enqueueCopyImageToBuffer(CLImage srcImage, CLBuffer dstBuffer, const size_t[3] srcOrigin, const size_t[3] region, size_t dstOffset, CLEvents waitlist = CLEvents())
 	{
 		cl_event event;
-		cl_errcode res = clEnqueueCopyImageToBuffer(_object, srcImage.cptr, dstBuffer.cptr, srcOrigin.ptr, region.ptr, dstOffset, cast(cl_uint) waitlist.length, waitlist.ptr, &event);
+		cl_errcode res = clEnqueueCopyImageToBuffer(this._object, srcImage.cptr, dstBuffer.cptr, srcOrigin.ptr, region.ptr, dstOffset, cast(cl_uint) waitlist.length, waitlist.ptr, &event);
 
 		mixin(exceptionHandling(
 			["CL_INVALID_COMMAND_QUEUE",			""],
@@ -637,7 +637,7 @@ public:
 	CLEvent enqueueCopyBufferToImage(CLBuffer srcBuffer, CLImage dstImage, size_t srcOffset, const size_t[3] dstOrigin, const size_t[3] region, CLEvents waitlist = CLEvents())
 	{
 		cl_event event;
-		cl_errcode res = clEnqueueCopyBufferToImage(_object, srcBuffer.cptr, dstImage.cptr, srcOffset, dstOrigin.ptr, region.ptr, cast(cl_uint) waitlist.length, waitlist.ptr, &event);
+		cl_errcode res = clEnqueueCopyBufferToImage(this._object, srcBuffer.cptr, dstImage.cptr, srcOffset, dstOrigin.ptr, region.ptr, cast(cl_uint) waitlist.length, waitlist.ptr, &event);
 
 		mixin(exceptionHandling(
 			["CL_INVALID_COMMAND_QUEUE",			""],
@@ -696,7 +696,7 @@ version(CL_VERSION_1_1)
 	{
 		// TODO: leave the default pitch values as 0 and let OpenCL compute or set default values as region[0]? etc. see method documentation
 		cl_event event;
-		cl_errcode res = func(_object, buffer.cptr, blocking, bufferOrigin.ptr, hostOrigin.ptr, region.ptr, bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch, ptr,  cast(cl_uint) waitlist.length, waitlist.ptr, &event);
+		cl_errcode res = func(this._object, buffer.cptr, blocking, bufferOrigin.ptr, hostOrigin.ptr, region.ptr, bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch, ptr,  cast(cl_uint) waitlist.length, waitlist.ptr, &event);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_COMMAND_QUEUE",						""],
@@ -756,7 +756,7 @@ version(CL_VERSION_1_1)
 	body
 	{
 		cl_event event;
-		cl_errcode res = clEnqueueCopyBufferRect(_object, srcBuffer.cptr, dstBuffer.cptr, srcOrigin.ptr, dstOrigin.ptr, region.ptr, srcRowPitch, srcSlicePitch, dstRowPitch, dstSlicePitch,  cast(cl_uint) waitlist.length, waitlist.ptr, &event);
+		cl_errcode res = clEnqueueCopyBufferRect(this._object, srcBuffer.cptr, dstBuffer.cptr, srcOrigin.ptr, dstOrigin.ptr, region.ptr, srcRowPitch, srcSlicePitch, dstRowPitch, dstSlicePitch,  cast(cl_uint) waitlist.length, waitlist.ptr, &event);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_COMMAND_QUEUE",		""],
@@ -787,7 +787,7 @@ version(CL_VERSION_1_1)
 	CLEvent enqueueMarker()
 	{
 		cl_event event;
-		cl_errcode res = clEnqueueMarker(_object, &event);
+		cl_errcode res = clEnqueueMarker(this._object, &event);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_COMMAND_QUEUE",	""],
@@ -807,7 +807,7 @@ version(CL_VERSION_1_1)
 	 */
 	void enqueueBarrier()
 	{
-		cl_errcode res = clEnqueueBarrier(_object);
+		cl_errcode res = clEnqueueBarrier(this._object);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_COMMAND_QUEUE",	""],
@@ -833,19 +833,19 @@ version(CL_VERSION_1_1)
 		//! specified properties for the command-queue
 		auto properties()
 		{
-			return getInfo!(cl_command_queue_properties)(CL_QUEUE_PROPERTIES);
+			return this.getInfo!(cl_command_queue_properties)(CL_QUEUE_PROPERTIES);
 		}
 
 		//! are the commands queued in the command queue executed out-of-order
 		bool outOfOrder()
 		{
-			return cast(bool) (getInfo!(cl_command_queue_properties)(CL_QUEUE_PROPERTIES) & CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE);
+			return cast(bool) (this.getInfo!(cl_command_queue_properties)(CL_QUEUE_PROPERTIES) & CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE);
 		}
 		
 		//! is profiling of commands in the command-queue enabled
 		bool profiling()
 		{
-			return cast(bool) (getInfo!(cl_command_queue_properties)(CL_QUEUE_PROPERTIES) & CL_QUEUE_PROFILING_ENABLE);
+			return cast(bool) (this.getInfo!(cl_command_queue_properties)(CL_QUEUE_PROPERTIES) & CL_QUEUE_PROFILING_ENABLE);
 		}
 	}
 }

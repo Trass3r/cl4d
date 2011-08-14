@@ -89,7 +89,7 @@ public:
 	{
 		cl_errcode res;
 
-		_object = clCreateKernel(program.cptr, toStringz(kernelName), &res);
+		this._object = clCreateKernel(program.cptr, toStringz(kernelName), &res);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_PROGRAM",				"program is not a valid program object"],
@@ -161,7 +161,7 @@ public:
 		// TODO: thus, if multiple CLKernel objects wrap the same cl_kernel one, this still makes problems
 		cl_errcode res;
 		// TODO:
-		/* synchronized(this) */ res = clSetKernelArg(_object, idx, size, value);
+		/* synchronized(this) */ res = clSetKernelArg(this._object, idx, size, value);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_KERNEL",		""],
@@ -192,19 +192,19 @@ public:
 		/// Return the number of arguments to kernel
 		cl_uint numArgs()
 		{
-			return getInfo!(cl_uint)(CL_KERNEL_NUM_ARGS);
+			return this.getInfo!(cl_uint)(CL_KERNEL_NUM_ARGS);
 		}
 		
 		/// Return the context associated with kernel
 		CLContext context()
 		{
-			return CLContext(getInfo!(cl_context)(CL_KERNEL_CONTEXT));
+			return CLContext(this.getInfo!(cl_context)(CL_KERNEL_CONTEXT));
 		}
 		
 		//! Return the program object associated with kernel
 		CLProgram program()
 		{
-			return CLProgram(getInfo!(cl_program)(CL_KERNEL_PROGRAM));
+			return CLProgram(this.getInfo!(cl_program)(CL_KERNEL_PROGRAM));
 		}
 	} // of @property
 

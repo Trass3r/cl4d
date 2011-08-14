@@ -41,7 +41,7 @@ struct CLBuffer
 		// TODO: perform argument checks? is it necessary or just leave it to OpenCL?
 
 		cl_errcode res;
-		_object = clCreateBuffer(context.cptr, flags, datasize, hostptr, &res);
+		this._object = clCreateBuffer(context.cptr, flags, datasize, hostptr, &res);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",				""],
@@ -123,7 +123,7 @@ struct CLBufferGL
 	this(CLContext context, cl_mem_flags flags, cl_GLuint bufobj)
 	{
 		cl_errcode res;
-		_object = clCreateFromGLBuffer(context.cptr, flags, bufobj, &res);
+		this._object = clCreateFromGLBuffer(context.cptr, flags, bufobj, &res);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",		"context is not a valid context or was not created from a GL context"],
@@ -164,7 +164,7 @@ struct CLBufferRenderGL
 	this(CLContext context, cl_mem_flags flags, cl_GLuint renderbuffer)
 	{
 		cl_errcode res;
-		_object = clCreateFromGLRenderbuffer(context.cptr, flags, renderbuffer, &res);
+		this._object = clCreateFromGLRenderbuffer(context.cptr, flags, renderbuffer, &res);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_CONTEXT",					"context is not a valid context or was not created from a GL context"],

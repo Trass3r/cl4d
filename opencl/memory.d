@@ -58,7 +58,7 @@ public:
 	 */
 	void getGLObjectInfo(out cl_gl_object_type glObjectType, out cl_GLuint glObjectName)
 	{
-		cl_errcode res = clGetGLObjectInfo(_object, &glObjectType, &glObjectName);
+		cl_errcode res = clGetGLObjectInfo(this._object, &glObjectType, &glObjectName);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_MEM_OBJECT",	""],
@@ -95,7 +95,7 @@ public:
 	 */
 	void* hostPtr()
 	{
-		return getInfo!(void*)(CL_MEM_HOST_PTR);
+		return this.getInfo!(void*)(CL_MEM_HOST_PTR);
 	}
 
 	//! actual size of this CLMemory's data store in bytes
