@@ -22,7 +22,7 @@ alias CLObjectCollection!CLDevice CLDevices;
 /// device class
 struct CLDevice
 {
-	mixin CLWrapper!(cl_device_id, clGetDeviceInfo);
+	mixin(CLWrapper("cl_device_id", "clGetDeviceInfo"));
 
 public:
 

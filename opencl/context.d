@@ -24,7 +24,7 @@ import opencl.wrapper;
  */
 struct CLContext
 {
-	mixin CLWrapper!(cl_context, clGetContextInfo);
+	mixin(CLWrapper("cl_context", "clGetContextInfo"));
 
 public:
 	/**
