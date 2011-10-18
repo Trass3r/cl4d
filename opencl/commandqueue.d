@@ -672,8 +672,8 @@ version(CL_VERSION_1_1)
 	 *
 	 *	TODO: add assertions that buffer origin etc. is correct in respect to CLBuffer isImage2D etc. see above notes
 	 */
-	private void enqueueReadWriteBufferRect(alias func, PtrType)(CLBuffer buffer, cl_bool blocking, const size_t[3] bufferOrigin, const size_t[3] hostOrigin, const size_t[3] region,
-	                                                             PtrType ptr, CLEvents waitlist = CLEvents(), size_t bufferRowPitch = 0, size_t bufferSlicePitch = 0, size_t hostRowPitch = 0, size_t hostSlicePitch = 0)
+	private CLEvent enqueueReadWriteBufferRect(alias func, PtrType)(CLBuffer buffer, cl_bool blocking, const size_t[3] bufferOrigin, const size_t[3] hostOrigin, const size_t[3] region,
+	                                                                PtrType ptr, CLEvents waitlist = CLEvents(), size_t bufferRowPitch = 0, size_t bufferSlicePitch = 0, size_t hostRowPitch = 0, size_t hostSlicePitch = 0)
 	in
 	{
 		assert(ptr !is null);
