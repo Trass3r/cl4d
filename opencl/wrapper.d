@@ -47,7 +47,6 @@ package string CLWrapper(string T, string classInfoFunction)
 	return "private:\nalias " ~ T ~ " T;\n" ~ q{
 	package T _object = null;
 	//public alias _object this; // TODO any merit?
-	//alias CLObject this;
 	package alias T CType; // remember the C type
 
 public:
@@ -319,30 +318,13 @@ protected:
 /**
  *	a collection of OpenCL objects returned by some methods
  *	Params:
- *		T = an OpenCL C object like cl_kernel
+ *		T = a cl4d object like CLKernel
  */
 package struct CLObjectCollection(T)
 // TODO: if (is(T : CLObject))
 {
-//private:
 	T[] _objects;
-
-	static if(is(T == CLPlatform))
-		alias cl_platform_id CType;
-	else static if(is(T == CLDevice))
-		alias cl_device_id CType;
-	else static if(is(T == CLKernel))
-		alias cl_kernel CType;
-	else static if(is(T : CLEvent))
-		alias cl_event CType;
-	else static if(is(T : CLMemory))
-		alias cl_mem CType;
-	else
-		static assert(0, "object type not supported by CLObjectCollection");
-
-public:
-	// TODO: re-enable once bug 6492 is fixed
-	//alias _objects this;
+	alias _objects this;
 
 	//! takes a list of cl4d CLObjects
 	this(T[] objects...)
@@ -358,8 +340,7 @@ public:
 
 	//! takes a list of OpenCL C objects returned by some OpenCL functions like GetPlatformIDs
 	// TODO: so these are already allocated and don't need to be dup'ed?!
-	// TODO: change CType to T.Ctype and remove the static if crap above, once that is sorted out
-	this(CType[] objects)//, bool transferOwnership = true)
+	this(T.CType[] objects)
 	in
 	{
 		assert(objects !is null);
@@ -385,35 +366,6 @@ public:
 	//!
 	package @property auto ptr() const
 	{
-		return cast(const(CType)*) _objects.ptr;
-	}
-
-	//! get number of Objects
-	@property size_t length() const
-	{
-		return _objects.length;
-	}
-
-	/// returns a new instance wrapping object i
-	T opIndex(size_t i) const
-	{
-		// increment reference count
-		return this._objects[i];
-	}
-
-	// TODO: delete this once bug 2781 is fixed
-	/// for foreach to work
-	int opApply(scope int delegate(ref T) dg)
-	{
-		int result = 0;
-		
-		for(uint i=0; i<_objects.length; i++)
-		{
-			result = dg(this._objects[i]);
-			if(result)
-				break;
-		}
-		
-		return result;
+		return cast(const(T.CType)*) _objects.ptr;
 	}
 }
