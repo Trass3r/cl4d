@@ -766,7 +766,7 @@ version(CL_VERSION_1_1)
 			["CL_OUT_OF_HOST_MEMORY",			""]
 		));
 		
-		return CLEvent(event); // TODO: what happens if the return value is ignored in terms of release(event)?
+		return CLEvent(event);
 	}
 } // of version(CL_VERSION_1_1)
 

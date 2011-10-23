@@ -37,7 +37,6 @@ struct CLImage
 	@property
 	{
 		//!image format descriptor specified when image was created
-		// TODO: test if getInfo works here, cl_image_format is a struct
 		auto format()
 		{
 			return this.getInfo!(cl_image_format, clGetImageInfo)(CL_IMAGE_FORMAT);

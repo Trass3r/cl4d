@@ -81,7 +81,7 @@ debug private import std.stdio;
 	//! ensure that _object isn't null
 	invariant()
 	{
-		assert(this._object !is null, "invariant violated: _object is null");
+		assert(_object !is null, "invariant violated: _object is null");
 	}
 */
 package:
@@ -95,12 +95,12 @@ package:
 	//! increments the object reference count
 	void retain()
 	{
-		// NOTE: cl_platform_id and cl_device_id don't have reference counting
+		// NOTE: cl_platform_id and cl_device_id aren't reference counted
 		// T.stringof is compared instead of T itself so it also works with T being an alias
 		// platform and device will have an empty retain() so it can be safely used in this()
 		static if (T.stringof[$-3..$] != "_id")
 		{
-			mixin("cl_errcode res = clRetain" ~ toCamelCase(T.stringof[2..$]) ~ (T.stringof == "cl_mem" ? "Object" : "") ~ "(this._object);");
+			mixin("cl_errcode res = clRetain" ~ toCamelCase(T.stringof[2..$]) ~ (T.stringof == "cl_mem" ? "Object" : "") ~ "(_object);");
 			mixin(exceptionHandling(
 				["CL_OUT_OF_RESOURCES",		""],
 				["CL_OUT_OF_HOST_MEMORY",	""]
@@ -116,7 +116,7 @@ package:
 	{
 		static if (T.stringof[$-3..$] != "_id")
 		{
-			mixin("cl_errcode res = clRelease" ~ toCamelCase(T.stringof[2..$]) ~ (T.stringof == "cl_mem" ? "Object" : "") ~ "(this._object);");
+			mixin("cl_errcode res = clRelease" ~ toCamelCase(T.stringof[2..$]) ~ (T.stringof == "cl_mem" ? "Object" : "") ~ "(_object);");
 			mixin(exceptionHandling(
 				["CL_OUT_OF_RESOURCES",		""],
 				["CL_OUT_OF_HOST_MEMORY",	""]
@@ -160,7 +160,7 @@ protected:
 	final U getInfo(U, alias infoFunction = }~classInfoFunction~q{)(cl_uint infoname) const
 	{
 		// TODO: should be in invariant
-		assert(this._object !is null, "_object is null");
+		assert(_object !is null, "_object is null");
 		cl_errcode res;
 		
 		debug
@@ -168,7 +168,7 @@ protected:
 			size_t needed;
 
 			// get amount of memory necessary
-			res = infoFunction(this._object, infoname, 0, null, &needed);
+			res = infoFunction(_object, infoname, 0, null, &needed);
 	
 			// error checking
 			if (res != CL_SUCCESS)
@@ -180,7 +180,7 @@ protected:
 		U info;
 
 		// get actual data
-		res = infoFunction(this._object, infoname, U.sizeof, &info, null);
+		res = infoFunction(_object, infoname, U.sizeof, &info, null);
 		
 		// error checking
 		if (res != CL_SUCCESS)
@@ -197,7 +197,7 @@ protected:
 	 */
 	U getInfo2(U, alias altFunction)( cl_device_id device, cl_uint infoname) const
 	{
-		assert(this._object !is null);
+		assert(_object !is null);
 		cl_errcode res;
 		
 		debug
@@ -205,7 +205,7 @@ protected:
 			size_t needed;
 
 			// get amount of memory necessary
-			res = altFunction(this._object, device, infoname, 0, null, &needed);
+			res = altFunction(_object, device, infoname, 0, null, &needed);
 	
 			// error checking
 			if (res != CL_SUCCESS)
@@ -217,7 +217,7 @@ protected:
 		U info;
 
 		// get actual data
-		res = altFunction(this._object, device, infoname, U.sizeof, &info, null);
+		res = altFunction(_object, device, infoname, U.sizeof, &info, null);
 		
 		// error checking
 		if (res != CL_SUCCESS)
@@ -239,12 +239,12 @@ protected:
 	// used for all array return types
 	final U[] getArrayInfo(U, alias infoFunction = }~classInfoFunction~q{)(cl_uint infoname) const
 	{
-		assert(this._object !is null);
+		assert(_object !is null);
 		size_t needed;
 		cl_errcode res;
 
 		// get amount of needed memory
-		res = infoFunction(this._object, infoname, 0, null, &needed);
+		res = infoFunction(_object, infoname, 0, null, &needed);
 
 		// error checking
 		if (res != CL_SUCCESS)
@@ -257,7 +257,7 @@ protected:
 		auto buffer = new U[needed/U.sizeof];
 
 		// get actual data
-		res = infoFunction(this._object, infoname, needed, cast(void*)buffer.ptr, null);
+		res = infoFunction(_object, infoname, needed, cast(void*)buffer.ptr, null);
 		
 		// error checking
 		if (res != CL_SUCCESS)
@@ -274,12 +274,12 @@ protected:
 	 */
 	U[] getArrayInfo2(U, alias altFunction)(cl_device_id device, cl_uint infoname) const
 	{
-		assert(this._object !is null);
+		assert(_object !is null);
 		size_t needed;
 		cl_errcode res;
 
 		// get amount of needed memory
-		res = altFunction(this._object, device, infoname, 0, null, &needed);
+		res = altFunction(_object, device, infoname, 0, null, &needed);
 
 		// error checking
 		if (res != CL_SUCCESS)
@@ -292,7 +292,7 @@ protected:
 		auto buffer = new U[needed/U.sizeof];
 
 		// get actual data
-		res = altFunction(this._object, device, infoname, needed, cast(void*)buffer.ptr, null);
+		res = altFunction(_object, device, infoname, needed, cast(void*)buffer.ptr, null);
 		
 		// error checking
 		if (res != CL_SUCCESS)

@@ -161,7 +161,7 @@ public:
 		// TODO: thus, if multiple CLKernel objects wrap the same cl_kernel one, this still makes problems
 		cl_errcode res;
 		// TODO:
-		/* synchronized(this) */ res = clSetKernelArg(this._object, idx, size, value);
+		/* synchronized(this) */ res = clSetKernelArg(_object, idx, size, value);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_KERNEL",		""],
@@ -226,7 +226,6 @@ public:
 		 */
 		size_t[3] compileWorkGroupSize(CLDevice device)
 		{
-			// TODO: check if this works
 			return getInfo2!(size_t[3], clGetKernelWorkGroupInfo)(device.cptr, CL_KERNEL_COMPILE_WORK_GROUP_SIZE);
 		}
 		
