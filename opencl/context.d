@@ -39,7 +39,7 @@ public:
 		
 		// TODO: user notification function
 
-		cl_context_properties[] cps = props ~ [CL_CONTEXT_PLATFORM, cast(cl_context_properties) (devices[0].platform.cptr)] ~ props ~ 0;
+		cl_context_properties[] cps = [CL_CONTEXT_PLATFORM, cast(cl_context_properties) (devices[0].platform.cptr)] ~ props ~ 0;
 		this(clCreateContext(cps.ptr, cast(cl_uint) devices.length, devices.ptr, null, null, &res));
 
 		mixin(exceptionHandling(
