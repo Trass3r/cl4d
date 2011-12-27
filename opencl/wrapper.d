@@ -339,7 +339,6 @@ package struct CLObjectCollection(T)
 	}
 
 	//! takes a list of OpenCL C objects returned by some OpenCL functions like GetPlatformIDs
-	// TODO: so these are already allocated and don't need to be dup'ed?!
 	this(T.CType[] objects)
 	in
 	{
@@ -347,7 +346,7 @@ package struct CLObjectCollection(T)
 	}
 	body
 	{
-		// TODO: just .dup if retain() calls are needed
+		// we safely reinterpret cast here since T just wraps a T.CType
 		_objects = cast(T[]) objects;
 	}
 
@@ -355,13 +354,13 @@ package struct CLObjectCollection(T)
 	{
 		_objects = _objects.dup; // calls postblits :)
 	}
-/* TODO reenable when bug 6473 is fixed
+
 	//! release all objects
 	~this()
 	{
 		foreach (object; _objects)
 			object.release();
-	}*/
+	}
 
 	//!
 	package @property auto ptr() const
