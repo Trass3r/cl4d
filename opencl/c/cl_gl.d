@@ -61,6 +61,25 @@ cl_mem clCreateFromGLTexture(
 	cl_errcode*		errcode_ret
 );
 
+deprecated cl_mem clCreateFromGLTexture2D(
+	cl_context		context,
+	cl_mem_flags	flags,
+	cl_GLenum		target,
+	cl_GLint		miplevel,
+	cl_GLuint		texture,
+	cl_errcode*		errcode_ret
+);
+
+deprecated cl_mem clCreateFromGLTexture3D(
+	cl_context		context,
+	cl_mem_flags	flags,
+	cl_GLenum		target,
+	cl_GLint		miplevel,
+	cl_GLuint		texture,
+	cl_errcode*		errcode_ret
+);
+
+
 cl_mem clCreateFromGLRenderbuffer(
 	cl_context		context,
 	cl_mem_flags	flags,
