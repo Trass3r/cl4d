@@ -1,0 +1,37 @@
+== Welcome ==
+
+**cl4d ** is an object-oriented wrapper for the [[http://www.khronos.org/opencl/|OpenCL]] C API written in the [[http://www.dlang.org/|D programming language]].\\
+Since the package includes bindings to the C API, you may also directly write usual OpenCL code if you need to.
+
+You're welcome to contribute to the project.
+* test
+* file issues about bugs
+* send patches
+* whatever else
+
+
+== License ==
+
+The code is licensed under the terms of the Boost Software License 1.0.
+
+
+== Build instructions ==
+
+* The repo contains some sample modules for your guidance.
+* To build them a simple tool like rdmd or xfBuild is enough. See makeExamples.sh.
+* Note that you need Derelict2 for the OpenGL interoperability sample.
+
+* Be sure to always use the latest compiler version!
+* For maximal performance enable function inlining + [[http://en.wikipedia.org/wiki/Link-time_optimization|LTO]] and set version NO_CL_EXCEPTIONS. Then most of the wrapper code should disappear and direct calls to the C API are performed.
+
+== Guidelines ==
+
+The philosophy behind cl4d is to provide a thin layer on top of the C API which makes working with OpenCL less painful by harnessing D's linguistic power. Unlike the official C++ bindings I still try to wrap the C API as good as possible, e.g. object properties are properly exposed as such so you don't have to call something like getInfo!cl_uint(CL_KERNEL_NUM_ARGS) all the time.
+
+The cumbersome C error handling is replaced by proper exception handling. Each OpenCL error gets its own Exception class so it is possible to selectively catch them as needed.
+Also expressive error messages are given.
+You may use version=NO_CL_EXCEPTIONS or version=BASIC_CL_EXCEPTIONS to reduce the EH overhead.
+
+Reference counts are automatically managed via (copy) constructors and destructors.
+Collections of CL objects are handled by a dedicated structure so you won't ever need to deal with pointers at all.
+There are no external dependencies and calls to the standard library are kept at a minimum.
