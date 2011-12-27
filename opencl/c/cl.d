@@ -9,14 +9,12 @@
  *		see LICENSE.txt
  */
 
-// based on $Revision: 11985 $ on $Date: 2010-07-15 11:16:06 -0700 (Thu, 15 Jul 2010) $
-
 module opencl.c.cl;
 
 public import opencl.c.cl_platform;
 
 // a helper function to make elements of enums accessable without EnumType. prefix
-private string bringToCurrentScope(alias EnumType)()
+package string bringToCurrentScope(alias EnumType)()
 {
 	string res = "";
 	foreach (e; __traits(allMembers, EnumType))
