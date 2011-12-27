@@ -30,11 +30,15 @@ typedef void* cl_GLsync; // typedef struct __GLsync *cl_GLsync;
 
 enum
 {
-	// cl_gl_object_type
+	// cl_gl_object_type = 0x2000 - 0x200F enum values are currently taken
 	CL_GL_OBJECT_BUFFER			= 0x2000,
 	CL_GL_OBJECT_TEXTURE2D		= 0x2001,
 	CL_GL_OBJECT_TEXTURE3D		= 0x2002,
 	CL_GL_OBJECT_RENDERBUFFER	= 0x2003,
+	CL_GL_OBJECT_TEXTURE2D_ARRAY= 0x200E,
+	CL_GL_OBJECT_TEXTURE1D		= 0x200F,
+	CL_GL_OBJECT_TEXTURE1D_ARRAY= 0x2010,
+	CL_GL_OBJECT_TEXTURE_BUFFER	= 0x2011,
 
 	// cl_gl_texture_info
 	CL_GL_TEXTURE_TARGET		= 0x2004,
@@ -48,22 +52,13 @@ cl_mem clCreateFromGLBuffer(
 	cl_errcode*		errcode_ret
 );
 
-cl_mem clCreateFromGLTexture2D(
+cl_mem clCreateFromGLTexture(
 	cl_context		context,
 	cl_mem_flags	flags,
 	cl_GLenum		target,
 	cl_GLint		miplevel,
 	cl_GLuint		texture,
 	cl_errcode*		errcode_ret
-);
-
-cl_mem clCreateFromGLTexture3D(
-	cl_context		context,
-	cl_mem_flags	flags,
-	cl_GLenum		target,
-	cl_GLint		miplevel,
-	cl_GLuint		texture,
-	cl_errcode*			errcode_ret
 );
 
 cl_mem clCreateFromGLRenderbuffer(

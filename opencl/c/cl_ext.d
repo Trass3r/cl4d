@@ -209,39 +209,5 @@ version(CL_EXT)
 			CL_PARTITION_BY_COUNTS_LIST_END_EXT		= (cast(cl_device_partition_property_ext) 0),
 			CL_PARTITION_BY_NAMES_LIST_END_EXT		= (cast(cl_device_partition_property_ext) 0 - 1),
 		}
-
-		/* cl_ext_atomic_counters_32 and cl_ext_atomic_counters_64 extensions
-		 * no extension #define since they have no functions
-		 */
-		enum CL_DEVICE_MAX_ATOMIC_COUNTERS_EXT = 0x4032;
-
-		/***********************************
-		 * cl_ext_migrate_memobject extension definitions
-		 ***********************************/
-		version = cl_ext_migrate_memobject;
-		
-		typedef cl_bitfield cl_mem_migration_flags_ext;
-		
-		enum CL_MIGRATE_MEM_OBJECT_HOST_EXT = 0x1;
-
-		enum CL_COMMAND_MIGRATE_MEM_OBJECT_EXT = 0x4040;
-		
-		cl_int clEnqueueMigrateMemObjectEXT(
-			cl_command_queue command_queue,
-			cl_uint num_mem_objects,
-			const(cl_mem)* mem_objects,
-			cl_mem_migration_flags_ext flags,
-			cl_uint num_events_in_wait_list,
-			const(cl_event)* event_wait_list,
-			cl_event* event);
-		
-		typedef extern(System) cl_int function(
-			cl_command_queue command_queue,
-			cl_uint num_mem_objects,
-			const(cl_mem)* mem_objects,
-			cl_mem_migration_flags_ext flags,
-			cl_uint num_events_in_wait_list,
-			const(cl_event)* event_wait_list,
-			cl_event* event) clEnqueueMigrateMemObjectEXT_fn;
 	}
 } // of version(CL_EXT)
