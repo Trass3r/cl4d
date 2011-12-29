@@ -22,7 +22,8 @@ The code is licensed under the terms of the Boost Software License 1.0.
 * Note that you need Derelict2 for the OpenGL interoperability sample.
 
 * Be sure to always use the latest compiler version!
-* For maximal performance enable function inlining + [[http://en.wikipedia.org/wiki/Link-time_optimization|LTO]] and set version NO_CL_EXCEPTIONS. Then most of the wrapper code should disappear and direct calls to the C API are performed.
+* For maximal performance enable function inlining and set version NO_CL_EXCEPTIONS. Then direct calls to the C API are performed.
+  If you additionally use proper dead code elimination (e.g. [[https://bitbucket.org/goshawk/gdc|gdc]]'s -ffunction-sections -fdata-sections -Wl,--gc-sections) or [[http://en.wikipedia.org/wiki/Link-time_optimization|LTO]] almost all of the wrapper code should disappear.
 
 == Guidelines ==
 

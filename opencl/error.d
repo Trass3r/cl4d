@@ -32,18 +32,17 @@ public:
 		super(msg, file, line, next);
 	}
 
-	// TODO: overload toString to contain errcode
-
 	/// errcode getter
-	@property cl_errcode errcode() {return _errcode;}
+	@property cl_errcode errcode() const {return _errcode;}
 }
 
 version(NO_CL_EXCEPTIONS) {} else
 version(BASIC_CL_EXCEPTIONS) {} else
 {
+import std.conv;
 
 /// an unrecognized OpenCL exception
-class CLUnrecognizedException : CLException {this(cl_errcode errcode, string file = "", size_t line = 0) {super(errcode, "unrecognized OpenCL exception occured", file, line);}}
+class CLUnrecognizedException : CLException {this(cl_errcode errcode, string file = "", size_t line = 0) {super(errcode, "unrecognized OpenCL exception occured: " ~ to!string(errcode), file, line);}}
 
 /// platform exceptions base class
 class CLPlatformException : CLException {this(cl_errcode errcode, string msg = "", string file = "", size_t line = 0) {super(errcode, msg, file, line);}}

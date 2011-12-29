@@ -10,3 +10,11 @@ size_t arrsizeof(T)(T[] array)
 	else
 		return array.length * T.sizeof;
 }
+
+unittest
+{
+	int[] a = new int[5];
+	assert(a.arrsizeof == 20);
+	int[4] b;
+	assert(b.arrsizeof == 16);
+}
