@@ -91,4 +91,17 @@ public:
 	
 	/// returns a list of all accelerator devices
 	CLDevices accelDevices() {return getDevices(CL_DEVICE_TYPE_ACCELERATOR);}
+
+	version(CL_VERSION_1_2)
+	/**
+	 * allows the implementation to release the resources allocated by the OpenCL compiler for
+	 * platform. This is a hint from the application and does not guarantee that the compiler will not be
+	 * used in the future or that the compiler will actually be unloaded by the implementation. Calls to
+	 * clBuildProgram, clCompileProgram or clLinkProgram after clUnloadPlatformCompiler
+	 * will reload the compiler, if necessary, to build the appropriate program executable
+	 */
+	void unloadCompiler()
+	{
+		clUnloadPlatformCompiler(_object);
+	}
 }

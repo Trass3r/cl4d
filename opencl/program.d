@@ -47,7 +47,7 @@ public:
 		));
 	}
 	
-	/*
+	/* TODO
 	 * creates a program object for a context, and loads the binary bits specified by binary into the program object
 	 *
 	this(CLContext context, ubyte[][] binaries, CLDevice[] devices = null)
@@ -57,6 +57,29 @@ public:
 		
 	}//*/
 	
+	version(CL_VERSION_1_2)
+	/**
+	 * creates a program object for a context, and loads the information related to the built-in kernels into a program object
+	 *
+	 * Params:
+	 *		devices = the built-in kernels are loaded for devices specified in this list
+	 *		kernelNames = semi-colon separated list of built-in kernel names
+	 */
+	this(CLContext context, CLDevices devices, string kernelNames)
+	{
+		import std.string;
+		cl_errcode res;
+		this(clCreateProgramWithBuiltInKernels(context.cptr, cast(cl_uint) devices.length, devices.ptr, toStringz(kernelNames), &res));
+
+		mixin(exceptionHandling(
+			["CL_INVALID_CONTEXT",		""],
+			["CL_INVALID_VALUE",		"devices or kernelNames is invalid"],
+			["CL_INVALID_DEVICE",		"some devices in list are not associated with context"],
+			["CL_INVALID_DEVICE",		""],
+			["CL_OUT_OF_HOST_MEMORY",	""]
+		));
+	}
+
 	/**
 	 * builds (compiles & links) a program executable from the program source or binary for all the
 	 * devices or a specific device(s) in the OpenCL context associated with program. OpenCL allows

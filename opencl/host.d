@@ -41,6 +41,7 @@ struct CLHost
 		return CLPlatforms(platformIDs);
 	}
 
+	version(CL_VERSION_1_2) {} else
 	/**
 	 * allows the implementation to release the resources allocated by the OpenCL compiler.  This is a
 	 * hint from the application and does not guarantee that the compiler will not be used in the future
@@ -49,7 +50,7 @@ struct CLHost
 	 */
 	static void unloadCompiler()
 	{
-		cl_errcode res;
+		cl_errcode res = void;
 		res = clUnloadCompiler();
 		if(res != CL_SUCCESS)
 			throw new CLException(res, "failed unloading compiler, this shouldn't happen in OpenCL 1.0");

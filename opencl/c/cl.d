@@ -983,6 +983,7 @@ cl_errcode clUnloadCompiler();
 
 version(CL_VERSION_1_2)
 {
+//!
 cl_errcode clCompileProgram(
 	cl_program           program,
 	cl_uint              num_devices,
@@ -995,6 +996,7 @@ cl_errcode clCompileProgram(
 	void *               user_data
 );
 
+//!
 cl_program clLinkProgram(
 	cl_context           context,
 	cl_uint              num_devices,
@@ -1007,7 +1009,8 @@ cl_program clLinkProgram(
 	cl_errcode*          errcode_ret
 );
 
-cl_errcode clUnloadPlatformCompiler(cl_platform_id /* platform */);
+//!
+cl_errcode clUnloadPlatformCompiler(cl_platform_id platform);
 }
 
 //!

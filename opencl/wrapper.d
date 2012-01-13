@@ -31,11 +31,6 @@ package
 	alias const(char)[] cstring; //!
 }
 
-//! all CL Objects "inherit" from this one to enable is(T : CLObject)
-struct CLObject
-{
-}
-
 /**
  *	this function is used to mixin low level CL C object handling into all CL classes
  *	namely info retrieval and reference counting methods
@@ -95,6 +90,11 @@ package:
 	//! increments the object reference count
 	void retain()
 	{
+		// HACK: really need a proper system for OpenCL version handling
+		version(CL_VERSION_1_2)
+			static if (T.stringof == "cl_device_id")
+				clRetainDevice(_object);
+
 		// NOTE: cl_platform_id and cl_device_id aren't reference counted
 		// T.stringof is compared instead of T itself so it also works with T being an alias
 		// platform and device will have an empty retain() so it can be safely used in this()
@@ -114,6 +114,11 @@ package:
 	 */
 	void release()
 	{
+		// HACK: really need a proper system for OpenCL version handling
+		version(CL_VERSION_1_2)
+			static if (T.stringof == "cl_device_id")
+				clReleaseDevice(_object);
+
 		static if (T.stringof[$-3..$] != "_id")
 		{
 			mixin("cl_errcode res = clRelease" ~ toCamelCase(T.stringof[2..$]) ~ (T.stringof == "cl_mem" ? "Object" : "") ~ "(_object);");
@@ -321,7 +326,6 @@ protected:
  *		T = a cl4d object like CLKernel
  */
 package struct CLObjectCollection(T)
-// TODO: if (is(T : CLObject))
 {
 	T[] _objects;
 	alias _objects this;
