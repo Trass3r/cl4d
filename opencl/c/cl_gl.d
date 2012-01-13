@@ -26,7 +26,7 @@ extern(System):
 typedef cl_uint	 cl_gl_object_type;
 alias cl_uint	 cl_gl_texture_info;
 alias cl_uint	 cl_gl_platform_info;
-typedef void* cl_GLsync; // typedef struct __GLsync *cl_GLsync;
+typedef const(void*) cl_GLsync; // typedef struct __GLsync *cl_GLsync;
 
 enum
 {
@@ -52,6 +52,7 @@ cl_mem clCreateFromGLBuffer(
 	cl_errcode*		errcode_ret
 );
 
+version(CL_VERSION_1_2)
 cl_mem clCreateFromGLTexture(
 	cl_context		context,
 	cl_mem_flags	flags,
@@ -60,8 +61,9 @@ cl_mem clCreateFromGLTexture(
 	cl_GLuint		texture,
 	cl_errcode*		errcode_ret
 );
-
-deprecated cl_mem clCreateFromGLTexture2D(
+else
+{
+cl_mem clCreateFromGLTexture2D(
 	cl_context		context,
 	cl_mem_flags	flags,
 	cl_GLenum		target,
@@ -70,7 +72,7 @@ deprecated cl_mem clCreateFromGLTexture2D(
 	cl_errcode*		errcode_ret
 );
 
-deprecated cl_mem clCreateFromGLTexture3D(
+cl_mem clCreateFromGLTexture3D(
 	cl_context		context,
 	cl_mem_flags	flags,
 	cl_GLenum		target,
@@ -78,7 +80,7 @@ deprecated cl_mem clCreateFromGLTexture3D(
 	cl_GLuint		texture,
 	cl_errcode*		errcode_ret
 );
-
+}
 
 cl_mem clCreateFromGLRenderbuffer(
 	cl_context		context,

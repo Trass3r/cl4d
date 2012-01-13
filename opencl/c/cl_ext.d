@@ -37,9 +37,6 @@ version(CL_KHR)
 {
 enum
 {
-	// cl_khr_fp64 extension - no extension #define since it has no functions
-	CL_DEVICE_DOUBLE_FP_CONFIG		= 0x1032,
-
 	// cl_khr_fp16 extension - no extension #define since it has no functions
 	CL_DEVICE_HALF_FP_CONFIG		= 0x1033,
 }
