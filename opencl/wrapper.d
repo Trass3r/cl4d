@@ -72,13 +72,13 @@ debug private import std.stdio;
 		debug writef("releasing %s %X. Reference count before: %d\n", T.stringof, cast(void*) _object, referenceCount);
 		release();
 	}
-/* TODO: reenable when bug 5039 is fixed
+
 	//! ensure that _object isn't null
 	invariant()
 	{
 		assert(_object !is null, "invariant violated: _object is null");
 	}
-*/
+
 package:
 	// return the internal OpenCL C object
 	// should only be used inside here so reference counting works
