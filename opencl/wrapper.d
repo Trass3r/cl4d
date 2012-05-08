@@ -372,3 +372,38 @@ package struct CLObjectCollection(T)
 		return cast(const(T.CType)*) _objects.ptr;
 	}
 }
+
+
+version(unittest)
+{
+	struct CLDummy
+	{
+		alias uint CType;
+		uint referenceCount = 1;
+
+		this(this) {retain();}
+		~this() {release();}
+		void retain() {++referenceCount;}
+		void release() {--referenceCount;}
+	}
+
+	alias CLObjectCollection!CLDummy CLDummies;
+}
+
+unittest
+{
+	import std.conv;
+	CLDummy a;
+	CLDummy b;
+	assert(a.referenceCount == 1);
+
+	CLDummies c = CLDummies(a, b);
+	foreach (d; c)
+		assert(d.referenceCount == 2);
+
+	CLDummy d = c[0];
+	assert(d.referenceCount == 3, to!string(d.referenceCount));
+
+	uint[5] s = [1,2,3,4,5];
+	CLDummies g = CLDummies(s);
+}
