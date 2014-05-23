@@ -12,6 +12,7 @@ module opencl.c.cl_dx9_media_sharing;
 
 import opencl.c.cl;
 
+version(Windows):
 extern(System):
 
 /******************************************************************************
@@ -70,7 +71,7 @@ enum
 
 /******************************************************************************/
 
-typedef extern(System) cl_int function(
+alias extern(System) cl_int function(
 	cl_platform_id					platform,
 	cl_dx9_media_adapter_type_khr	media_adapter_type,
 	void*							media_adapter,
@@ -79,7 +80,7 @@ typedef extern(System) cl_int function(
 	cl_device_id*					devices,
 	cl_uint*						num_devices) clGetDeviceIDsForDX9MediaAdapterKHR_fn;
 
-typedef extern(System) cl_mem function(
+alias extern(System) cl_mem function(
 	cl_context					context,
 	cl_mem_flags					flags,
 	cl_dx9_media_adapter_type_khr	adapter_type,
@@ -87,7 +88,7 @@ typedef extern(System) cl_mem function(
 	cl_uint							plane,
 	cl_int*							errcode_ret) clCreateFromDX9MediaSurfaceKHR_fn;
 
-typedef extern(System) cl_int function(
+alias extern(System) cl_int function(
 	cl_command_queue	command_queue,
 	cl_uint				num_objects,
 	const cl_mem*		mem_objects,
@@ -95,7 +96,7 @@ typedef extern(System) cl_int function(
 	const cl_event*		event_wait_list,
 	cl_event*			event) cl_intclEnqueueAcquireDX9MediaSurfacesKHR_fn;
 
-typedef extern(System) cl_int function(
+alias extern(System) cl_int function(
 	cl_command_queue	command_queue,
 	cl_uint				num_objects,
 	cl_mem*				mem_objects,

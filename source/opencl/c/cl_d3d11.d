@@ -15,6 +15,7 @@ module opencl.c.cl_d3d11;
 
 import opencl.c.cl;
 
+version(Windows):
 extern(System):
 
 /******************************************************************************
@@ -61,7 +62,7 @@ mixin(bringToCurrentScope!cl_d3d11_device_set_khr);
 
 /******************************************************************************/
 
-typedef extern(System) cl_errcode function(
+alias extern(System) cl_errcode function(
 	cl_platform_id				platform,
 	cl_d3d11_device_source_khr	d3d_device_source,
 	void*						d3d_object,
@@ -70,27 +71,27 @@ typedef extern(System) cl_errcode function(
 	cl_device_id*				devices, 
 	cl_uint*					num_devices) clGetDeviceIDsFromD3D11NV_fn;
 
-typedef extern(System) cl_mem function(
+alias extern(System) cl_mem function(
 	cl_context		context,
 	cl_mem_flags	flags,
 	ID3D11Buffer*	resource,
 	cl_errcode*		errcode_ret) clCreateFromD3D11BufferNV_fn;
 
-typedef extern(System) cl_mem function(
+alias extern(System) cl_mem function(
 	cl_context			context,
 	cl_mem_flags		flags,
 	ID3D11Texture2D*	resource,
 	uint				subresource,
 	cl_errcode*			errcode_ret) clCreateFromD3D11Texture2DNV_fn;
 
-typedef extern(System) cl_mem function(
+alias extern(System) cl_mem function(
 	cl_context			context,
 	cl_mem_flags		flags,
 	ID3D11Texture3D*	resource,
 	uint				subresource,
 	cl_errcode*			errcode_ret) clCreateFromD3D11Texture3DNV_fn;
 
-typedef extern(System) cl_errcode function(
+alias extern(System) cl_errcode function(
 	cl_command_queue	command_queue,
 	cl_uint				num_objects,
 	const(cl_mem)*		mem_objects,
@@ -98,7 +99,7 @@ typedef extern(System) cl_errcode function(
 	const(cl_event)*	event_wait_list,
 	cl_event*			event) clEnqueueAcquireD3D11ObjectsNV_fn;
 
-typedef extern(System) cl_errcode function(
+alias extern(System) cl_errcode function(
 	cl_command_queue	command_queue,
 	cl_uint				num_objects,
 	const cl_mem*		mem_objects,
