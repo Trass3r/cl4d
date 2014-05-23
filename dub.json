@@ -1,0 +1,10 @@
+{
+	"name": "cl4d",
+	"description": "cl4d is an object-oriented wrapper for the OpenCL C API written in the D programming language.",
+	"copyright": "Copyright (C) 2009-2014 Andreas Hollandt",
+	"authors": ["Andreas Hollandt"],
+	"license": "BSL-1.0",
+	"sourcePaths": ["opencl"],
+	"dependencies": {
+	}
+}
