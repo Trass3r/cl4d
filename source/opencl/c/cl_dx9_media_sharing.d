@@ -15,14 +15,21 @@ import opencl.c.cl;
 version(Windows):
 extern(System):
 
+import core.sys.windows.windows;
+
 /******************************************************************************
 /* cl_khr_dx9_media_sharing													*/
+
+struct IDirect3DSurface9;
 
 struct cl_dx9_surface_info_khr
 {
 	IDirect3DSurface9*	resource;
 	HANDLE				shared_handle;
 }
+
+alias cl_uint             cl_dx9_media_adapter_type_khr;
+alias cl_uint             cl_dx9_media_adapter_set_khr;
 
 /******************************************************************************/
 

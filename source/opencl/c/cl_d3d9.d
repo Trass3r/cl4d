@@ -18,9 +18,18 @@ import opencl.c.cl;
 version(Windows):
 extern(System):
 
+import core.sys.windows.windows;
+
 /******************************************************************************
  * cl_nv_d3d9_sharing														  *
  ******************************************************************************/
+
+struct IDirect3DVertexBuffer9;
+struct IDirect3DIndexBuffer9;
+struct IDirect3DSurface9;
+struct IDirect3DCubeTexture9;
+struct IDirect3DVolumeTexture9;
+struct IDirect3DTexture9;
 
 // Error Codes
 enum
@@ -43,6 +52,17 @@ enum
 // cl_command_type
 	CL_COMMAND_ACQUIRE_D3D9_OBJECTS_NV	= 0x402A,
 	CL_COMMAND_RELEASE_D3D9_OBJECTS_NV	= 0x402B,
+}
+
+enum D3DCUBEMAP_FACES 
+{ 
+  D3DCUBEMAP_FACE_POSITIVE_X   = 0,
+  D3DCUBEMAP_FACE_NEGATIVE_X   = 1,
+  D3DCUBEMAP_FACE_POSITIVE_Y   = 2,
+  D3DCUBEMAP_FACE_NEGATIVE_Y   = 3,
+  D3DCUBEMAP_FACE_POSITIVE_Z   = 4,
+  D3DCUBEMAP_FACE_NEGATIVE_Z   = 5,
+  D3DCUBEMAP_FACE_FORCE_DWORD  = 0xffffffff
 }
 
 enum cl_d3d9_device_source_nv : cl_uint

@@ -18,9 +18,15 @@ import opencl.c.cl;
 version(Windows):
 extern(System):
 
+import core.sys.windows.windows;
+
 /******************************************************************************
  * cl_khr_d3d11_sharing														  *
  ******************************************************************************/
+
+struct ID3D11Buffer;
+struct ID3D11Texture2D;
+struct ID3D11Texture3D;
 
 enum
 {
