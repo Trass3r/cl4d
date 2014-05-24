@@ -23,7 +23,11 @@
 	       "dependencies": {
 	           "derelict-sdl2": "~master",
 	           "derelict-gl3": "~master"
-           }
+           	}
+	   },
+	   {
+	   	"name": "cl4d-noexc",
+	   	"versions": ["NO_CL_EXCEPTIONS"]
 	   }
 	]
 }
