@@ -64,8 +64,8 @@ public:
 		cl_errcode res;
 
 		cl_context_properties[] cps = [CL_CONTEXT_PLATFORM, cast(cl_context_properties) platform.cptr] ~ props ~ 0;
-		auto hndl = clCreateContextFromType(cps.ptr, type, null, null, &res);
-		
+		this(clCreateContextFromType(cps.ptr, type, null, null, &res));
+
 		mixin(exceptionHandling(
 			["CL_INVALID_PLATFORM",		"no platform could be selected"],
 			["CL_INVALID_VALUE",		"internal invalid value error"],
@@ -75,8 +75,6 @@ public:
 			["CL_INVALID_DEVICE_TYPE",  "device_type is not a valid value"],
 			["CL_INVALID_GL_SHAREGROUP_REFERENCE_KHR", "CL and GL not on the same device"]
 		));
-		
-		this(hndl);
 	}
 	
 	CLProgram createProgram(string sourceCode)

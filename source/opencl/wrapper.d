@@ -44,7 +44,7 @@ package string CLWrapper(string T, string classInfoFunction)
 	package T _object;
 	//public alias _object this; // TODO any merit?
 	package alias T CType; // remember the C type
-
+	
 public:
 	//! wrap OpenCL C API object
 	//! this doesn't change the reference count
@@ -77,9 +77,11 @@ debug private import std.stdio;
 	//! ensure that _object isn't null
 	invariant()
 	{
-		assert(_object !is null, "invariant violated: _object is null");
+		// Invariant is now called before opAssigned and the check is always fails while creating new structure
+		// see https://issues.dlang.org/show_bug.cgi?id=5058
+		//assert(_object !is null, "invariant violated: _object is null");
 	}
-
+	
 package:
 	// return the internal OpenCL C object
 	// should only be used inside here so reference counting works
