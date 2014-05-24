@@ -215,7 +215,10 @@ mixin(mixinExceptionClasses(
 		ECD("CL_IMAGE_FORMAT_MISMATCH",		"",	"CLBufferException"),
 		ECD("CL_IMAGE_FORMAT_NOT_SUPPORTED","", "CLBufferException"),
 		ECD("CL_INVALID_MIP_LEVEL",			"", "CLBufferException"),
-		ECD("CL_INVALID_GL_OBJECT",			"", "CLBufferException")
+		ECD("CL_INVALID_GL_OBJECT",			"", "CLBufferException"),
+		
+		// extention errors
+		ECD("CL_INVALID_GL_SHAREGROUP_REFERENCE_KHR", "", "CLPlatformException")
 ));
 
 } // of version(!NO_CL_EXCEPTIONS)
