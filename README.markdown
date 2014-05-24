@@ -1,7 +1,7 @@
 Welcome
 =======
 
-*cl4d* is an object-oriented wrapper for the [OpenCL](http://www.khronos.org/opencl/) C API written in the [D programming language](http://www.dlang.org/).\\
+**cl4d** is an object-oriented wrapper for the [OpenCL](http://www.khronos.org/opencl/) C API written in the [D programming language](http://www.dlang.org/).\\
 Since the package includes bindings to the C API, you may also directly write usual OpenCL code if you need to.
 
 You're welcome to contribute to the project.
