@@ -26,8 +26,12 @@
            	}
 	   },
 	   {
-	   	"name": "cl4d-noexc",
-	   	"versions": ["NO_CL_EXCEPTIONS"]
+	   		"name": "cl4d-noexc",
+	   		"versions": ["NO_CL_EXCEPTIONS"]
+	   },
+	   {
+	   		"name": "cl4d-verbose",
+	   		"version": ["CL4D_VERBOSE"]
 	   }
 	]
 }
