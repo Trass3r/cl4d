@@ -8,20 +8,21 @@ module CLGLInterop;
 
 import opencl.all;
 
-import derelict.sdl.sdl;
+import derelict.sdl2.sdl;
 
-import derelict.opengl.gl;
-import derelict.opengl.gltypes;
+import derelict.opengl3.gl;
+import derelict.opengl3.types;
 
 version(Windows)
-	import derelict.opengl.wgl;
+	import derelict.opengl3.wgl;
 else version(Posix)
-	import derelict.opengl.glx;
+	import derelict.opengl3.glx;
 else
 	static assert(0, "OS not supported");
 
 import std.datetime;
 import std.stdio;
+import std.conv;
 
 import common;
 
@@ -49,21 +50,26 @@ CLCommandQueue CQ;
 void main()
 {
 	// create a window plus OpenGL context
-	DerelictSDL.load();
-	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTTHREAD);
-
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	SDL_Surface* screen = SDL_SetVideoMode(1024, 768, 0, SDL_OPENGL|SDL_RESIZABLE|SDL_HWSURFACE);
-
-	scope(exit) SDL_Quit();
-
-	if (!screen)
-		return;
-
-	// initialize OpenGL
 	DerelictGL.load();
-	DerelictGL.loadClassicVersions(GLVersion.GL20); // load functions post OpenGL 1.1
-
+	DerelictSDL2.load();
+	SDL_Init(SDL_INIT_VIDEO);
+	scope(exit) SDL_Quit();
+	
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	auto window = SDL_CreateWindow("GL and CL interop example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 768, SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE);
+	if(!window)
+	{
+	    writeln("Error while loading window!");
+	    return;
+	}
+	
+	auto screen = SDL_GetWindowSurface(window);
+	assert(screen);
+	
+	// initialize OpenGL
+	DerelictGL.reload(); // load functions post OpenGL 1.1
+	assert(DerelictGL.loadedVersion >= GLVersion.GL20, text("Failed to load GL20, loaded version: ", DerelictGL.loadedVersion));
+	
 	setupViewport(screen.w, screen.h);
 
 	// start timers
@@ -85,14 +91,23 @@ void main()
 		{
 			switch(evt.type)
 			{
-				case SDL_VIDEORESIZE:
-					screen = SDL_SetVideoMode(evt.resize.w, evt.resize.h, 0, SDL_OPENGL|SDL_RESIZABLE|SDL_HWSURFACE);
-					if (screen)
-						setupViewport(screen.w, screen.h);
-					else
-					{} // Uh oh, we couldn't set the new video mode??
-					break;
-
+				case SDL_WINDOWEVENT:
+				{
+				    switch(evt.window.event)
+				    {
+				        case SDL_WINDOWEVENT_RESIZED:
+				        {
+        					//screen = SDL_SetVideoMode(evt.resize.w, evt.resize.h, 0, SDL_OPENGL|SDL_RESIZABLE|SDL_HWSURFACE);
+        					//if (screen)
+        						setupViewport(screen.w, screen.h);
+        					//else
+        					//{} // Uh oh, we couldn't set the new video mode??
+        					break;
+    					}
+				        default:
+					}
+				    break;
+				}
 				case SDL_QUIT:
 					done = 1;
 					break;
@@ -104,7 +119,7 @@ void main()
 		callCLKernel();
 		// draw scene
 		draw();
-		SDL_GL_SwapBuffers();
+		SDL_GL_SwapWindow(window);
 
 		// compute fps
 		numFrames++;
@@ -225,7 +240,6 @@ private void initialize()
 
 	// varTime is a regular buffer to store the simulation time, which we will pass on to the kernel
 	varTempo = CLBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, Tempo.sizeof, Tempo.ptr);
-
 	// the kernel we will use to manipulate the data
 	enum interopTeste = q{
 		/**
@@ -337,7 +351,8 @@ private void callCLKernel()
 	CQ.enqueueWriteBuffer(varTempo, CL_TRUE, 0, Tempo.sizeof, Tempo.ptr);
 
 	// now execute the kernel
-	CQ.enqueueNDRangeKernel(kernelinteropTeste, NDRange(PositionData.length / 3));
+	auto range = NDRange(PositionData.length / 3);
+	CQ.enqueueNDRangeKernel(kernelinteropTeste, range);
 
 	CQ.enqueueReleaseGLObjects(c);
 
