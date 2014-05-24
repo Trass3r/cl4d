@@ -7,7 +7,7 @@
 	"sourcePaths": ["source/opencl"],
 	"dependencies": {
 	},
-	"libs-posix": ["OpenCL"],
+	"libs": ["OpenCL"],
 	"configurations": [
 	   {
 	       "name": "vector-example",
