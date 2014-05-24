@@ -51,17 +51,17 @@ public:
 	this(T obj)
 	{
 		_object = obj;
-		debug writef("wrapped %s %X\n", TName, cast(void*) _object);
+		version(CL4D_VERBOSE) writef("wrapped %s %X\n", TName, cast(void*) _object);
 	}
 
-debug private import std.stdio;
+	version(CL4D_VERBOSE) private import std.stdio;
 
 	//! copy and increase reference count
 	this(this)
 	{
 		// increment reference count
 		retain();
-		debug writef("copied %s %X. Reference count is now: %d\n", TName, cast(void*) _object, referenceCount);
+		version(CL4D_VERBOSE) writef("copied %s %X. Reference count is now: %d\n", TName, cast(void*) _object, referenceCount);
 	}
 
 	//! release the object
@@ -70,7 +70,7 @@ debug private import std.stdio;
 		if (_object is null)
 			return;
 
-		debug writef("releasing %s %X. Reference count before: %d\n", TName, cast(void*) _object, referenceCount);
+		version(CL4D_VERBOSE) writef("releasing %s %X. Reference count before: %d\n", TName, cast(void*) _object, referenceCount);
 		release();
 	}
 
