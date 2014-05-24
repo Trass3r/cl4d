@@ -49,19 +49,25 @@ CLCommandQueue CQ;
 
 void main()
 {
-	// create a window plus OpenGL context
 	DerelictGL.load();
 	DerelictSDL2.load();
-	SDL_Init(SDL_INIT_VIDEO);
+	
+	// create a window plus OpenGL context
+	assert(SDL_Init(SDL_INIT_VIDEO) == 0, "Error while initing SDL!");
 	scope(exit) SDL_Quit();
 	
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	auto window = SDL_CreateWindow("GL and CL interop example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 768, SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE);
-	if(!window)
-	{
-	    writeln("Error while loading window!");
-	    return;
-	}
+	assert(window, "Error while loading window!");
+	
+	auto renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC);
+	assert(renderer, "Failed to create renderer!");
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+	SDL_RenderClear(renderer);
+	SDL_RenderPresent(renderer);
+	
+	auto context = SDL_GL_CreateContext(window);
+	assert(context, "Failed to create opengl context!");
 	
 	auto screen = SDL_GetWindowSurface(window);
 	assert(screen);
