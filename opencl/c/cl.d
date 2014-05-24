@@ -159,7 +159,8 @@ enum cl_errcode : cl_int
 	CL_INVALID_IMAGE_DESCRIPTOR                 = -65,
 	CL_INVALID_COMPILER_OPTIONS                 = -66,
 	CL_INVALID_LINKER_OPTIONS                   = -67,
-	CL_INVALID_DEVICE_PARTITION_COUNT           = -68
+	CL_INVALID_DEVICE_PARTITION_COUNT           = -68,
+	CL_INVALID_GL_SHAREGROUP_REFERENCE_KHR      = -1000
 }
 mixin(bringToCurrentScope!cl_errcode());
 
