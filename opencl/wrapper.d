@@ -317,7 +317,9 @@ protected:
 	 */
 	final string getStringInfo(alias infoFunction = }~classInfoFunction~q{)(cl_uint infoname) const
 	{
-		return cast(string) getArrayInfo!(ichar, infoFunction)(infoname);
+	    auto arr = getArrayInfo!(ichar, infoFunction)(infoname);
+	    if(arr.length == 0) return "";
+	    else return cast(string) arr[0 .. $-1]; // removing zero end symbol
 	}
 
 }; // return q{...}
