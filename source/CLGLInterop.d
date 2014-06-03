@@ -21,6 +21,7 @@ else
 	static assert(0, "OS not supported");
 
 import std.datetime;
+import std.exception;
 import std.stdio;
 import std.conv;
 
@@ -53,7 +54,7 @@ void main()
 	DerelictSDL2.load();
 	
 	// create a window plus OpenGL context
-	assert(SDL_Init(SDL_INIT_VIDEO) == 0, "Error while initing SDL!");
+	enforce(SDL_Init(SDL_INIT_VIDEO) == 0, "Error while initing SDL!");
 	scope(exit) SDL_Quit();
 	
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
