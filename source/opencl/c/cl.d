@@ -29,7 +29,6 @@ package string bringToCurrentScope(alias EnumType)()
 
 extern(System):
 
-//! these MUST be aliass
 alias const(void*)
 	cl_platform_id,
 	cl_device_id,
