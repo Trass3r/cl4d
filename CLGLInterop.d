@@ -103,11 +103,7 @@ void main()
 				    {
 				        case SDL_WINDOWEVENT_RESIZED:
 				        {
-        					//screen = SDL_SetVideoMode(evt.resize.w, evt.resize.h, 0, SDL_OPENGL|SDL_RESIZABLE|SDL_HWSURFACE);
-        					//if (screen)
-        						setupViewport(screen.w, screen.h);
-        					//else
-        					//{} // Uh oh, we couldn't set the new video mode??
+    						setupViewport(screen.w, screen.h);
         					break;
     					}
 				        default:
