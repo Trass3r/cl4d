@@ -10,6 +10,9 @@
 	"libs": ["OpenCL"],
 	"configurations": [
 	   {
+            "name": "cl4d"
+	   },
+	   {
 	       "name": "vector-example",
 	       "sourceFiles": ["source/vectorAdd.d"],
 	       "targetType": "executable",
