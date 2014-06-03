@@ -39,28 +39,29 @@ package
  */ 
 package string CLWrapper(string T, string classInfoFunction)
 {
-	return "private:\nalias " ~ T ~ " T;\n" ~ q{
-	package T _object = null;
+	return "private:\nalias " ~ T ~ " T;\n" ~ 
+	"enum TName = \"" ~ T ~ "\";\n" ~ q{
+	package T _object;
 	//public alias _object this; // TODO any merit?
 	package alias T CType; // remember the C type
-
+	
 public:
 	//! wrap OpenCL C API object
 	//! this doesn't change the reference count
 	this(T obj)
 	{
 		_object = obj;
-		debug writef("wrapped %s %X\n", T.stringof, cast(void*) _object);
+		version(CL4D_VERBOSE) writef("wrapped %s %X\n", TName, cast(void*) _object);
 	}
 
-debug private import std.stdio;
+	version(CL4D_VERBOSE) private import std.stdio;
 
 	//! copy and increase reference count
 	this(this)
 	{
 		// increment reference count
 		retain();
-		debug writef("copied %s %X. Reference count is now: %d\n", T.stringof, cast(void*) _object, referenceCount);
+		version(CL4D_VERBOSE) writef("copied %s %X. Reference count is now: %d\n", TName, cast(void*) _object, referenceCount);
 	}
 
 	//! release the object
@@ -69,16 +70,18 @@ debug private import std.stdio;
 		if (_object is null)
 			return;
 
-		debug writef("releasing %s %X. Reference count before: %d\n", T.stringof, cast(void*) _object, referenceCount);
+		version(CL4D_VERBOSE) writef("releasing %s %X. Reference count before: %d\n", TName, cast(void*) _object, referenceCount);
 		release();
 	}
 
 	//! ensure that _object isn't null
 	invariant()
 	{
-		assert(_object !is null, "invariant violated: _object is null");
+		// Invariant is now called before opAssigned and the check is always fails while creating new structure
+		// see https://issues.dlang.org/show_bug.cgi?id=5058
+		//assert(_object !is null, "invariant violated: _object is null");
 	}
-
+	
 package:
 	// return the internal OpenCL C object
 	// should only be used inside here so reference counting works
@@ -92,15 +95,15 @@ package:
 	{
 		// HACK: really need a proper system for OpenCL version handling
 		version(CL_VERSION_1_2)
-			static if (T.stringof == "cl_device_id")
+			static if (TName == "cl_device_id")
 				clRetainDevice(_object);
 
 		// NOTE: cl_platform_id and cl_device_id aren't reference counted
-		// T.stringof is compared instead of T itself so it also works with T being an alias
+		// TName is compared instead of T itself so it also works with T being an alias
 		// platform and device will have an empty retain() so it can be safely used in this()
-		static if (T.stringof[$-3..$] != "_id")
+		static if (TName[$-3..$] != "_id")
 		{
-			mixin("cl_errcode res = clRetain" ~ toCamelCase(T.stringof[2..$]) ~ (T.stringof == "cl_mem" ? "Object" : "") ~ "(_object);");
+			mixin("cl_errcode res = clRetain" ~ toCamelCase(TName[2..$]) ~ (TName == "cl_mem" ? "Object" : "") ~ "(_object);");
 			mixin(exceptionHandling(
 				["CL_OUT_OF_RESOURCES",		""],
 				["CL_OUT_OF_HOST_MEMORY",	""]
@@ -116,12 +119,12 @@ package:
 	{
 		// HACK: really need a proper system for OpenCL version handling
 		version(CL_VERSION_1_2)
-			static if (T.stringof == "cl_device_id")
+			static if (TName == "cl_device_id")
 				clReleaseDevice(_object);
 
-		static if (T.stringof[$-3..$] != "_id")
+		static if (TName[$-3..$] != "_id")
 		{
-			mixin("cl_errcode res = clRelease" ~ toCamelCase(T.stringof[2..$]) ~ (T.stringof == "cl_mem" ? "Object" : "") ~ "(_object);");
+			mixin("cl_errcode res = clRelease" ~ toCamelCase(TName[2..$]) ~ (TName == "cl_mem" ? "Object" : "") ~ "(_object);");
 			mixin(exceptionHandling(
 				["CL_OUT_OF_RESOURCES",		""],
 				["CL_OUT_OF_HOST_MEMORY",	""]
@@ -137,10 +140,10 @@ package:
 	 */
 	public @property cl_uint referenceCount() const
 	{
-		static if (T.stringof[$-3..$] != "_id")
+		static if (TName[$-3..$] != "_id")
 		{
 			// HACK: not even toUpper works in CTFE anymore as of 2.054 *sigh*
-			mixin("return getInfo!cl_uint(CL_" ~ (T.stringof == "cl_command_queue" ? "QUEUE" : (){char[] tmp = T.stringof[3..$].dup; toUpperInPlace(tmp); return tmp;}()) ~ "_REFERENCE_COUNT);");
+			mixin("return getInfo!cl_uint(CL_" ~ (TName == "cl_command_queue" ? "QUEUE" : (){char[] tmp = TName[3..$].dup; toUpperInPlace(tmp); return tmp;}()) ~ "_REFERENCE_COUNT);");
 		}
 		else
 			return 0;
@@ -185,7 +188,7 @@ protected:
 		U info;
 
 		// get actual data
-		res = infoFunction(_object, infoname, U.sizeof, &info, null);
+		res = infoFunction(_object, infoname, U.sizeof, cast(void*)&info, null);
 		
 		// error checking
 		if (res != CL_SUCCESS)
@@ -314,7 +317,9 @@ protected:
 	 */
 	final string getStringInfo(alias infoFunction = }~classInfoFunction~q{)(cl_uint infoname) const
 	{
-		return cast(string) getArrayInfo!(ichar, infoFunction)(infoname);
+	    auto arr = getArrayInfo!(ichar, infoFunction)(infoname);
+	    if(arr.length == 0) return "";
+	    else return cast(string) arr[0 .. $-1]; // removing zero end symbol
 	}
 
 }; // return q{...}

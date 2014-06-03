@@ -16,6 +16,7 @@ import opencl.wrapper;
 import opencl.device;
 import opencl.context;
 import opencl.error;
+import std.array;
 
 /**
  * An OpenCL program consists of a set of kernels that are identified as functions declared with
@@ -215,14 +216,15 @@ public:
 		string buildLogs()
 		{
 			auto devices = context.devices;
-			string res = "Build logs:\n";
+			auto builder = appender!string;
+			builder.put("Build logs:\n");
 			foreach(device; devices)
 			{
 				// TODO: currently build just builds for all devices, but what if build(specific_device) is added?
-				res ~=  device.name ~ ": " ~ buildLog(device) ~ "\n";
+				builder.put(device.name ~ ": " ~ buildLog(device) ~ "\n");
 			}
 			
-			return res;
+			return builder.data;
 		}
 		
 		//! the context specified when the program object was created

@@ -1,0 +1,40 @@
+{
+	"name": "cl4d",
+	"description": "cl4d is an object-oriented wrapper for the OpenCL C API written in the D programming language.",
+	"copyright": "Copyright (C) 2009-2014 Andreas Hollandt",
+	"authors": ["Andreas Hollandt"],
+	"license": "BSL-1.0",
+	"sourcePaths": ["source/opencl"],
+	"dependencies": {
+	},
+	"libs": ["OpenCL"],
+	"configurations": [
+	   {
+            "name": "cl4d"
+	   },
+	   {
+	       "name": "vector-example",
+	       "sourceFiles": ["source/vectorAdd.d"],
+	       "targetType": "executable",
+	       "targetName": "vector-example"
+	   },
+	   {
+	       "name": "gl-example",
+	       "sourceFiles": ["source/CLGLInterop.d"],
+	       "targetType": "executable",
+	       "targetName": "gl-example",
+	       "dependencies": {
+	           "derelict-sdl2": "~master",
+	           "derelict-gl3": "~master"
+           	}
+	   },
+	   {
+	   		"name": "cl4d-noexc",
+	   		"versions": ["NO_CL_EXCEPTIONS"]
+	   },
+	   {
+	   		"name": "cl4d-verbose",
+	   		"version": ["CL4D_VERBOSE"]
+	   }
+	]
+}

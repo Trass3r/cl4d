@@ -65,13 +65,15 @@ public:
 
 		cl_context_properties[] cps = [CL_CONTEXT_PLATFORM, cast(cl_context_properties) platform.cptr] ~ props ~ 0;
 		this(clCreateContextFromType(cps.ptr, type, null, null, &res));
-		
+
 		mixin(exceptionHandling(
 			["CL_INVALID_PLATFORM",		"no platform could be selected"],
 			["CL_INVALID_VALUE",		"internal invalid value error"],
 			["CL_DEVICE_NOT_AVAILABLE",	"no devices currently available"],
 			["CL_DEVICE_NOT_FOUND",		"no devices were found"],
-			["CL_OUT_OF_HOST_MEMORY",	""]
+			["CL_OUT_OF_HOST_MEMORY",	""],
+			["CL_INVALID_DEVICE_TYPE",  "device_type is not a valid value"],
+			["CL_INVALID_GL_SHAREGROUP_REFERENCE_KHR", "CL and GL not on the same device"]
 		));
 	}
 	

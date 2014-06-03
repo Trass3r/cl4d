@@ -29,8 +29,7 @@ package string bringToCurrentScope(alias EnumType)()
 
 extern(System):
 
-//! these MUST be typedefs
-typedef const(void*)
+alias const(void*)
 	cl_platform_id,
 	cl_device_id,
 	cl_context,
@@ -42,7 +41,7 @@ typedef const(void*)
 	cl_sampler;
 
 // TODO: info types should be aliases so getInfo isn't instantiated too often for the same types?
-// on the other hand typedefs are needed to be type-safe, esp. for bitfields
+// on the other hand aliass are needed to be type-safe, esp. for bitfields
 //alias cl_uint			cl_bool;		// WARNING!  Unlike cl_ types in cl_platform.h, cl_bool is not guaranteed to be the same size as the bool in kernels.
 alias cl_ulong			cl_bitfield;
 alias cl_uint			cl_platform_info;
@@ -159,7 +158,8 @@ enum cl_errcode : cl_int
 	CL_INVALID_IMAGE_DESCRIPTOR                 = -65,
 	CL_INVALID_COMPILER_OPTIONS                 = -66,
 	CL_INVALID_LINKER_OPTIONS                   = -67,
-	CL_INVALID_DEVICE_PARTITION_COUNT           = -68
+	CL_INVALID_DEVICE_PARTITION_COUNT           = -68,
+	CL_INVALID_GL_SHAREGROUP_REFERENCE_KHR      = -1000
 }
 mixin(bringToCurrentScope!cl_errcode());
 
@@ -1320,8 +1320,8 @@ cl_errcode clEnqueueFillImage(
 	cl_command_queue   command_queue,
 	cl_mem             image,
 	const(void)*       fill_color,
-	const(size_t)*     origin[3],
-	const(size_t)*     region[3],
+	const(size_t)*[3]  origin,
+	const(size_t)*[3]  region,
 	cl_uint            num_events_in_wait_list,
 	const(cl_event)*   event_wait_list,
 	cl_event*          event

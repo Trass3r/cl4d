@@ -16,7 +16,10 @@ module opencl.c.cl_d3d10;
 //import d3d10;
 import opencl.c.cl;
 
+version(Windows):
 extern(System):
+
+import core.sys.windows.windows;
 
 /******************************************************************************
  * cl_khr_d3d10_sharing
@@ -62,7 +65,7 @@ mixin(bringToCurrentScope!cl_d3d10_device_set_khr);
 
 /******************************************************************************/
 
-typedef extern(System) cl_errcode function(
+alias extern(System) cl_errcode function(
 	cl_platform_id				platform,
 	cl_d3d10_device_source_khr	d3d_device_source,
 	void*						d3d_object,
@@ -72,14 +75,14 @@ typedef extern(System) cl_errcode function(
 	cl_uint*					num_devices
 ) clGetDeviceIDsFromD3D10KHR_fn;
 
-typedef extern(System) cl_mem function(
+alias extern(System) cl_mem function(
 	cl_context		context,
 	cl_mem_flags	flags,
 	void*			resource, // ID3D10Buffer*
 	cl_errcode*		errcode_ret
 ) clCreateFromD3D10BufferKHR_fn;
 
-typedef extern(System) cl_mem function(
+alias extern(System) cl_mem function(
 	cl_context			context,
 	cl_mem_flags		flags,
 	void*				resource, // ID3D10Texture2D*
@@ -87,7 +90,7 @@ typedef extern(System) cl_mem function(
 	cl_errcode*			errcode_ret
 ) clCreateFromD3D10Texture2DKHR_fn;
 
-typedef extern(System) cl_mem function(
+alias extern(System) cl_mem function(
 	cl_context			context,
 	cl_mem_flags		flags,
 	void*				resource, // ID3D10Texture3D*
@@ -95,7 +98,7 @@ typedef extern(System) cl_mem function(
 	cl_errcode*			errcode_ret
 ) clCreateFromD3D10Texture3DKHR_fn;
 
-typedef extern(System) cl_errcode function(
+alias extern(System) cl_errcode function(
 	cl_command_queue	command_queue,
 	cl_uint				num_objects,
 	const(cl_mem)*		mem_objects,
@@ -104,7 +107,7 @@ typedef extern(System) cl_errcode function(
 	cl_event*			event
 ) clEnqueueAcquireD3D10ObjectsKHR_fn;
 
-typedef extern(System) cl_errcode function(
+alias extern(System) cl_errcode function(
 	cl_command_queue	command_queue,
 	cl_uint				num_objects,
 	const(cl_mem)*		mem_objects,

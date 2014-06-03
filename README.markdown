@@ -1,6 +1,7 @@
-== Welcome ==
+Welcome
+=======
 
-**cl4d ** is an object-oriented wrapper for the [[http://www.khronos.org/opencl/|OpenCL]] C API written in the [[http://www.dlang.org/|D programming language]].\\
+**cl4d** is an object-oriented wrapper for the [OpenCL](http://www.khronos.org/opencl/) C API written in the [D programming language](http://www.dlang.org/).\\
 Since the package includes bindings to the C API, you may also directly write usual OpenCL code if you need to.
 
 You're welcome to contribute to the project.
@@ -9,23 +10,34 @@ You're welcome to contribute to the project.
 * send patches
 * whatever else
 
-
-== License ==
+License
+=======
 
 The code is licensed under the terms of the Boost Software License 1.0.
 
-
-== Build instructions ==
+Build instructions
+==================
+To use the package as dependency add following to you `dub.json` file:
+```JSON
+"dependencies": {
+  "cl4d": "~master"
+}
+```
 
 * The repo contains some sample modules for your guidance.
-* To build them a simple tool like rdmd or xfBuild is enough. See makeExamples.sh.
-* Note that you need Derelict2 for the OpenGL interoperability sample.
+To build them you can run following in repo root folder:
+```
+dub build --config=vector-example
+dub build --config=gl-example
+```
+* Note that cl4d uses Derelict dependencies for the OpenGL interoperability sample.
 
 * Be sure to always use the latest compiler version!
 * For maximal performance enable function inlining and set version NO_CL_EXCEPTIONS. Then direct calls to the C API are performed.
-  If you additionally use proper dead code elimination (e.g. [[https://bitbucket.org/goshawk/gdc|gdc]]'s -ffunction-sections -fdata-sections -Wl,--gc-sections) or [[http://en.wikipedia.org/wiki/Link-time_optimization|LTO]] almost all of the wrapper code should disappear.
+  If you additionally use proper dead code elimination (e.g. [gdc](https://bitbucket.org/goshawk/gdc)'s -ffunction-sections -fdata-sections -Wl,--gc-sections) or [LTO](http://en.wikipedia.org/wiki/Link-time_optimization) almost all of the wrapper code should disappear.
 
-== Guidelines ==
+Guidelines
+==========
 
 The philosophy behind cl4d is to provide a thin layer on top of the C API which makes working with OpenCL less painful by harnessing D's linguistic power. Unlike the official C++ bindings I still try to wrap the C API as good as possible, e.g. object properties are properly exposed as such so you don't have to call something like getInfo!cl_uint(CL_KERNEL_NUM_ARGS) all the time.
 

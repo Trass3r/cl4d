@@ -15,11 +15,21 @@ module opencl.c.cl_d3d9;
 
 import opencl.c.cl;
 
+version(Windows):
 extern(System):
+
+import core.sys.windows.windows;
 
 /******************************************************************************
  * cl_nv_d3d9_sharing														  *
  ******************************************************************************/
+
+struct IDirect3DVertexBuffer9;
+struct IDirect3DIndexBuffer9;
+struct IDirect3DSurface9;
+struct IDirect3DCubeTexture9;
+struct IDirect3DVolumeTexture9;
+struct IDirect3DTexture9;
 
 // Error Codes
 enum
@@ -44,6 +54,17 @@ enum
 	CL_COMMAND_RELEASE_D3D9_OBJECTS_NV	= 0x402B,
 }
 
+enum D3DCUBEMAP_FACES 
+{ 
+  D3DCUBEMAP_FACE_POSITIVE_X   = 0,
+  D3DCUBEMAP_FACE_NEGATIVE_X   = 1,
+  D3DCUBEMAP_FACE_POSITIVE_Y   = 2,
+  D3DCUBEMAP_FACE_NEGATIVE_Y   = 3,
+  D3DCUBEMAP_FACE_POSITIVE_Z   = 4,
+  D3DCUBEMAP_FACE_NEGATIVE_Z   = 5,
+  D3DCUBEMAP_FACE_FORCE_DWORD  = 0xffffffff
+}
+
 enum cl_d3d9_device_source_nv : cl_uint
 {
 	CL_D3D9_DEVICE_NV					= 0x4022,
@@ -61,7 +82,7 @@ mixin(bringToCurrentScope!cl_d3d9_device_set_nv);
 
 /******************************************************************************/
 
-typedef extern(System) cl_errcode function(
+alias extern(System) cl_errcode function(
 	cl_platform_id				platform,
 	cl_d3d9_device_source_nv	d3d_device_source,
 	void*						d3d_object,
@@ -70,32 +91,32 @@ typedef extern(System) cl_errcode function(
 	cl_device_id*				devices, 
 	cl_uint*					num_devices) clGetDeviceIDsFromD3D9NV_fn;
 
-typedef extern(System) cl_mem function(
+alias extern(System) cl_mem function(
 	cl_context				context,
 	cl_mem_flags			flags,
 	IDirect3DVertexBuffer9*	resource,
 	cl_errcode*				errcode_ret) clCreateFromD3D9VertexBufferNV_fn;
 
-typedef extern(System) cl_mem function(
+alias extern(System) cl_mem function(
 	cl_context				context,
 	cl_mem_flags			flags,
 	IDirect3DIndexBuffer9*	resource,
 	cl_errcode*				errcode_ret) clCreateFromD3D9IndexBufferNV_fn;
 
-typedef extern(System) cl_mem function(
+alias extern(System) cl_mem function(
 	cl_context			context,
 	cl_mem_flags		flags,
 	IDirect3DSurface9*	resource,
 	cl_errcode*			errcode_ret) clCreateFromD3D9SurfaceNV_fn;
 
-typedef extern(System) cl_mem function(
+alias extern(System) cl_mem function(
 	cl_context		 	context,
 	cl_mem_flags		flags,
 	IDirect3DTexture9*	resource,
 	uint				miplevel,
 	cl_errcode*			errcode_ret) clCreateFromD3D9TextureNV_fn;
 
-typedef extern(System) cl_mem function(
+alias extern(System) cl_mem function(
 	cl_context				context,
 	cl_mem_flags			flags,
 	IDirect3DCubeTexture9*	resource,
@@ -103,14 +124,14 @@ typedef extern(System) cl_mem function(
 	uint					miplevel,
 	cl_errcode*				errcode_ret) clCreateFromD3D9CubeTextureNV_fn;
 
-typedef extern(System) cl_mem function(
+alias extern(System) cl_mem function(
 	cl_context					context,
 	cl_mem_flags				flags,
 	IDirect3DVolumeTexture9*	resource,
 	uint						miplevel,
 	cl_errcode*					errcode_ret) clCreateFromD3D9VolumeTextureNV_fn;
 
-typedef extern(System) cl_errcode function(
+alias extern(System) cl_errcode function(
 	cl_command_queue	command_queue,
 	cl_uint				num_objects,
 	const(cl_mem)*		mem_objects,
@@ -118,7 +139,7 @@ typedef extern(System) cl_errcode function(
 	const(cl_event)*	event_wait_list,
 	cl_event*			event) clEnqueueAcquireD3D9ObjectsNV_fn;
 
-typedef extern(System) cl_errcode function(
+alias extern(System) cl_errcode function(
 	cl_command_queue	command_queue,
 	cl_uint				num_objects,
 	cl_mem*				mem_objects,
