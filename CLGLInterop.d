@@ -6,7 +6,7 @@
  */
 module CLGLInterop;
 
-import cl4d.all;
+import cl4d;
 
 import derelict.sdl2.sdl;
 

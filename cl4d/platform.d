@@ -25,31 +25,31 @@ struct CLPlatform
 
 public:
 	/// get the platform name
-	string name()
+	@property string name()
 	{
 		 return getStringInfo(CL_PLATFORM_NAME);
 	}
 	
 	/// get platform vendor
-	string vendor()
+	@property string vendor()
 	{
 		 return getStringInfo(CL_PLATFORM_VENDOR);
 	}
 
 	/// get platform version
-	string clversion()
+	@property string clversion()
 	{
 		 return getStringInfo(CL_PLATFORM_VERSION);
 	}
 
 	/// get platform profile
-	string profile()
+	@property string profile()
 	{
 		 return getStringInfo(CL_PLATFORM_PROFILE);
 	}
 
 	/// get platform extensions
-	string extensions()
+	@property string extensions()
 	{
 		 return getStringInfo(CL_PLATFORM_EXTENSIONS);
 	}

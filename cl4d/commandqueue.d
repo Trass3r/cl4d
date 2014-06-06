@@ -826,7 +826,7 @@ version(CL_VERSION_1_1)
 		}
 
 		//! specified properties for the command-queue
-		auto properties()
+		cl_command_queue_properties properties()
 		{
 			return this.getInfo!(cl_command_queue_properties)(CL_QUEUE_PROPERTIES);
 		}

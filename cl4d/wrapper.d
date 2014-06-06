@@ -77,11 +77,9 @@ public:
 	//! ensure that _object isn't null
 	invariant()
 	{
-		// Invariant is now called before opAssigned and the check is always fails while creating new structure
-		// see https://issues.dlang.org/show_bug.cgi?id=5058
-		//assert(_object !is null, "invariant violated: _object is null");
+		assert(_object !is null, "invariant violated: _object is null");
 	}
-	
+
 package:
 	// return the internal OpenCL C object
 	// should only be used inside here so reference counting works
@@ -142,8 +140,7 @@ package:
 	{
 		static if (TName[$-3..$] != "_id")
 		{
-			// HACK: not even toUpper works in CTFE anymore as of 2.054 *sigh*
-			mixin("return getInfo!cl_uint(CL_" ~ (TName == "cl_command_queue" ? "QUEUE" : (){char[] tmp = TName[3..$].dup; toUpperInPlace(tmp); return tmp;}()) ~ "_REFERENCE_COUNT);");
+			mixin("return getInfo!cl_uint(CL_" ~ (TName == "cl_command_queue" ? "QUEUE" : TName[3..$].toUpper) ~ "_REFERENCE_COUNT);");
 		}
 		else
 			return 0;
@@ -343,8 +340,8 @@ package struct CLObjectCollection(T)
 	}
 	body
 	{
-		// they were already copy-constructed (due to variadic?!)
-		_objects = objects;
+		// must copy
+		_objects = objects.dup;
 	}
 
 	//! takes a list of OpenCL C objects returned by some OpenCL functions like GetPlatformIDs

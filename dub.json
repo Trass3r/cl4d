@@ -9,32 +9,33 @@
 	},
 	"libs": ["OpenCL"],
 	"configurations": [
-	   {
-            "name": "cl4d"
-	   },
-	   {
-	       "name": "vector-example",
-	       "sourceFiles": ["vectorAdd.d"],
-	       "targetType": "executable",
-	       "targetName": "vector-example"
-	   },
-	   {
-	       "name": "gl-example",
-	       "sourceFiles": ["CLGLInterop.d"],
-	       "targetType": "executable",
-	       "targetName": "gl-example",
-	       "dependencies": {
-	           "derelict-sdl2": "~master",
-	           "derelict-gl3": "~master"
-           	}
-	   },
-	   {
-	   		"name": "cl4d-noexc",
-	   		"versions": ["NO_CL_EXCEPTIONS"]
-	   },
-	   {
-	   		"name": "cl4d-verbose",
-	   		"version": ["CL4D_VERBOSE"]
-	   }
+		{
+			"name": "cl4d",
+			"versions": ["CL_VERSION_1_1"]
+		},
+		{
+			"name": "vector-example",
+			"sourceFiles": ["vectorAdd.d"],
+			"targetType": "executable",
+			"targetName": "vector-example"
+		},
+		{
+			"name": "gl-example",
+			"sourceFiles": ["CLGLInterop.d"],
+			"targetType": "executable",
+			"targetName": "gl-example",
+			"dependencies": {
+				"derelict-sdl2": "~master",
+				"derelict-gl3": "~master"
+			}
+		},
+		{
+				"name": "cl4d-noexc",
+				"versions": ["NO_CL_EXCEPTIONS"]
+		},
+		{
+				"name": "cl4d-verbose",
+				"versions": ["CL4D_VERBOSE"]
+		}
 	]
 }

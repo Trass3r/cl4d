@@ -1,7 +1,7 @@
 
 module vectorAdd;
 
-import cl4d.all;
+import cl4d;
 
 import std.stdio;
 

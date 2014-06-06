@@ -8,7 +8,7 @@
  *	License:
  *		see LICENSE.txt
  */
-module cl4d.all;
+module cl4d;
 
 public import
 	cl4d.c.opencl,

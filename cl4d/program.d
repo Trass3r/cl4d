@@ -150,7 +150,7 @@ public:
 	 *	Returns:
 	 *		kernel collection
 	 */
-	auto createKernels()
+	CLKernels createKernels()
 	{
 		cl_errcode res;
 		cl_uint numKernels;
@@ -187,7 +187,7 @@ public:
 	 *		CL_BUILD_IN_PROGRESS. The build status returned if the last call to clBuildProgram on the specified
 	 *						program object for device has not finished.
 	 */
-	auto buildStatus(CLDevice device)
+	cl_build_status buildStatus(CLDevice device)
 	{
 		return getInfo2!(cl_build_status, clGetProgramBuildInfo)(device.cptr, CL_PROGRAM_BUILD_STATUS);
 	}
@@ -244,7 +244,7 @@ public:
 		 * which the program object has been created or can be a subset of devices that are specified when a progam object
 		 * is created using	clCreateProgramWithBinary
 		 */
-		auto devices()
+		CLDevices devices()
 		{
 			cl_device_id[] ids = this.getArrayInfo!(cl_device_id)(CL_PROGRAM_DEVICES);
 			return CLDevices(ids);
