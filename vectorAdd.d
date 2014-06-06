@@ -1,7 +1,7 @@
 
 module vectorAdd;
 
-import opencl.all;
+import cl4d.all;
 
 import std.stdio;
 

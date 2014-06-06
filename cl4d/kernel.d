@@ -3,22 +3,22 @@
  *	written in the D programming language
  *
  *	Copyright:
- *		(C) 2009-2011 Andreas Hollandt
+ *		(C) 2009-2014 Andreas Hollandt
  *
  *	License:
  *		see LICENSE.txt
  */
-module opencl.kernel;
+module cl4d.kernel;
 
-import opencl.c.cl;
-import opencl.commandqueue;
-import opencl.context;
-import opencl.device;
-import opencl.error;
-import opencl.memory;
-import opencl.program;
-import opencl.sampler;
-import opencl.wrapper;
+import cl4d.c.cl;
+import cl4d.commandqueue;
+import cl4d.context;
+import cl4d.device;
+import cl4d.error;
+import cl4d.memory;
+import cl4d.program;
+import cl4d.sampler;
+import cl4d.wrapper;
 
 import std.string : toStringz;
 import std.traits;

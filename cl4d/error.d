@@ -3,14 +3,14 @@
  *	written in the D programming language
  *
  *	Copyright:
- *		(C) 2009-2011 Andreas Hollandt
+ *		(C) 2009-2014 Andreas Hollandt
  *
  *	License:
  *		see LICENSE.txt
  */
-module opencl.error;
+module cl4d.error;
 
-import opencl.c.cl;
+import cl4d.c.cl;
 
 class CLException : Exception
 {

@@ -3,7 +3,7 @@
  *	written in the D programming language
  *
  *	Copyright:
- *		(c) 2009-2011 Andreas Hollandt
+ *		(c) 2009-2014 Andreas Hollandt
  *
  *	License:
  *		see LICENSE.txt
@@ -11,9 +11,9 @@
 
 // $Revision: 11708 $ on $Date: 2010-06-13 23:36:24 -0700 (Sun, 13 Jun 2010) $
 
-module opencl.c.cl_d3d11;
+module cl4d.c.cl_d3d11;
 
-import opencl.c.cl;
+import cl4d.c.cl;
 
 version(Windows):
 extern(System):

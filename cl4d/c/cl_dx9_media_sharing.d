@@ -8,9 +8,9 @@
  *	License:
  *		see LICENSE.txt
  */
-module opencl.c.cl_dx9_media_sharing;
+module cl4d.c.cl_dx9_media_sharing;
 
-import opencl.c.cl;
+import cl4d.c.cl;
 
 version(Windows):
 extern(System):

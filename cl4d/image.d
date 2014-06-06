@@ -3,19 +3,19 @@
  *	written in the D programming language
  *
  *	Copyright:
- *		(C) 2009-2011 Andreas Hollandt
+ *		(C) 2009-2014 Andreas Hollandt
  *
  *	License:
  *		see LICENSE.txt
  */
-module opencl.image;
+module cl4d.image;
 
-import opencl.c.cl;
-import opencl.c.cl_gl;
-import opencl.context;
-import opencl.error;
-import opencl.memory;
-import opencl.wrapper;
+import cl4d.c.cl;
+import cl4d.c.cl_gl;
+import cl4d.context;
+import cl4d.error;
+import cl4d.memory;
+import cl4d.wrapper;
 
 /**
  *	base class for the different image types

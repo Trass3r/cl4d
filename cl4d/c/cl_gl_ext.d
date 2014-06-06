@@ -3,7 +3,7 @@
  *	written in the D programming language
  *
  *	Copyright:
- *		(c) 2009-2011 Andreas Hollandt
+ *		(c) 2009-2014 Andreas Hollandt
  *
  *	License:
  *		see LICENSE.txt
@@ -14,10 +14,10 @@
 /**
  *	cl_gl_ext.h contains vendor (non-KHR) OpenCL extensions which have OpenGL dependencies.
  */
-module opencl.c.cl_gl_ext;
+module cl4d.c.cl_gl_ext;
 
-import opencl.c.cl;
-import opencl.c.cl_gl;
+import cl4d.c.cl;
+import cl4d.c.cl_gl;
 
 extern(System):
 

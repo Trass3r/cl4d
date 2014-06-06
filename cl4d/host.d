@@ -3,16 +3,16 @@
  *	written in the D programming language
  *
  *	Copyright:
- *		(C) 2009-2011 Andreas Hollandt
+ *		(C) 2009-2014 Andreas Hollandt
  *
  *	License:
  *		see LICENSE.txt
  */
-module opencl.host;
+module cl4d.host;
 
-import opencl.c.cl;
-import opencl.error;
-import opencl.platform;
+import cl4d.c.cl;
+import cl4d.error;
+import cl4d.platform;
 
 ///
 struct CLHost

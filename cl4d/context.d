@@ -3,19 +3,19 @@
  *	written in the D programming language
  *
  *	Copyright:
- *		(C) 2009-2011 Andreas Hollandt
+ *		(C) 2009-2014 Andreas Hollandt
  *
  *	License:
  *		see LICENSE.txt
  */
-module opencl.context;
+module cl4d.context;
 
-import opencl.c.cl;
-import opencl.device;
-import opencl.error;
-import opencl.platform;
-import opencl.program;
-import opencl.wrapper;
+import cl4d.c.cl;
+import cl4d.device;
+import cl4d.error;
+import cl4d.platform;
+import cl4d.program;
+import cl4d.wrapper;
 
 /**
  * context class

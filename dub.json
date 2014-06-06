@@ -4,7 +4,7 @@
 	"copyright": "Copyright (C) 2009-2014 Andreas Hollandt",
 	"authors": ["Andreas Hollandt"],
 	"license": "BSL-1.0",
-	"sourcePaths": ["source/opencl"],
+	"sourcePaths": ["cl4d"],
 	"dependencies": {
 	},
 	"libs": ["OpenCL"],
@@ -14,13 +14,13 @@
 	   },
 	   {
 	       "name": "vector-example",
-	       "sourceFiles": ["source/vectorAdd.d"],
+	       "sourceFiles": ["vectorAdd.d"],
 	       "targetType": "executable",
 	       "targetName": "vector-example"
 	   },
 	   {
 	       "name": "gl-example",
-	       "sourceFiles": ["source/CLGLInterop.d"],
+	       "sourceFiles": ["CLGLInterop.d"],
 	       "targetType": "executable",
 	       "targetName": "gl-example",
 	       "dependencies": {

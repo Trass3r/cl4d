@@ -3,17 +3,17 @@
  *	written in the D programming language
  *
  *	Copyright:
- *		(C) 2009-2011 Andreas Hollandt
+ *		(C) 2009-2014 Andreas Hollandt
  *
  *	License:
  *		see LICENSE.txt
  */
-module opencl.sampler;
+module cl4d.sampler;
 
-import opencl.c.cl;
-import opencl.context;
-import opencl.error;
-import opencl.wrapper;
+import cl4d.c.cl;
+import cl4d.context;
+import cl4d.error;
+import cl4d.wrapper;
 
 /**
  *	A sampler object describes how to sample an image when the image is read in the kernel

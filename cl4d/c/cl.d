@@ -9,9 +9,9 @@
  *		see LICENSE.txt
  */
 
-module opencl.c.cl;
+module cl4d.c.cl;
 
-public import opencl.c.cl_platform;
+public import cl4d.c.cl_platform;
 
 version(CL_VERSION_1_2)
 	version = CL_VERSION_1_1;

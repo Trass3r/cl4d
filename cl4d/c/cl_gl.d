@@ -3,7 +3,7 @@
  *	written in the D programming language
  *
  *	Copyright:
- *		(c) 2009-2011 Andreas Hollandt
+ *		(c) 2009-2014 Andreas Hollandt
  *
  *	License:
  *		see LICENSE.txt
@@ -16,10 +16,10 @@
  * OpenGL dependencies. The application is responsible for #including
  * OpenGL or OpenGL ES headers before #including cl_gl.h.
  */
-module opencl.c.cl_gl;
+module cl4d.c.cl_gl;
 
-//import opencl.c.cl_platform;
-import opencl.c.cl;
+//import cl4d.c.cl_platform;
+import cl4d.c.cl;
 
 extern(System):
 

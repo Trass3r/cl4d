@@ -3,18 +3,18 @@
  *	written in the D programming language
  *
  *	Copyright:
- *		(C) 2009-2011 Andreas Hollandt
+ *		(C) 2009-2014 Andreas Hollandt
  *
  *	License:
  *		see LICENSE.txt
  */
-module opencl.device;
+module cl4d.device;
 
-import opencl.c.cl;
-import opencl.c.cl_ext;
-import opencl.error;
-import opencl.platform;
-import opencl.wrapper;
+import cl4d.c.cl;
+import cl4d.c.cl_ext;
+import cl4d.error;
+import cl4d.platform;
+import cl4d.wrapper;
 
 /// collection of several devices
 alias CLObjectCollection!CLDevice CLDevices;

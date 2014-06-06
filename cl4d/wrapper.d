@@ -3,20 +3,20 @@
  *	written in the D programming language
  *
  *	Copyright:
- *		(C) 2009-2011 Andreas Hollandt
+ *		(C) 2009-2014 Andreas Hollandt
  *
  *	License:
  *		see LICENSE.txt
  */
-module opencl.wrapper;
+module cl4d.wrapper;
 
-import opencl.error;
-import opencl.c.cl;
-import opencl.kernel;
-import opencl.memory;
-import opencl.platform;
-import opencl.device;
-import opencl.event;
+import cl4d.error;
+import cl4d.c.cl;
+import cl4d.kernel;
+import cl4d.memory;
+import cl4d.platform;
+import cl4d.device;
+import cl4d.event;
 
 import std.array;
 

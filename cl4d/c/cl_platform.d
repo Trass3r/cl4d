@@ -3,7 +3,7 @@
  *	written in the D programming language
  *
  *	Copyright:
- *		(c) 2009-2011 Andreas Hollandt
+ *		(c) 2009-2014 Andreas Hollandt
  *
  *	License:
  *		see LICENSE.txt
@@ -11,7 +11,7 @@
 
 // based on $Revision: 14829 $ on $Date: 2011-05-26 08:22:50 -0700 (Thu, 26 May 2011) $
 
-module opencl.c.cl_platform;
+module cl4d.c.cl_platform;
 
 // calling conventions are extern(System) now
 // TODO: on MacOSX API calls are __attribute__((weak_import))
