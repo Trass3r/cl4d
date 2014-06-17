@@ -10,8 +10,8 @@
  */
 module cl4d.device;
 
-import cl4d.c.cl;
-import cl4d.c.cl_ext;
+import derelict.opencl.cl;
+import derelict.opencl.cl_ext;
 import cl4d.error;
 import cl4d.platform;
 import cl4d.wrapper;

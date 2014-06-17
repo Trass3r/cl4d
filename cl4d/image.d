@@ -10,8 +10,8 @@
  */
 module cl4d.image;
 
-import cl4d.c.cl;
-import cl4d.c.cl_gl;
+import derelict.opencl.cl;
+import derelict.opencl.cl_gl;
 import cl4d.context;
 import cl4d.error;
 import cl4d.memory;
@@ -157,7 +157,7 @@ struct CLImage2DGL
 	 *		miplevel= mipmap level to be used
 	 *		texobj	= name of a complete GL 2D, cubemap or rectangle texture object
 	 */
-	this(const CLContext context, cl_mem_flags flags, cl_GLenum target, cl_GLint  miplevel, cl_GLuint texobj)
+	this(CLContext context, cl_mem_flags flags, cl_GLenum target, cl_GLint  miplevel, cl_GLuint texobj)
 	{
 		// call "base constructor"
 		cl_errcode res;
@@ -231,7 +231,7 @@ struct CLImage3DGL
 	 *		miplevel= mipmap level to be used
 	 *		texobj	= name of a complete GL 3D texture object
 	 */
-	this(const CLContext context, cl_mem_flags flags, cl_GLenum target, cl_GLint  miplevel, cl_GLuint texobj)
+	this(CLContext context, cl_mem_flags flags, cl_GLenum target, cl_GLint  miplevel, cl_GLuint texobj)
 	{
 		cl_errcode res;
 		sup = CLImage3D(clCreateFromGLTexture3D(context.cptr, flags, target, miplevel, texobj, &res));

@@ -10,7 +10,7 @@
  */
 module cl4d.platform;
 
-public import cl4d.c.cl;
+public import derelict.opencl.cl;
 import cl4d.device;
 import cl4d.error;
 import cl4d.wrapper;
@@ -92,7 +92,6 @@ public:
 	/// returns a list of all accelerator devices
 	CLDevices accelDevices() {return getDevices(CL_DEVICE_TYPE_ACCELERATOR);}
 
-	version(CL_VERSION_1_2)
 	/**
 	 * allows the implementation to release the resources allocated by the OpenCL compiler for
 	 * platform. This is a hint from the application and does not guarantee that the compiler will not be
@@ -102,6 +101,7 @@ public:
 	 */
 	void unloadCompiler()
 	{
+		assert(DerelictCL.loadedVersion >= CLVersion.CL12);
 		clUnloadPlatformCompiler(_object);
 	}
 }

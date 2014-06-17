@@ -10,8 +10,8 @@
  */
 module cl4d.wrapper;
 
+import derelict.opencl.cl;
 import cl4d.error;
-import cl4d.c.cl;
 import cl4d.kernel;
 import cl4d.memory;
 import cl4d.platform;
@@ -78,7 +78,7 @@ public:
 package:
 	// return the internal OpenCL C object
 	// should only be used inside here so reference counting works
-	final @property T cptr() const
+	final @property T cptr()
 	{
 		return _object;
 	}
@@ -86,10 +86,11 @@ package:
 	//! increments the object reference count
 	void retain()
 	{
-		// HACK: really need a proper system for OpenCL version handling
-		version(CL_VERSION_1_2)
-			static if (TName == "cl_device_id")
+		static if (TName == "cl_device_id")
+		{
+			if (DerelictCL.loadedVersion >= CLVersion.CL12)
 				clRetainDevice(_object);
+		}
 
 		// NOTE: cl_platform_id and cl_device_id aren't reference counted
 		// TName is compared instead of T itself so it also works with T being an alias
@@ -103,17 +104,18 @@ package:
 			));
 		}
 	}
-	
+
 	/**
 	 *	decrements the context reference count
 	 *	The object is deleted once the number of instances that are retained to it become zero
 	 */
 	void release()
 	{
-		// HACK: really need a proper system for OpenCL version handling
-		version(CL_VERSION_1_2)
-			static if (TName == "cl_device_id")
+		static if (TName == "cl_device_id")
+		{
+			if (DerelictCL.loadedVersion >= CLVersion.CL12)
 				clReleaseDevice(_object);
+		}
 
 		static if (TName[$-3..$] != "_id")
 		{
@@ -157,7 +159,7 @@ protected:
 	 *		queried information
 	 */
 	// TODO: make infoname type-safe, not cl_uint (can vary for certain _object, see cl_mem)
-	final U getInfo(U, alias infoFunction = }~classInfoFunction~q{)(cl_uint infoname) const
+	final U getInfo(U, alias infoFunction = }~classInfoFunction~q{)(cl_uint infoname) /*const*/
 	{
 		// TODO: should be in invariant
 		assert(_object !is null, "_object is null");
@@ -195,7 +197,7 @@ protected:
 	 *	See_Also:
 	 *		getInfo
 	 */
-	U getInfo2(U, alias altFunction)( cl_device_id device, cl_uint infoname) const
+	U getInfo2(U, alias altFunction)( cl_device_id device, cl_uint infoname) /*const*/
 	{
 		assert(_object !is null);
 		cl_errcode res;
@@ -237,7 +239,7 @@ protected:
 	 */
 	// helper function for all OpenCL Get*Info functions
 	// used for all array return types
-	final U[] getArrayInfo(U, alias infoFunction = }~classInfoFunction~q{)(cl_uint infoname) const
+	final U[] getArrayInfo(U, alias infoFunction = }~classInfoFunction~q{)(cl_uint infoname) /*const*/
 	{
 		assert(_object !is null);
 		size_t needed;
@@ -272,7 +274,7 @@ protected:
 	 *	See_Also:
 	 *		getArrayInfo
 	 */
-	U[] getArrayInfo2(U, alias altFunction)(cl_device_id device, cl_uint infoname) const
+	U[] getArrayInfo2(U, alias altFunction)(cl_device_id device, cl_uint infoname) /*const*/
 	{
 		assert(_object !is null);
 		size_t needed;
@@ -307,7 +309,7 @@ protected:
 	 *	See_Also:
 	 *		getArrayInfo
 	 */
-	final string getStringInfo(alias infoFunction = }~classInfoFunction~q{)(cl_uint infoname) const
+	final string getStringInfo(alias infoFunction = }~classInfoFunction~q{)(cl_uint infoname) /*const*/
 	{
 	    auto arr = getArrayInfo!(ichar, infoFunction)(infoname);
 	    if(arr.length == 0) return "";

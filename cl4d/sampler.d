@@ -10,7 +10,7 @@
  */
 module cl4d.sampler;
 
-import cl4d.c.cl;
+import derelict.opencl.cl;
 import cl4d.context;
 import cl4d.error;
 import cl4d.wrapper;

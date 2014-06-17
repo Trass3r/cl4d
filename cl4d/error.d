@@ -10,7 +10,8 @@
  */
 module cl4d.error;
 
-import cl4d.c.cl;
+import derelict.opencl.cl;
+alias int cl_errcode;
 
 class CLException : Exception
 {

@@ -10,11 +10,14 @@
  */
 module cl4d.event;
 
-import cl4d.c.cl;
+import derelict.opencl.cl;
 import cl4d.context;
 import cl4d.error;
 import cl4d.program;
 import cl4d.wrapper;
+
+alias extern(System) void function(cl_event,  cl_int,  void*) evt_notify_fn;
+alias cl_command_execution_status = int;
 
 //! Event collection
 struct CLEvents
@@ -91,9 +94,10 @@ public:
 	 *		command_exec_callback_type = The command execution callback values for which a callback can be registered are: CL_COMPLETE
 	 *		pfn_notify = the function to be registered, will be called asynchronously
 	 */
-	version(CL_VERSION_1_1)
 	void setCallback(cl_command_execution_status command_exec_callback_type, evt_notify_fn pfn_notify, void* userData = null)
 	{
+		assert(DerelictCL.loadedVersion >= CLVersion.CL11);
+
 		cl_errcode res = clSetEventCallback(this._object, command_exec_callback_type, pfn_notify, userData);
 		
 		mixin(exceptionHandling(
@@ -209,7 +213,6 @@ public:
 	} // of @property
 }
 
-version(CL_VERSION_1_1)
 /**
  *	User event class
  *
@@ -238,6 +241,8 @@ struct CLUserEvent
 	//! creates a user event object
 	this(CLContext context)
 	{
+		assert(DerelictCL.loadedVersion >= CLVersion.CL11);
+
 		// call "base constructor"
 		cl_errcode res;
 		sup = CLEvent(clCreateUserEvent(context.cptr, &res));

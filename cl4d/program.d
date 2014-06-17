@@ -11,7 +11,7 @@
 module cl4d.program;
 
 import cl4d.kernel;
-import cl4d.c.cl;
+import derelict.opencl.cl;
 import cl4d.wrapper;
 import cl4d.device;
 import cl4d.context;
@@ -57,8 +57,7 @@ public:
 		super(clCreateProgramWithBinary(context.cptr, 0, devices, binaries.length, ));
 		
 	}//*/
-	
-	version(CL_VERSION_1_2)
+
 	/**
 	 * creates a program object for a context, and loads the information related to the built-in kernels into a program object
 	 *
@@ -68,6 +67,7 @@ public:
 	 */
 	this(CLContext context, CLDevices devices, string kernelNames)
 	{
+		assert(DerelictCL.loadedVersion >= CLVersion.CL12);
 		import std.string;
 		cl_errcode res;
 		this(clCreateProgramWithBuiltInKernels(context.cptr, cast(cl_uint) devices.length, devices.ptr, toStringz(kernelNames), &res));

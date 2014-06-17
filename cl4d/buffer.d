@@ -10,8 +10,8 @@
  */
 module cl4d.buffer;
 
-import cl4d.c.cl;
-import cl4d.c.cl_gl;
+import derelict.opencl.cl;
+import derelict.opencl.cl_gl;
 import cl4d.context;
 import cl4d.error;
 import cl4d.memory;
@@ -57,7 +57,6 @@ struct CLBuffer
 		));
 	}
 
-	version(CL_VERSION_1_1)
 	/**
 	 *	create a new buffer object representing a specific region in this buffer
 	 *
@@ -69,6 +68,8 @@ struct CLBuffer
 	 */
 	CLBuffer createRegionSubBuffer(cl_mem_flags flags, size_t origin, size_t size)
 	{
+		assert(DerelictCL.loadedVersion >= CLVersion.CL11);
+
 		cl_buffer_region reg = {origin, size};
 
 		cl_errcode res;

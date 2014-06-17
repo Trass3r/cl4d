@@ -11,7 +11,7 @@
 module cl4d;
 
 public import
-	cl4d.c.opencl,
+	derelict.opencl.cl,
 	cl4d.commandqueue,
 	cl4d.context,
 	cl4d.device,

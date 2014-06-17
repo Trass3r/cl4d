@@ -10,11 +10,13 @@
  */
 module cl4d.memory;
 
-import cl4d.c.cl;
-import cl4d.c.cl_gl;
+import derelict.opencl.cl;
+import derelict.opencl.cl_gl;
 import cl4d.context;
 import cl4d.error;
 import cl4d.wrapper;
+
+alias extern(System) void function(cl_mem, void*) mem_notify_fn;
 
 alias CLObjectCollection!CLMemory CLMemories;
 
@@ -26,7 +28,6 @@ package struct CLMemory
 	mixin(CLWrapper("cl_mem", "clGetMemObjectInfo"));
 
 public:
-	version(CL_VERSION_1_1)
 	/**
 	 *	registers a user callback function with a memory object
 	 *	Each call registers the specified user callback function on a callback stack associated with memobj.
@@ -38,6 +39,7 @@ public:
 	 */
 	void setDestructorCallback(mem_notify_fn fpNotify, void* userData = null)
 	{
+		assert(DerelictCL.loadedVersion >= CLVersion.CL11);
 		cl_errcode res = clSetMemObjectDestructorCallback(this.cptr, fpNotify, userData);
 
 		mixin(exceptionHandling(
@@ -70,10 +72,10 @@ public:
 
 @property
 {
-	version(CL_VERSION_1_1)
 	//! ditto
 	void destructorCallback(mem_notify_fn fpNotify)
 	{
+		assert(DerelictCL.loadedVersion >= CLVersion.CL11);
 		setDestructorCallback(fpNotify);
 	}
 

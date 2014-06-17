@@ -10,8 +10,8 @@
  */
 module cl4d.commandqueue;
 
-import cl4d.c.cl;
-import cl4d.c.cl_gl;
+import derelict.opencl.cl;
+import derelict.opencl.cl_gl;
 import cl4d.buffer;
 import cl4d.context;
 import cl4d.device;
@@ -651,8 +651,6 @@ public:
 		return CLEvent(event);
 	}
 
-version(CL_VERSION_1_1)
-{
 	/**
 	 *	enqueue commands to read a 2D or 3D rectangular region from a buffer object to host memory or write a 2D or 3D rectangular region to a buffer object from host memory
 	 *
@@ -689,6 +687,8 @@ version(CL_VERSION_1_1)
 	}
 	body
 	{
+		assert(DerelictCL.loadedVersion >= CLVersion.CL11);
+
 		// TODO: leave the default pitch values as 0 and let OpenCL compute or set default values as region[0]? etc. see method documentation
 		cl_event event;
 		cl_errcode res = func(this._object, buffer.cptr, blocking, bufferOrigin.ptr, hostOrigin.ptr, region.ptr, bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch, ptr,  cast(cl_uint) waitlist.length, waitlist.ptr, &event);
@@ -750,6 +750,8 @@ version(CL_VERSION_1_1)
 	}
 	body
 	{
+		assert(DerelictCL.loadedVersion >= CLVersion.CL11);
+
 		cl_event event;
 		cl_errcode res = clEnqueueCopyBufferRect(this._object, srcBuffer.cptr, dstBuffer.cptr, srcOrigin.ptr, dstOrigin.ptr, region.ptr, srcRowPitch, srcSlicePitch, dstRowPitch, dstSlicePitch,  cast(cl_uint) waitlist.length, waitlist.ptr, &event);
 		
@@ -768,7 +770,6 @@ version(CL_VERSION_1_1)
 		
 		return CLEvent(event);
 	}
-} // of version(CL_VERSION_1_1)
 
 	/**
 	 *	enqueues a marker command

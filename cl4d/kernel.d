@@ -10,7 +10,7 @@
  */
 module cl4d.kernel;
 
-import cl4d.c.cl;
+import derelict.opencl.cl;
 import cl4d.commandqueue;
 import cl4d.context;
 import cl4d.device;
