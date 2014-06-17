@@ -25,7 +25,6 @@ import cl4d.wrapper;
 struct CLContext
 {
 	mixin(CLWrapper("cl_context", "clGetContextInfo"));
-
 public:
 	/**
 	 *	creates an OpenCL context using the given devices
@@ -76,7 +75,7 @@ public:
 			["CL_INVALID_GL_SHAREGROUP_REFERENCE_KHR", "CL and GL not on the same device"]
 		));
 	}
-	
+
 	CLProgram createProgram(string sourceCode)
 	{
 		return CLProgram(this, sourceCode);

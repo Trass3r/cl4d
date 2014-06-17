@@ -711,7 +711,7 @@ version(CL_VERSION_1_1)
 	}
 	alias enqueueReadWriteBufferRect!(clEnqueueReadBufferRect, void*) enqueueReadBufferRect; //! ditto
 	alias enqueueReadWriteBufferRect!(clEnqueueWriteBufferRect, const void*) enqueueWriteBufferRect; //! ditto
-	
+
 	/**
 	 *	enqueues a command to copy a 2D or 3D rectangular region from the buffer object identified by
 	 *	srcBuffer to a 2D or 3D region in the buffer object identified by dstBuffer

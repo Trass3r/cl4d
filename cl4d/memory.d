@@ -39,7 +39,7 @@ public:
 	void setDestructorCallback(mem_notify_fn fpNotify, void* userData = null)
 	{
 		cl_errcode res = clSetMemObjectDestructorCallback(this.cptr, fpNotify, userData);
-		
+
 		mixin(exceptionHandling(
 			["CL_INVALID_MEM_OBJECT",	""],
 			["CL_INVALID_VALUE",		"fpNotify is null"],
@@ -59,7 +59,7 @@ public:
 	void getGLObjectInfo(out cl_gl_object_type glObjectType, out cl_GLuint glObjectName)
 	{
 		cl_errcode res = clGetGLObjectInfo(this._object, &glObjectType, &glObjectName);
-		
+
 		mixin(exceptionHandling(
 			["CL_INVALID_MEM_OBJECT",	""],
 			["CL_INVALID_GL_OBJECT",	"there is no GL object associated with memobj"],

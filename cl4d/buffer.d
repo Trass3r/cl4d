@@ -84,10 +84,10 @@ struct CLBuffer
 			["CL_OUT_OF_RESOURCES",				""],
 			["CL_OUT_OF_HOST_MEMORY",			""]
 		));
-		
+
 		return CLBuffer(ret);
 	}
-	
+
 @property
 {
 	//! offset of a sub-buffer object, 0 otherwise

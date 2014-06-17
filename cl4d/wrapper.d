@@ -22,12 +22,7 @@ import std.array;
 
 package
 {
-	alias const(char) cchar; //!
-	alias const(wchar) cwchar; //!
-	alias const(dchar) cdchar; //!
 	alias immutable(char) ichar; //!
-	alias immutable(wchar) iwchar; //!
-	alias immutable(dchar) idchar; //!
 	alias const(char)[] cstring; //!
 }
 
@@ -44,7 +39,7 @@ package string CLWrapper(string T, string classInfoFunction)
 	package T _object;
 	//public alias _object this; // TODO any merit?
 	package alias T CType; // remember the C type
-	
+
 public:
 	//! wrap OpenCL C API object
 	//! this doesn't change the reference count
@@ -333,7 +328,7 @@ package struct CLObjectCollection(T)
 	alias _objects this;
 
 	//! takes a list of cl4d CLObjects
-	this(T[] objects...)
+	this(T[] objects)
 	in
 	{
 		assert(objects !is null);
