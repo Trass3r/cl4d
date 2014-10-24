@@ -6,6 +6,7 @@
 	"homepage": "https://github.com/Trass3r/cl4d",
 	"license": "BSL-1.0",
 	"sourcePaths": ["cl4d"],
+	"importPaths": ["./"],
 	"dependencies": {
 	},
 	"libs": ["OpenCL"],
