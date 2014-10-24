@@ -328,7 +328,7 @@ package struct CLObjectCollection(T)
 	alias _objects this;
 
 	//! takes a list of cl4d CLObjects
-	this(T[] objects)
+	this(T[] objects ...)
 	in
 	{
 		assert(objects !is null);
