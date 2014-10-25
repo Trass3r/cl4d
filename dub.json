@@ -16,6 +16,10 @@
 			"versions": ["CL_VERSION_1_1"]
 		},
 		{
+			"name": "cl4d-verbose",
+			"versions": ["CL_VERSION_1_1", "CL4D_VERBOSE"]
+		},
+		{
 			"name": "vector-example",
 			"sourceFiles": ["vectorAdd.d"],
 			"targetType": "executable",
