@@ -36,7 +36,17 @@ package string CLWrapper(string T, string classInfoFunction)
 {
 	return "private:\nalias " ~ T ~ " T;\n" ~ 
 	"enum TName = \"" ~ T ~ "\";\n" ~ q{
-	package T _object;
+	
+	package void* _handle; // Because T is a const(void*) that prevent the actual structure to be assignable
+	package T _object() const pure nothrow
+	{
+		return cast(T)_handle;
+	}
+	package void _object(T object) nothrow
+	{
+		_handle = cast(void*)object;
+	}
+
 	//public alias _object this; // TODO any merit?
 	package alias T CType; // remember the C type
 

@@ -67,7 +67,7 @@ public:
 	 */
 	void wait() const
 	{
-		cl_errcode res = clWaitForEvents(1, &_object);
+		cl_errcode res = clWaitForEvents(1, &_handle);
 		
 		mixin(exceptionHandling(
 			["CL_INVALID_VALUE",		""],
