@@ -17,6 +17,8 @@ import cl4d.device;
 import cl4d.context;
 import cl4d.error;
 import std.array;
+import std.range;
+import std.algorithm;
 
 /**
  * An OpenCL program consists of a set of kernels that are identified as functions declared with
@@ -48,15 +50,31 @@ public:
 		));
 	}
 	
-	/* TODO
-	 * creates a program object for a context, and loads the binary bits specified by binary into the program object
-	 *
-	this(CLContext context, ubyte[][] binaries, CLDevice[] devices = null)
+	/* creates a program object for a context, and loads the binary bits specified by binary into the program object
+	 */
+	this(CLContext context, ubyte[][] binaries, CLDevices devices = CLDevices())
 	{
-		cl_errcode res, binary_status;
-		super(clCreateProgramWithBinary(context.cptr, 0, devices, binaries.length, ));
-		
-	}//*/
+		cl_errcode res;
+		size_t* lengths = cast(size_t*)(binaries.map!(b => b.length).array);
+		const(ubyte*)* bins = cast(const(ubyte*)*)(binaries.map!(b => cast(const(ubyte*))b).array);
+
+		this(clCreateProgramWithBinary(
+			context.cptr,  
+			cast(cl_uint) devices.length, 
+			devices.ptr, 
+			lengths, 
+			bins,
+			null,
+			&res));
+
+		mixin(exceptionHandling(
+			["CL_INVALID_CONTEXT",		""],
+			["CL_INVALID_VALUE",		"binary pointer is invalid"],
+			["CL_INVALID_DEVICE",  		"OpenCL devices listed in device_list are not in the list of devices associated with context"],
+			["CL_INVALID_BINARY", 		"an invalid program binary was encountered for any device."],
+			["CL_OUT_OF_HOST_MEMORY",	""]
+			));
+	}
 	
 	version(CL_VERSION_1_2)
 	/**
