@@ -68,13 +68,10 @@ public:
 		retain();
 		version(CL4D_VERBOSE) writef("copied %s %X. Reference count is now: %d\n", TName, cast(void*) _object, referenceCount);
 	}
-
+		
 	//! release the object
 	~this()
 	{
-		if (_object is null)
-			return;
-
 		version(CL4D_VERBOSE) writef("releasing %s %X. Reference count before: %d\n", TName, cast(void*) _object, referenceCount);
 		release();
 	}
@@ -274,7 +271,7 @@ protected:
 			throw new CLException(res);
 		
 		return buffer;
-	}
+	}	
 	
 	/**
 	 *	special version only used for clGetProgramBuildInfo and clGetKernelWorkgroupInfo

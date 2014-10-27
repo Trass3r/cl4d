@@ -291,7 +291,7 @@ public:
 		ubyte[][] binaries()
 		{
 			// retrieve sizes of binary data for each device associated with program
-			size_t[] sizes = this.getArrayInfo!(size_t)(CL_PROGRAM_BINARY_SIZES);
+			size_t[] sizes = getBinarySizes();
 
 			// we can't use getArrayInfo for the following
 			// since we need to preallocate the buffers for the binaries
@@ -313,6 +313,25 @@ public:
 			if (res != CL_SUCCESS)
 				throw new CLException(res, "couldn't obtain program binaries");
 
+			return buffer;
+		}
+
+		private size_t[] getBinarySizes() 
+		{
+			assert(_object !is null);
+
+			cl_uint numDevices = this.numDevices();			
+			auto buffer = new size_t[numDevices];
+
+			assert(buffer.length);
+			
+			// get actual data
+			auto res = clGetProgramInfo(_object, CL_PROGRAM_BINARY_SIZES, numDevices * size_t.sizeof, cast(void*)buffer.ptr, null);
+			
+			// error checking
+			if (res != CL_SUCCESS)
+				throw new CLException(res);
+			
 			return buffer;
 		}
 	} // of @property
