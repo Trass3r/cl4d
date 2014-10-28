@@ -84,7 +84,7 @@ public:
 	/**
 	 *	get a list of image formats supported by the OpenCL implementation
 	 */
-	cl_image_format[] supportedImageFormats(cl_mem_flags flags, cl_mem_object_type type) const
+	cl_image_format[] supportedImageFormats(cl_mem_flags flags, cl_mem_object_type type)
 	{
 		cl_uint numFormats;
 		cl_errcode res = clGetSupportedImageFormats(this._object, flags, type, 0, null, &numFormats);

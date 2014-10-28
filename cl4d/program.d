@@ -104,7 +104,7 @@ public:
 	 * devices or a specific device(s) in the OpenCL context associated with program. OpenCL allows
 	 * program executables to be built using the source or the binary.
 	 */
-	CLProgram build(string options = "", CLDevices devices = CLDevices())
+	void build(string options = "", CLDevices devices = CLDevices())
 	{
 		cl_errcode res;
 		
@@ -134,8 +134,6 @@ public:
 			["CL_COMPILER_NOT_AVAILABLE","program is created with clCreateProgramWithSource and a compiler is not available i.e. CL_DEVICE_COMPILER_AVAILABLE specified in table 4.3 is set to CL_FALSE"],
 			["CL_OUT_OF_HOST_MEMORY",	""]
 		));
-
-		return this;
 	}
 
 	/**

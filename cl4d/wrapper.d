@@ -36,16 +36,10 @@ package string CLWrapper(string T, string classInfoFunction)
 {
 	return "private:\nalias " ~ T ~ " T;\n" ~ 
 	"enum TName = \"" ~ T ~ "\";\n" ~ q{
+
+	private import std.typecons;
 	
-	package void* _handle; // Because T is a const(void*) that prevent the actual structure to be assignable
-	package T _object() const pure nothrow
-	{
-		return cast(T)_handle;
-	}
-	package void _object(T object) nothrow
-	{
-		_handle = cast(void*)object;
-	}
+	package T _object;
 
 	//public alias _object this; // TODO any merit?
 	package alias T CType; // remember the C type
@@ -55,6 +49,7 @@ public:
 	//! this doesn't change the reference count
 	this(T obj)
 	{
+		assert(obj !is null);
 		_object = obj;
 		version(CL4D_VERBOSE) writef("wrapped %s %X\n", TName, cast(void*) _object);
 	}
@@ -76,16 +71,10 @@ public:
 		release();
 	}
 
-	//! ensure that _object isn't null
-	invariant()
-	{
-		assert(_object !is null, "invariant violated: _object is null");
-	}
-
 package:
 	// return the internal OpenCL C object
 	// should only be used inside here so reference counting works
-	final @property T cptr() const
+	final @property T cptr()
 	{
 		return _object;
 	}
@@ -93,6 +82,8 @@ package:
 	//! increments the object reference count
 	void retain()
 	{
+		if (!_object) return;
+
 		// HACK: really need a proper system for OpenCL version handling
 		version(CL_VERSION_1_2)
 			static if (TName == "cl_device_id")
@@ -117,6 +108,8 @@ package:
 	 */
 	void release()
 	{
+		if (!_object) return;
+
 		// HACK: really need a proper system for OpenCL version handling
 		version(CL_VERSION_1_2)
 			static if (TName == "cl_device_id")
@@ -138,8 +131,9 @@ package:
 	 *	The reference count returned should be considered immediately stale. It is unsuitable for general use in 
 	 *	applications. This feature is provided for identifying memory leaks
 	 */
-	public @property cl_uint referenceCount() const
+	public @property cl_uint referenceCount()
 	{
+		if (!_object) return 0;
 		static if (TName[$-3..$] != "_id")
 		{
 			mixin("return getInfo!cl_uint(CL_" ~ (TName == "cl_command_queue" ? "QUEUE" : TName[3..$].toUpper) ~ "_REFERENCE_COUNT);");
@@ -164,10 +158,9 @@ protected:
 	 *		queried information
 	 */
 	// TODO: make infoname type-safe, not cl_uint (can vary for certain _object, see cl_mem)
-	final U getInfo(U, alias infoFunction = }~classInfoFunction~q{)(cl_uint infoname) const
+	final U getInfo(U, alias infoFunction = }~classInfoFunction~q{)(cl_uint infoname)
 	{
-		// TODO: should be in invariant
-		assert(_object !is null, "_object is null");
+		assert(_object !is null, "invariant violated: _object is null");
 		cl_errcode res;
 		
 		debug
@@ -202,9 +195,9 @@ protected:
 	 *	See_Also:
 	 *		getInfo
 	 */
-	U getInfo2(U, alias altFunction)( cl_device_id device, cl_uint infoname) const
+	U getInfo2(U, alias altFunction)( cl_device_id device, cl_uint infoname)
 	{
-		assert(_object !is null);
+		assert(_object !is null, "invariant violated: _object is null");
 		cl_errcode res;
 		
 		debug
@@ -244,9 +237,9 @@ protected:
 	 */
 	// helper function for all OpenCL Get*Info functions
 	// used for all array return types
-	final U[] getArrayInfo(U, alias infoFunction = }~classInfoFunction~q{)(cl_uint infoname) const
+	final U[] getArrayInfo(U, alias infoFunction = }~classInfoFunction~q{)(cl_uint infoname)
 	{
-		assert(_object !is null);
+		assert(_object !is null, "invariant violated: _object is null");
 		size_t needed;
 		cl_errcode res;
 
@@ -279,9 +272,9 @@ protected:
 	 *	See_Also:
 	 *		getArrayInfo
 	 */
-	U[] getArrayInfo2(U, alias altFunction)(cl_device_id device, cl_uint infoname) const
+	U[] getArrayInfo2(U, alias altFunction)(cl_device_id device, cl_uint infoname)
 	{
-		assert(_object !is null);
+		assert(_object !is null, "invariant violated: _object is null");
 		size_t needed;
 		cl_errcode res;
 
@@ -314,8 +307,9 @@ protected:
 	 *	See_Also:
 	 *		getArrayInfo
 	 */
-	final string getStringInfo(alias infoFunction = }~classInfoFunction~q{)(cl_uint infoname) const
+	final string getStringInfo(alias infoFunction = }~classInfoFunction~q{)(cl_uint infoname)
 	{
+		assert(_object !is null, "invariant violated: _object is null");
 	    auto arr = getArrayInfo!(ichar, infoFunction)(infoname);
 	    if(arr.length == 0) return "";
 	    else return cast(string) arr[0 .. $-1]; // removing zero end symbol

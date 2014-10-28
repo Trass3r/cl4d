@@ -29,7 +29,7 @@ package string bringToCurrentScope(alias EnumType)()
 
 extern(System):
 
-alias const(void*)
+alias void*
 	cl_platform_id,
 	cl_device_id,
 	cl_context,
