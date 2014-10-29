@@ -61,13 +61,13 @@ public:
 	{
 		// increment reference count
 		retain();
-		version(CL4D_VERBOSE) writef("copied %s %X. Reference count is now: %d\n", TName, cast(void*) _object, referenceCount);
+		version(CL4D_VERBOSE) if (_object) writef("copied %s %X. Reference count is now: %d\n", TName, cast(void*) _object, referenceCount);
 	}
 		
 	//! release the object
 	~this()
 	{
-		version(CL4D_VERBOSE) writef("releasing %s %X. Reference count before: %d\n", TName, cast(void*) _object, referenceCount);
+		version(CL4D_VERBOSE) if (_object) writef("releasing %s %X. Reference count before: %d\n", TName, cast(void*) _object, referenceCount);
 		release();
 	}
 
@@ -394,13 +394,18 @@ unittest
 	CLDummy a;
 	CLDummy b;
 	assert(a.referenceCount == 1);
+	assert(b.referenceCount == 1);
 
-	CLDummies c = CLDummies(a, b);
+	CLDummies c = CLDummies(a, b); // Copy to constructor + copy to value
+	assert(c[0].referenceCount == 3);
+	assert(c[1].referenceCount == 3);
+	foreach (ref d; c)
+		assert(d.referenceCount == 3);
 	foreach (d; c)
-		assert(d.referenceCount == 2);
+		assert(d.referenceCount == 4);
 
 	CLDummy d = c[0];
-	assert(d.referenceCount == 3, to!string(d.referenceCount));
+	assert(d.referenceCount == 4, to!string(d.referenceCount));
 
 	uint[5] s = [1,2,3,4,5];
 	CLDummies g = CLDummies(s);
