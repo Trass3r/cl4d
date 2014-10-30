@@ -49,7 +49,7 @@ public:
 	//! this doesn't change the reference count
 	this(T obj)
 	{
-		assert(obj !is null);
+		assert(obj !is null, "Argument 'obj' is null.");
 		_object = obj;
 		version(CL4D_VERBOSE) writef("wrapped %s %X\n", TName, cast(void*) _object);
 	}
