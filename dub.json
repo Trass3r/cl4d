@@ -6,6 +6,7 @@
 	"homepage": "https://github.com/Trass3r/cl4d",
 	"license": "BSL-1.0",
 	"sourcePaths": ["cl4d"],
+	"importPaths": ["./"],
 	"dependencies": {
 	},
 	"libs": ["OpenCL"],
@@ -13,6 +14,10 @@
 		{
 			"name": "cl4d",
 			"versions": ["CL_VERSION_1_1"]
+		},
+		{
+			"name": "cl4d-verbose",
+			"versions": ["CL_VERSION_1_1", "CL4D_VERBOSE"]
 		},
 		{
 			"name": "vector-example",
