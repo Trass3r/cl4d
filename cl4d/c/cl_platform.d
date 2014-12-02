@@ -17,36 +17,18 @@ module cl4d.c.cl_platform;
 // TODO: on MacOSX API calls are __attribute__((weak_import))
 
 // scalar types, leave as aliases for template instantiation
-version(GNU)
-{
-	alias byte		cl_char;
-	alias ubyte		cl_uchar;
-	pragma(attribute, aligned(2)) alias short	cl_short;
-	pragma(attribute, aligned(2)) alias ushort	cl_ushort;
-	pragma(attribute, aligned(4)) alias int		cl_int;
-	pragma(attribute, aligned(4)) alias uint	cl_uint;
-	pragma(attribute, aligned(8)) alias long	cl_long;
-	pragma(attribute, aligned(8)) alias ulong	cl_ulong;
-	
-	pragma(attribute, aligned(2)) alias ushort	cl_half;
-	pragma(attribute, aligned(4)) alias float	cl_float;
-	pragma(attribute, aligned(8)) alias double	cl_double;
-}
-else
-{
-	alias byte		cl_char;
-	alias ubyte		cl_uchar;
-	alias short		cl_short;
-	alias ushort	cl_ushort;
-	alias int		cl_int;
-	alias uint		cl_uint;
-	alias long		cl_long;
-	alias ulong		cl_ulong;
-	
-	alias ushort	cl_half;
-	alias float		cl_float;
-	alias double	cl_double;
-}
+alias byte		cl_char;
+alias ubyte		cl_uchar;
+alias short		cl_short;
+alias ushort	cl_ushort;
+alias int		cl_int;
+alias uint		cl_uint;
+alias long		cl_long;
+alias ulong		cl_ulong;
+
+alias ushort	cl_half;
+alias float		cl_float;
+alias double	cl_double;
 
 /+
 // Macro names and corresponding values defined by OpenCL
@@ -168,14 +150,11 @@ union ` ~ type ~ to!string(size) ~ `
 {
 	`;
     // add aligned attribute if inside GDC
-    version(GNU) res ~= `pragma(attribute, aligned(` ~ to!string(size) ~ ` * ` ~ type ~ `.sizeof)) `;
 	res ~= type ~ "[" ~ to!string(size) ~ `] s;
 	alias s this; // allow array access and implicit conversion to the array
 	struct { ` ~ type ~ ` x, y` ~ (size<=2 ? "" : ", z, w") ~ (size>=16 ? ", __spacer4, __spacer5, __spacer6, __spacer7, __spacer8, __spacer9, sa, sb, sc, sd, se, sf" : "") ~ `; }
 	struct { ` ~ type ~ ` s0, s1` ~ (size<=2 ? "" : ", s2, s3") ~ (size>=8 ? ", s4, s5, s6, s7" : "") ~ (size>=16 ? ", s8, s9, sA, sB, sC, sD, sE, sF" : "") ~ `; }
 	struct { ` ~ type ~ (size>2 ? to!string(size/2) : "") ~ ` lo, hi; }`;
-	version(GNU) res ~= `
-	pragma(attribute, vector_size(` ~ to!string(size) ~ ` * ` ~ type ~ `.sizeof)) ` ~ type ~ " v" ~ to!string(size) ~ `;`;
 	res ~= `
 }
 `;

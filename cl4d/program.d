@@ -17,6 +17,8 @@ import cl4d.device;
 import cl4d.context;
 import cl4d.error;
 import std.array;
+import std.range;
+import std.algorithm;
 
 /**
  * An OpenCL program consists of a set of kernels that are identified as functions declared with
@@ -48,15 +50,31 @@ public:
 		));
 	}
 	
-	/* TODO
-	 * creates a program object for a context, and loads the binary bits specified by binary into the program object
-	 *
-	this(CLContext context, ubyte[][] binaries, CLDevice[] devices = null)
+	/* creates a program object for a context, and loads the binary bits specified by binary into the program object
+	 */
+	this(CLContext context, ubyte[][] binaries, CLDevices devices = CLDevices())
 	{
-		cl_errcode res, binary_status;
-		super(clCreateProgramWithBinary(context.cptr, 0, devices, binaries.length, ));
-		
-	}//*/
+		cl_errcode res;
+		size_t* lengths = cast(size_t*)(binaries.map!(b => b.length).array);
+		const(ubyte*)* bins = cast(const(ubyte*)*)(binaries.map!(b => cast(const(ubyte*))b).array);
+
+		this(clCreateProgramWithBinary(
+			context.cptr,  
+			cast(cl_uint) devices.length, 
+			devices.ptr, 
+			lengths, 
+			bins,
+			null,
+			&res));
+
+		mixin(exceptionHandling(
+			["CL_INVALID_CONTEXT",		""],
+			["CL_INVALID_VALUE",		"binary pointer is invalid"],
+			["CL_INVALID_DEVICE",  		"OpenCL devices listed in device_list are not in the list of devices associated with context"],
+			["CL_INVALID_BINARY", 		"an invalid program binary was encountered for any device."],
+			["CL_OUT_OF_HOST_MEMORY",	""]
+			));
+	}
 	
 	version(CL_VERSION_1_2)
 	/**
@@ -86,7 +104,7 @@ public:
 	 * devices or a specific device(s) in the OpenCL context associated with program. OpenCL allows
 	 * program executables to be built using the source or the binary.
 	 */
-	CLProgram build(string options = "", CLDevices devices = CLDevices())
+	void build(string options = "", CLDevices devices = CLDevices())
 	{
 		cl_errcode res;
 		
@@ -116,8 +134,6 @@ public:
 			["CL_COMPILER_NOT_AVAILABLE","program is created with clCreateProgramWithSource and a compiler is not available i.e. CL_DEVICE_COMPILER_AVAILABLE specified in table 4.3 is set to CL_FALSE"],
 			["CL_OUT_OF_HOST_MEMORY",	""]
 		));
-
-		return this;
 	}
 
 	/**
@@ -273,7 +289,7 @@ public:
 		ubyte[][] binaries()
 		{
 			// retrieve sizes of binary data for each device associated with program
-			size_t[] sizes = this.getArrayInfo!(size_t)(CL_PROGRAM_BINARY_SIZES);
+			size_t[] sizes = getBinarySizes();
 
 			// we can't use getArrayInfo for the following
 			// since we need to preallocate the buffers for the binaries
@@ -295,6 +311,25 @@ public:
 			if (res != CL_SUCCESS)
 				throw new CLException(res, "couldn't obtain program binaries");
 
+			return buffer;
+		}
+
+		private size_t[] getBinarySizes() 
+		{
+			assert(_object !is null);
+
+			cl_uint numDevices = this.numDevices();			
+			auto buffer = new size_t[numDevices];
+
+			assert(buffer.length);
+			
+			// get actual data
+			auto res = clGetProgramInfo(_object, CL_PROGRAM_BINARY_SIZES, numDevices * size_t.sizeof, cast(void*)buffer.ptr, null);
+			
+			// error checking
+			if (res != CL_SUCCESS)
+				throw new CLException(res);
+			
 			return buffer;
 		}
 	} // of @property
